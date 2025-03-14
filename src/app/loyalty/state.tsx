@@ -21,6 +21,7 @@ export interface RedemptionHistory {
 export interface LoyaltyState {
     state: STATE;
     list: Loyalty[] | null;
+    filteredList: Loyalty[] | null;
     filter: {
         branchName: string;
         totalVisits: number;
@@ -37,6 +38,7 @@ export interface RedemptionState {
 export const initialLoyaltyState: LoyaltyState = {
     state: STATE.INITIALIZED,
     list: null,
+    filteredList: null,
     filter: {
         branchName: '',
         totalVisits: -1,

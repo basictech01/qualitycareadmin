@@ -8,9 +8,19 @@ const loyaltySlice = createSlice({
     reducers: {
         setFilter(state, action) {
             state.filter = action.payload;
+            state.filteredList = state.list?.filter((item) => {
+                const { stampsCollected, branchName, totalVisits } = state.filter;
+
+                return (
+                    (stampsCollected === -1 || item.stampsCollected >= stampsCollected) &&
+                    (branchName === '' || item.branchName === branchName) &&
+                    (totalVisits === -1 || item.visitCount >= totalVisits)
+                );
+            }) || null;
         },
         clearFilter(state) {
             state.filter = initialLoyaltyState.filter;
+            state.filteredList = state.list;
         },
     },
     extraReducers: (builder) => {
