@@ -23,7 +23,7 @@ export interface LoyaltyState {
     list: Loyalty[] | null;
     filteredList: Loyalty[] | null;
     filter: {
-        branchName: string;
+        branchName: string | null;
         totalVisits: number;
         stampsCollected: number;
     };
@@ -40,7 +40,7 @@ export const initialLoyaltyState: LoyaltyState = {
     list: null,
     filteredList: null,
     filter: {
-        branchName: '',
+        branchName: null,
         totalVisits: -1,
         stampsCollected: -1,
     },

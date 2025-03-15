@@ -8,15 +8,24 @@ const loyaltySlice = createSlice({
     reducers: {
         setFilter(state, action) {
             state.filter = action.payload;
-            state.filteredList = state.list?.filter((item) => {
-                const { stampsCollected, branchName, totalVisits } = state.filter;
+            const { stampsCollected, branchName, totalVisits } = state.filter;
 
-                return (
-                    (stampsCollected === -1 || item.stampsCollected >= stampsCollected) &&
-                    (branchName === '' || item.branchName === branchName) &&
-                    (totalVisits === -1 || item.visitCount >= totalVisits)
-                );
-            }) || null;
+            console.log("stamps: ", stampsCollected)
+            console.log("branch: ", branchName)
+            console.log("visits: ", totalVisits)
+
+            state.filteredList = state.list;
+
+            if (stampsCollected !== -1) {
+                state.filteredList = state.filteredList?.filter(e => e.stampsCollected >= stampsCollected) || null;
+            }
+            if (branchName !== null) {
+                state.filteredList = state.filteredList?.filter(e => e.branchName === branchName) || null;
+            }
+            if (totalVisits !== -1) {
+                state.filteredList = state.filteredList?.filter(e => e.visitCount >= totalVisits) || null;
+            }
+            return state;
         },
         clearFilter(state) {
             state.filter = initialLoyaltyState.filter;
@@ -31,6 +40,7 @@ const loyaltySlice = createSlice({
             .addCase(fetchLoyaltyList.fulfilled, (state, action) => {
                 state.state = STATE.INITIALIZED;
                 state.list = action.payload.list;
+                state.filteredList = action.payload.list;
             })
             .addCase(fetchLoyaltyList.rejected, (state) => {
                 state.state = STATE.ERROR;

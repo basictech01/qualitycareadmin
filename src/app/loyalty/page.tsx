@@ -10,7 +10,7 @@ import Link from 'next/link';
 export default function LoyaltyPage() {
     const dispatch = useDispatch();
 
-    const { list, filter } = useSelector((state: RootState) => state.loyalty);
+    const { filter, filteredList } = useSelector((state: RootState) => state.loyalty);
 
     useEffect(() => {
         dispatch(fetchLoyaltyList());
@@ -53,9 +53,9 @@ export default function LoyaltyPage() {
                         onChange={(e) => handleFilterChange('branchName', e.target.value)}
                     >
                         <option value='-1'>None</option>
-                        <option value='Branch A'>Branch A</option>
-                        <option value='Branch B'>Branch B</option>
-                        <option value='Branch C'>Branch C</option>
+                        <option value='Branch 1'>Branch 1</option>
+                        <option value='Branch 2'>Branch 2</option>
+                        <option value='Branch 3'>Branch 3</option>
                     </select>
 
                     {/* Filter by Total Visits */}
@@ -92,7 +92,7 @@ export default function LoyaltyPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {list?.map((customer) => (
+                            {filteredList?.map((customer) => (
                                 <tr key={customer.id}>
                                     <td>{customer.id}</td>
                                     <td>{customer.name}</td>
