@@ -13,8 +13,8 @@ export default function LoyaltyPage() {
     const { filter, filteredList } = useSelector((state: RootState) => state.loyalty);
 
     useEffect(() => {
-        dispatch(fetchLoyaltyList());
-        dispatch(fetchRedemptionHistory());
+        dispatch(fetchLoyaltyList() as any);
+        dispatch(fetchRedemptionHistory() as any);
     }, [dispatch]);
 
     // Directly update Redux state on input change

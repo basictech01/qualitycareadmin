@@ -116,17 +116,17 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                 <div>
                     <Link href='/' className='sidebar-logo'>
                         <img
-                            src='assets/images/logo.png'
+                            src='/assets/images/logo.png'
                             alt='site logo'
                             className='light-logo'
                         />
                         <img
-                            src='assets/images/logo-light.png'
+                            src='/assets/images/logo-light.png'
                             alt='site logo'
                             className='dark-logo'
                         />
                         <img
-                            src='assets/images/logo-icon.png'
+                            src='/assets/images/logo-icon.png'
                             alt='site logo'
                             className='logo-icon'
                         />
@@ -256,7 +256,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                     <Link
                                         href='/settings/vat'
                                         className={
-                                            pathname === "/vat" ? "active-page" : ""
+                                            pathname === "/settings/vat" ? "active-page" : ""
                                         }
                                     >
                                         <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
@@ -338,7 +338,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                         data-bs-toggle='dropdown'
                                     >
                                         <img
-                                            src='assets/images/user.png'
+                                            src='/assets/images/user.png'
                                             alt='image_user'
                                             className='w-40-px h-40-px object-fit-cover rounded-circle'
                                         />
