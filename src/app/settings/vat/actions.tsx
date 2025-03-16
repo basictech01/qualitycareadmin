@@ -1,14 +1,10 @@
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const fetchVat = createAsyncThunk("vat/fetchVat", async (_, { rejectWithValue }) => {
     try {
-        const res = await fetch(`${BASE_URL}/vat`);
-        if (!res.ok) throw new Error("Failed to fetch VAT");
-
-        const data = await res.json();
-        return data.data.vat;
+        const response = await fetchWithAuth('/vat');
+        return response.vat;
     } catch (error: any) {
         return rejectWithValue(error.message);
     }
@@ -18,7 +14,7 @@ export const updateVat = createAsyncThunk(
     "vat/updateVat",
     async (vat: number, { rejectWithValue }) => {
         try {
-            const res = await fetch(`${BASE_URL}/vat`, {
+            const response = await fetchWithAuth('/vat', {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -26,10 +22,8 @@ export const updateVat = createAsyncThunk(
                 body: JSON.stringify({ vat }),
             });
 
-            if (!res.ok) throw new Error("Failed to update VAT");
 
-            const data = await res.json();
-            return data.data.vat;
+            return response.vat;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }

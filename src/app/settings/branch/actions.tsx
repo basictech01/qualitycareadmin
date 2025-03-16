@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Branch } from "./state";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export const addBranch = createAsyncThunk(
     "branch/addBranch",
@@ -10,19 +9,14 @@ export const addBranch = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const res = await fetch(`${BASE_URL}/branch`, {
+            const response = await fetchWithAuth('/branch', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(branch),
             });
-            if (!res.ok) throw new Error("Failed to add branch");
-            const data = await res.json();
-            if (data.success) {
-                return data.data;
-            }
-            return {};
+            return response
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -36,19 +30,14 @@ export const updateBranch = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const res = await fetch(`${BASE_URL}/branch/${branch.id}`, {
+            const response = await fetchWithAuth('/branch/${branch.id}', {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(branch),
             });
-            if (!res.ok) throw new Error("Failed to update branch");
-            const data = await res.json();
-            if (data.success) {
-                return data.data;
-            }
-            return {};
+            return response
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -82,9 +71,6 @@ export const fetchBranch = createAsyncThunk(
                 },
             ];
 
-            // Simulate network delay
-            await new Promise((resolve) => setTimeout(resolve, 500));
-
             return data;
         } catch (error: any) {
             return rejectWithValue(error.message);
@@ -97,8 +83,6 @@ export const deleteBranch = createAsyncThunk(
     "branch/deleteBranch",
     async (branchId: number, { rejectWithValue }) => {
         try {
-            // Simulate successful deletion
-            await new Promise((resolve) => setTimeout(resolve, 300));
 
             return branchId;
         } catch (error: any) {
