@@ -17,3 +17,41 @@
 @import url("~/public/assets/css/lib/animate.min.css");
 @import url("~/public/assets/css/style.css");
 @import url("~/public/assets/css/extra.css");
+
+@font-face {
+    font-family: 'Bahij Nazanin';
+    src: url('/fonts/Bahij_Nazanin.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bahij Nazanin';
+    src: url('/fonts/Bahij_Nazanin-Bold.ttf') format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    font-family: "Bahij Nazanin", sans-serif;
+}
+
+@keyframes scalePulse {
+    0%, 100% {
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+  
+.scale-pulse {
+animation: scalePulse 5s infinite ease-in-out;
+}

@@ -3,6 +3,7 @@ import { loyaltyReducer } from './app/loyalty/store';
 import { redemptionReducer } from './app/loyalty/store';
 import { vatReducer } from './app/settings/vat/store';
 import { branchReducer } from './app/settings/branch/store';
+import userReducer from './app/login/store';
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         redemption: redemptionReducer,
         vat: vatReducer,
         branch: branchReducer, // <-- Register branch reducer here
+        user: userReducer,
     },
 });
 

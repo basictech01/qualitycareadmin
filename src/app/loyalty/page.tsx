@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLoyaltyList, fetchRedemptionHistory } from './actions';
 import { setFilter } from './store';
-import { RootState } from '@/store';
+import { AppDispatch, RootState } from '@/store';
 import Link from 'next/link';
 
 export default function LoyaltyPage() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const { filter, filteredList } = useSelector((state: RootState) => state.loyalty);
 

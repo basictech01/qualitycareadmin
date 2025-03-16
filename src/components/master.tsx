@@ -116,7 +116,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                 <div>
                     <Link href='/' className='sidebar-logo'>
                         <img
-                            src='/assets/images/logo.png'
+                            src='/images/light-logo.png'
                             alt='site logo'
                             className='light-logo'
                         />

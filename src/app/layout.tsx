@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import MasterLayout from "@/components/master";
-import { Breadcrumb } from "react-bootstrap";
 import ReduxProvider from "@/utils/reduxProvider";
+import Auth from "./auth";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -25,19 +24,16 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+
     return (
         <html lang="en">
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-
                 <ReduxProvider>
-                    {/* MasterLayout */}
-                    <MasterLayout>
-                        {/* Breadcrumb */}
-                        <Breadcrumb />
+                    <Auth>
                         {children}
-                    </MasterLayout>
+                    </Auth>                    
                 </ReduxProvider>
             </body>
         </html>

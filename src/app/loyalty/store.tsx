@@ -34,9 +34,7 @@ const loyaltySlice = createSlice({
                 state.state = STATE.LOADING;
             })
             .addCase(fetchLoyaltyList.fulfilled, (state, action) => {
-                state.state = STATE.INITIALIZED;
-                state.list = action.payload.list;
-                state.filteredList = action.payload.list;
+                state.state = STATE.LOADING;
             })
             .addCase(fetchLoyaltyList.rejected, (state) => {
                 state.state = STATE.ERROR;
