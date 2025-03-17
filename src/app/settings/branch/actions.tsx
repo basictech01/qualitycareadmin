@@ -9,6 +9,9 @@ export const addBranch = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
+            // dummy data
+            // return branch
+
             const response = await fetchWithAuth('/branch', {
                 method: "POST",
                 headers: {
@@ -30,7 +33,10 @@ export const updateBranch = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const response = await fetchWithAuth('/branch/${branch.id}', {
+            // dummy data
+            // return branch
+
+            const response = await fetchWithAuth(`/branch/${branch.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -49,29 +55,29 @@ export const fetchBranch = createAsyncThunk(
     "branch/fetchBranch",
     async (_, { rejectWithValue }) => {
         try {
-            // Dummy data for now
-            const data = [
-                {
-                    id: 1,
-                    name_ar: "فرع 1",
-                    name_en: "Branch 1",
-                    city_en: "City 1",
-                    city_ar: "مدينة 1",
-                    latitude: 37.7749,
-                    longitude: -122.4194,
-                },
-                {
-                    id: 2,
-                    name_ar: "فرع 2",
-                    name_en: "Branch 2",
-                    city_en: "City 2",
-                    city_ar: "مدينة 2",
-                    latitude: 34.0522,
-                    longitude: -118.2437,
-                },
-            ];
-
-            return data;
+            // dummy data
+            // return [
+            //     {
+            //         id: 1,
+            //         name_ar: "Branch 1",
+            //         name_en: "Branch 1",
+            //         city_en: "City 1",
+            //         city_ar: "City 1",
+            //         latitude: 1,
+            //         longitude: 1,
+            //     },
+            //     {
+            //         id: 2,
+            //         name_ar: "Branch 2",
+            //         name_en: "Branch 2",
+            //         city_en: "City 2",
+            //         city_ar: "City 2",
+            //         latitude: 2,
+            //         longitude: 2,
+            //     },
+            // ]
+            const data = await fetchWithAuth('/branch');
+            return data.branch;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -83,8 +89,13 @@ export const deleteBranch = createAsyncThunk(
     "branch/deleteBranch",
     async (branchId: number, { rejectWithValue }) => {
         try {
+            // dummy data
+            // return branchId
 
-            return branchId;
+            const data = await fetchWithAuth(`/branch/${branchId}`, {
+                method: "DELETE",
+            })
+            return data;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }

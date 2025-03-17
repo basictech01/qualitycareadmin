@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store";
 import { addBranch, deleteBranch, fetchBranch, updateBranch } from "./actions";
+import { STATE } from "./state";
 
 export default function BranchSettingsPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -56,101 +57,133 @@ export default function BranchSettingsPage() {
         dispatch(deleteBranch(branchId));
     };
 
-    return (
-        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Branch Settings</h2>
+    if (loading === STATE.LOADING) {
+        return <div>Loading...</div>;
+    }
 
-            {/* Input Form */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-                <input
-                    type="text"
-                    name="name_ar"
-                    value={formData.name_ar}
-                    onChange={handleChange}
-                    placeholder="Branch Name (Arabic)"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
-                <input
-                    type="text"
-                    name="name_en"
-                    value={formData.name_en}
-                    onChange={handleChange}
-                    placeholder="Branch Name (English)"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
-                <input
-                    type="text"
-                    name="city_ar"
-                    value={formData.city_ar}
-                    onChange={handleChange}
-                    placeholder="City (Arabic)"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
-                <input
-                    type="text"
-                    name="city_en"
-                    value={formData.city_en}
-                    onChange={handleChange}
-                    placeholder="City (English)"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
-                <input
-                    type="number"
-                    name="latitude"
-                    value={formData.latitude}
-                    onChange={handleChange}
-                    placeholder="Latitude"
-                    min="-90"
-                    max="90"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
-                <input
-                    type="number"
-                    name="longitude"
-                    value={formData.longitude}
-                    onChange={handleChange}
-                    placeholder="Longitude"
-                    min="-180"
-                    max="180"
-                    className="p-2 bg-gray-700 border border-gray-600 rounded"
-                />
+    if (loading === STATE.ERROR) {
+        return <div>Error: {error}</div>;
+    }
+
+    return (
+        <div className="container py-4">
+            {/* Form */}
+            <div className="card mb-4">
+                <div className="card-header">Branch Settings</div>
+                <div className="card-body">
+                    <div className="mb-3">
+                        <label>Name (AR)</label>
+                        <input
+                            type="text"
+                            name="name_ar"
+                            value={formData.name_ar}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label>Name (EN)</label>
+                        <input
+                            type="text"
+                            name="name_en"
+                            value={formData.name_en}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label>City (EN)</label>
+                        <input
+                            type="text"
+                            name="city_en"
+                            value={formData.city_en}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label>City (AR)</label>
+                        <input
+                            type="text"
+                            name="city_ar"
+                            value={formData.city_ar}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label>Latitude</label>
+                        <input
+                            type="number"
+                            name="latitude"
+                            value={formData.latitude}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label>Longitude</label>
+                        <input
+                            type="number"
+                            name="longitude"
+                            value={formData.longitude}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <button onClick={handleAddOrUpdate} className="btn btn-primary">
+                        {editId ? "Update Branch" : "Add Branch"}
+                    </button>
+                </div>
             </div>
 
-            <button
-                onClick={handleAddOrUpdate}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded"
-            >
-                {editId ? "Update" : "Add"} Branch
-            </button>
-
-            {/* List of Branches */}
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p className="text-red-500">{error}</p>
-            ) : (
-                <ul>
-                    {branches.map((branch) => (
-                        <li key={branch.id} className="flex justify-between p-2 bg-gray-700 mb-2 rounded">
-                            <span>{branch.name_en} - {branch.city_en}</span>
-                            <div>
-                                <button
-                                    onClick={() => handleEdit(branch)}
-                                    className="mr-2 text-yellow-400"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(branch.id)}
-                                    className="text-red-400"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            {/* List */}
+            <div className="card">
+                <div className="card-header">Branch List</div>
+                <div className="card-body">
+                    <table className="table bordered-table sm-table mb-0 bg-base">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name (EN)</th>
+                                <th>Name (AR)</th>
+                                <th>City (EN)</th>
+                                <th>City (AR)</th>
+                                <th>Latitude</th>
+                                <th>Longitude</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {branches.map((branch) => (
+                                <tr key={branch.id}>
+                                    <td>{branch.id}</td>
+                                    <td>{branch.name_en}</td>
+                                    <td>{branch.name_ar}</td>
+                                    <td>{branch.city_en}</td>
+                                    <td>{branch.city_ar}</td>
+                                    <td>{branch.latitude}</td>
+                                    <td>{branch.longitude}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleEdit(branch)}
+                                            className="btn btn-warning me-2"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(branch.id)}
+                                            className="btn btn-danger"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

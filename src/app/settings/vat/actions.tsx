@@ -3,6 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchVat = createAsyncThunk("vat/fetchVat", async (_, { rejectWithValue }) => {
     try {
+        // dummy data
+        // return 15;
         const response = await fetchWithAuth('/vat');
         return response.vat;
     } catch (error: any) {
@@ -14,6 +16,8 @@ export const updateVat = createAsyncThunk(
     "vat/updateVat",
     async (vat: number, { rejectWithValue }) => {
         try {
+            // dummy data
+            // return vat;
             const response = await fetchWithAuth('/vat', {
                 method: "PUT",
                 headers: {

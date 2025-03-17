@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { addBranch, deleteBranch, fetchBranch, updateBranch } from "./actions";
-import { BranchState, initialBranchState } from "./state";
+import { BranchState, initialBranchState, STATE } from "./state";
 
 const branchSlice = createSlice({
     name: "branch",
@@ -9,15 +9,15 @@ const branchSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchBranch.pending, (state) => {
-                state.loading = true;
+                state.loading = STATE.LOADING;
                 state.error = null;
             })
             .addCase(fetchBranch.fulfilled, (state, action) => {
-                state.loading = false;
+                state.loading = STATE.INITIALIZED;
                 state.branches = action.payload;
             })
             .addCase(fetchBranch.rejected, (state, action) => {
-                state.loading = false;
+                state.loading = STATE.ERROR;
                 state.error = action.payload as string;
             });
 
@@ -40,3 +40,4 @@ const branchSlice = createSlice({
 });
 
 export const branchReducer = branchSlice.reducer;
+

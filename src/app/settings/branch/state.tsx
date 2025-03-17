@@ -1,3 +1,9 @@
+export enum STATE {
+    LOADING = 'LOADING',
+    ERROR = 'ERROR',
+    INITIALIZED = 'INITIALIZED',
+}
+
 export interface Branch {
     id: number;
     name_ar: string;
@@ -10,13 +16,13 @@ export interface Branch {
 
 export interface BranchState {
     branches: Branch[];
-    loading: boolean;
+    loading: STATE;
     error: string | null;
 }
 
 export const initialBranchState: BranchState = {
     branches: [],
-    loading: false,
+    loading: STATE.INITIALIZED,
     error: null,
 };
 

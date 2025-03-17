@@ -1,11 +1,17 @@
+export enum STATE {
+    LOADING = 'LOADING',
+    ERROR = 'ERROR',
+    INITIALIZED = 'INITIALIZED',
+}
+
 export interface VatState {
     vat: number | null;
-    loading: boolean;
+    loading: STATE;
     error: string | null;
 }
 
 export const initialVatState: VatState = {
     vat: null,
-    loading: false,
+    loading: STATE.INITIALIZED,
     error: null,
 };
