@@ -140,7 +140,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                     icon='solar:home-smile-angle-outline'
                                     className='menu-icon'
                                 />
-                                <span>Dashboard</span>
+                                <span>Reporting</span>
                             </Link>
                             <ul className='sidebar-submenu'>
                                 <li>
@@ -149,7 +149,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                         className={pathname === "/dashboard/sales" ? "active-page" : ""}
                                     >
                                         <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
-                                        Sales Stats
+                                        Sales Statistics
                                     </Link>
                                 </li>
                                 <li>
@@ -158,41 +158,29 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                         className={pathname === "/dashboard/doctor" ? "active-page" : ""}
                                     >
                                         <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
-                                        Doctor Stats
+                                        Doctor Statistics
                                     </Link>
                                 </li>
                             </ul>
                         </li>
-                        <li className='dropdown'>
-                            <Link href='#'>
-                                <Icon
-                                    icon='solar:home-smile-angle-outline'
-                                    className='menu-icon'
-                                />
-                                <span>Booking</span>
+                        <li>
+                            <Link
+                                href='/doctor'
+                                className={pathname === "/doctor" ? "active-page" : ""}
+                            >
+                                <Icon icon='mage:email' className='menu-icon' />
+                                <span>Doctor</span>
                             </Link>
-                            <ul className='sidebar-submenu'>
-                                <li>
-                                    <Link
-                                        href='/booking/service'
-                                        className={pathname === "/booking/service" ? "active-page" : ""}
-                                    >
-                                        <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
-                                        Service
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href='/booking/doctor'
-                                        className={pathname === "/booking/doctor" ? "active-page" : ""}
-                                    >
-                                        <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
-                                        Doctor
-                                    </Link>
-                                </li>
-                            </ul>
                         </li>
-
+                        <li>
+                            <Link
+                                href='/service'
+                                className={pathname === "/service" ? "active-page" : ""}
+                            >
+                                <Icon icon='mage:email' className='menu-icon' />
+                                <span>Service</span>
+                            </Link>
+                        </li>
                         <li>
                             <Link
                                 href='/marketing'
@@ -222,8 +210,8 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                         </li>
                         <li>
                             <Link
-                                href='/reviews'
-                                className={pathname === "/reviews" ? "active-page" : ""}
+                                href='/review'
+                                className={pathname === "/review" ? "active-page" : ""}
                             >
                                 <Icon
                                     icon='material-symbols:map-outline'
