@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store";
 import { fetchVat, updateVat } from "./actions";
+import { STATE } from "./state";
+import { Icon } from "@iconify/react";
 
 export default function VatSettingsPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -21,37 +23,59 @@ export default function VatSettingsPage() {
     }, [vat]);
 
     const handleUpdateVat = async () => {
-        if (newVat === "" || isNaN(Number(newVat))) return;
+        if (newVat === "" || isNaN(Number(newVat)) || newVat < 0) return;
         dispatch(updateVat(Number(newVat)));
     };
 
     return (
-        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">VAT Settings</h2>
+        <div className="container py-24">
+            <div className="row">
+                <div className="col-xxl-3 col-sm-6">
+                    <div className="card h-100 radius-12 text-center shadow-md">
+                        <div className="card-body p-24">
+                            <div className="w-64-px h-64-px d-inline-flex align-items-center justify-content-center bg-gradient-primary text-primary-600 mb-16 radius-12">
+                                <Icon icon="ri:percent-fill" className="h5 mb-0" />
+                            </div>
+                            <h6 className="mb-8">VAT Percentage</h6>
+                            {loading === STATE.LOADING ? (
+                                <p className="text-secondary-light">Loading VAT details...</p>
+                            ) : error ? (
+                                <p className="text-danger">{error}</p>
+                            ) : (
+                                <p className="card-text mb-8 text-secondary-light">
+                                    Current VAT: <strong>{vat || "Not Set"}</strong>%
+                                </p>
+                            )}
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p className="text-red-500">{error}</p>
-            ) : (
-                <div>
-                    <div className="mb-4">
-                        <label className="block mb-2">Current VAT (%)</label>
-                        <input
-                            type="number"
-                            value={newVat}
-                            onChange={(e) => setNewVat(Number(e.target.value))}
-                            className="p-2 bg-gray-700 border border-gray-600 rounded w-full"
-                        />
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleUpdateVat();
+                                }}
+                                className="mt-12"
+                            >
+                                <div className="input-group mb-12">
+                                    <input
+                                        type="number"
+                                        className="form-control radius-12 border-1 px-12 py-8 shadow-sm"
+                                        placeholder="Enter new VAT"
+                                        value={newVat}
+                                        onChange={(e) => setNewVat(e.target.value as number | "")}
+                                        required
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="btn bg-primary text-white px-20 py-8 radius-12 hover-bg-primary-dark"
+                                        disabled={loading === STATE.LOADING}
+                                    >
+                                        {loading === STATE.LOADING ? "Updating..." : "Update"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <button
-                        onClick={handleUpdateVat}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded"
-                    >
-                        Update VAT
-                    </button>
                 </div>
-            )}
+            </div>
         </div>
     );
 }

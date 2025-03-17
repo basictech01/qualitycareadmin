@@ -10,10 +10,6 @@ const loyaltySlice = createSlice({
             state.filter = action.payload;
             const { stampsCollected, branchName, totalVisits } = state.filter;
 
-            console.log("stamps: ", stampsCollected)
-            console.log("branch: ", branchName)
-            console.log("visits: ", totalVisits)
-
             state.filteredList = state.list;
 
             if (stampsCollected !== -1) {
