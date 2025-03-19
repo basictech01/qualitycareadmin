@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { loginAsync } from './actions';
 
 const initialState: UserState = {
   status: 'LOADING', // LOADING, LOGGED_IN, LOGGED_OUT
@@ -27,7 +26,6 @@ const userSlice = createSlice({
         refresh_token,
         access_token,
       } = action.payload;
-
       state.status = 'LOGGED_IN';
       state.full_name = full_name;
       state.email_address = email_address;
@@ -39,6 +37,7 @@ const userSlice = createSlice({
 
       // Store user data in local storage
       localStorage.setItem('user', JSON.stringify(action.payload));
+      localStorage.setItem('x-access-token', access_token);
     },
 
     logout: (state) => {
@@ -53,6 +52,7 @@ const userSlice = createSlice({
 
       // Clear user data from local storage
       localStorage.removeItem('user');
+      localStorage.removeItem('x-access-token');
     },
 
     checkAuthenticated: (state) => {
@@ -75,26 +75,6 @@ const userSlice = createSlice({
       state.status = 'LOADING'
     }
   },
-  extraReducers: (builder) => {
-    builder
-    .addCase(loginAsync.pending, (state) => {
-      state.status = 'LOADING';
-    })
-    .addCase(loginAsync.fulfilled, (state, action) => {
-      state.status = 'LOGGED_IN';
-      state.full_name = action.payload.full_name;
-      state.email_address = action.payload.email_address;
-      state.phone_number = action.payload.phone_number;
-      state.national_id = action.payload.national_id;
-      state.photo_url = action.payload.photo_url;
-      state.refresh_token = action.payload.refresh_token;
-      state.access_token = action.payload.access_token;
-    })
-    .addCase(loginAsync.rejected, (state) => {
-      state.status = 'LOGGED_OUT';
-    })
-    // Add reducers for additional action types here, and handle loading state as needed
-  }
 });
 
 export const { login, logout, checkAuthenticated, setLoading } = userSlice.actions;

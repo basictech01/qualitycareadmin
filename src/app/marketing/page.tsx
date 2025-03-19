@@ -7,6 +7,7 @@ const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import Link from "next/link";
 import flatpickr from "flatpickr";
 import { Icon } from "@iconify/react";
+import Modal from 'react-bootstrap/Modal';
 
 const DatePicker = ({ id, placeholder }) => {
   const datePickerRef = useRef(null);
@@ -29,7 +30,9 @@ const DatePicker = ({ id, placeholder }) => {
   );
 };
 
-export default function MarketingPage() {
+
+const AddNewBanner = () => {
+
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleFileChange = (e) => {
@@ -278,4 +281,60 @@ export default function MarketingPage() {
       {/* Sidebar Start */}
     </div>
   );
+}
+
+const BannerCard = () => {
+  return (
+    <div className='col-xxl-3 col-md-4 col-sm-6'>
+      <div className='hover-scale-img border radius-16 overflow-hidden'>
+        <div className='max-h-266-px overflow-hidden'>
+          <img
+            src='assets/images/gallery/gallery-img1.png'
+            alt=''
+            className='hover-scale-img__img w-100 h-100 object-fit-cover'
+          />
+        </div>
+        
+          <div className="card shadow-sm p-4">
+            <p className="mb-3">
+              https://excalidraw.com/
+            </p>
+            <p className="mb-1 text-muted small">
+              <strong>Start Time:</strong> 2025-03-12 10:30 AM
+            </p>
+            <p className="mb-0 text-muted small">
+              <strong>End Time:</strong> 2025-03-12 10:30 AM
+            </p>
+          </div>
+        <div className='max-h-266-px overflow-hidden'>
+          <img
+            src='assets/images/gallery/gallery-img1.png'
+            alt=''
+            className='hover-scale-img__img w-100 h-100 object-fit-cover'
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function MarketingPage() {
+
+  const [newBannerModel, setNewBannerModel] = useState(false);
+  return (
+    <>
+    <Modal show={newBannerModel} fullscreen onHide={() => setNewBannerModel(false)}>
+      <Modal.Header closeButton>
+        
+      </Modal.Header>
+      <Modal.Body>
+        <AddNewBanner />
+      </Modal.Body>
+    </Modal>
+    <div className='row gy-4'>
+      <BannerCard />
+    </div>
+    </>
+  )
+  
 }

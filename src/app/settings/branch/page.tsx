@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store";
 import { addBranch, deleteBranch, fetchBranch, updateBranch } from "./actions";
 import { STATE } from "./state";
+import { ERRORS } from "@/utils/errors";
 
 export default function BranchSettingsPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -15,8 +16,8 @@ export default function BranchSettingsPage() {
         name_en: "",
         city_en: "",
         city_ar: "",
-        latitude: 0,
-        longitude: 0,
+        latitude: "",
+        longitude: "",
     });
 
     const [editId, setEditId] = useState<number | null>(null);
@@ -31,10 +32,26 @@ export default function BranchSettingsPage() {
     };
 
     const handleAddOrUpdate = () => {
+        if (!formData.name_ar || !formData.name_en || !formData.city_en || !formData.city_ar) {
+            console.log(ERRORS.FORM_NOT_FILLED)
+            return;
+        }
+        if (isNaN(parseFloat(formData.latitude)) || isNaN(parseFloat(formData.longitude))) {
+            console.log(ERRORS.LANG_LAT_NOT_NUMBER)
+            return;
+        }
+        const branch = {
+            name_ar: formData.name_ar,
+            name_en: formData.name_en,
+            city_en: formData.city_en,
+            city_ar: formData.city_ar,
+            latitude: parseFloat(formData.latitude),
+            longitude: parseFloat(formData.longitude),
+        };
         if (editId) {
-            dispatch(updateBranch({ id: editId, ...formData }));
+            dispatch(updateBranch({ id: editId, ...branch }));
         } else {
-            dispatch(addBranch(formData));
+            dispatch(addBranch(branch));
         }
 
         setFormData({
@@ -42,8 +59,8 @@ export default function BranchSettingsPage() {
             name_en: "",
             city_en: "",
             city_ar: "",
-            latitude: 0,
-            longitude: 0,
+            latitude: "",
+            longitude: "",
         });
         setEditId(null);
     };

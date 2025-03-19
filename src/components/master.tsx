@@ -262,15 +262,6 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                         Branch
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        href='/settings/city'
-                                        className={pathname === "/settings/city" ? "active-page" : ""}
-                                    >
-                                        <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
-                                        City
-                                    </Link>
-                                </li>
                             </ul>
                         </li>
 

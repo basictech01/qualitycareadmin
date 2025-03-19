@@ -2,17 +2,51 @@ import React, { FormEvent, MouseEventHandler } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
-import { loginAsync } from "./actions";
 import { AppDispatch } from "@/store";
+import { login } from "./store";
+import { ERRORS } from "@/utils/errors";
+import { isValidEmail } from "@/utils/validate";
+import { post } from "@/utils/network";
 
 const SignInLayer = () => {
 	const [email, setEmail] = React.useState('');
 	const [password, setPassword] = React.useState('');
+
 	const dispatch = useDispatch<AppDispatch>();
 
-	const submit = () => {
-		dispatch(loginAsync({ email, password }));
+	const submit = async (e: any) => {
+    e.preventDefault()
+    try {
+      if (!email || !password) {
+        throw  ERRORS.FORM_NOT_FILLED
+      }
+      if (!isValidEmail(email)) {
+        throw ERRORS.INVALID_EMAIL
+      }
+      const body = {
+        email_address: email,
+        password: password
+      }
+      const data = await post('/user/login_email', body)
+      dispatch(
+        login(
+          {
+            full_name: data.full_name,
+            email_address: data.email_address,
+            phone_number: data.phone_number,
+            national_id: data.national_id,
+            photo_url: data.photo_url,
+            refresh_token: data.refresh_token,
+            access_token: data.access_token
+          }
+        )
+      )
+    } catch (error) {
+      console.error(error);
+      return
+    }
 	}
+
   return (
     <section className='auth bg-base d-flex flex-wrap'>
       <div className='auth-left d-lg-block d-none'>
@@ -34,7 +68,7 @@ const SignInLayer = () => {
               Welcome back! please enter your detail
             </p>
           </div>
-          <form action='#'>
+          <form >
             <div className='icon-field mb-16'>
               <span className='icon top-50 translate-middle-y'>
                 <Icon icon='mage:email' />
@@ -57,17 +91,11 @@ const SignInLayer = () => {
 									onChange={(e) => setPassword(e.target.value)}
                   type='password'
                   className='form-control h-56-px bg-neutral-50 radius-12'
-                  id='your-password'
                   placeholder='Password'
                 />
               </div>
-              <span
-                className='toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light'
-                data-toggle='#your-password'
-              />
             </div>
             <button
-              type='submit'
               className='btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32'
               onClick={submit}
             >

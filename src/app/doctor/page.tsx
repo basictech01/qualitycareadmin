@@ -12,7 +12,6 @@ const DoctorDashboard = () => {
 
   return (
     <>
-    // create user modal
     <Modal show={showCreateDoctorModel} fullscreen onHide={() => setShowCreateDoctorModel(false)}>
       <Modal.Header closeButton>
         <Modal.Title>Register New Doctor </Modal.Title>
@@ -22,7 +21,6 @@ const DoctorDashboard = () => {
       </Modal.Body>
     </Modal>
 
-    // edit user modal
     <Modal show={showEditUserModel} fullscreen onHide={() => setShowEditUserModel(false)}>
       <Modal.Header closeButton>
         <Modal.Title>Edit Doctor </Modal.Title>

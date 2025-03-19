@@ -1,12 +1,12 @@
+import { BACKEND_URL } from "./constants";
+
 export const fetchWithAuth = async (
     route: string,
     options: RequestInit = {}
 ): Promise<any> => {
-    const url = process.env.NEXT_PUBLIC_BACKEND_URL + route;
-    const token = typeof window !== 'undefined' ? localStorage.getItem('x-access-token') : null;
-
+    const url = BACKEND_URL + route;
+    let token = typeof window !== 'undefined' ? localStorage.getItem('x-access-token') : null;
     const headers = new Headers(options.headers || {});
-
     if (token) {
         headers.set('x-access-token', token);
     }
