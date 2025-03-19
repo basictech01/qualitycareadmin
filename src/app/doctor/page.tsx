@@ -57,7 +57,7 @@ const DoctorDashboard = () => {
         </button>
       </div>
       <div className='card-body p-24'>
-        <div className='row gy-4'>
+        <div className='row'>
           <DoctorCard />
         </div>
 

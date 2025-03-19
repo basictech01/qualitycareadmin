@@ -20,7 +20,7 @@ export async function get(url: string, options: any = {}) : Promise<any> {
 			...updatedOptions,
 		});
 		const result = await response.json();
-		if (result.success) {
+		if (!result.success) {
 			throw new CustomError(result.error.message, result.error.code);
 		}
 		return result.data;
@@ -89,6 +89,32 @@ export async function put(url: string, body: any, options: any = {}) : Promise<a
 			throw new CustomError(result.error.message, result.error.code);
 		}
 		return result.data;
+	} catch (error) {
+		if (error instanceof CustomError) {
+			throw error;
+		}
+		throw ERRORS.SERVER_ERROR;
+	}
+}
+
+export async function upload(formData: FormData): Promise<string> {
+	try {
+		let token = typeof window !== 'undefined' ? localStorage.getItem('x-access-token') : null;
+		if (!token) {
+			throw ERRORS.UNAUTHORIZED;
+		}
+		const response = await fetch(`${BACKEND_URL}/upload/admin`, {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'x-access-token': token,
+			},
+		});
+		const result = await response.json();
+		if (!result.success) {
+			throw new CustomError(result.error.message, result.error.code);
+		}
+		return result.data.url;
 	} catch (error) {
 		if (error instanceof CustomError) {
 			throw error;
