@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 
 const ThemeToggleButton = () => {
     // 1. State for the current theme, initialized to null before hydration
-    const [theme, setTheme] = useState(null);
+    const [theme, setTheme] = useState<string>("light");
 
     // 2. Function to update the theme on the HTML element
-    const updateThemeOnHtmlEl = (theme) => {
+    const updateThemeOnHtmlEl = (theme: string) => {
         if (typeof window !== "undefined") {
             document.documentElement.setAttribute("data-theme", theme);
         }

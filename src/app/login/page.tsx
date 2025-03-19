@@ -1,4 +1,5 @@
-import React, { FormEvent, MouseEventHandler } from "react";
+'use client'
+import React, { FormEvent, MouseEventHandler, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
@@ -9,13 +10,12 @@ import { isValidEmail } from "@/utils/validate";
 import { post } from "@/utils/network";
 
 const SignInLayer = () => {
-	const [email, setEmail] = React.useState('');
-	const [password, setPassword] = React.useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
 	const dispatch = useDispatch<AppDispatch>();
 
-	const submit = async (e: any) => {
-    e.preventDefault()
+	const submit = async () => {
     try {
       if (!email || !password) {
         throw  ERRORS.FORM_NOT_FILLED
@@ -68,7 +68,7 @@ const SignInLayer = () => {
               Welcome back! please enter your detail
             </p>
           </div>
-          <form >
+          <div >
             <div className='icon-field mb-16'>
               <span className='icon top-50 translate-middle-y'>
                 <Icon icon='mage:email' />
@@ -102,7 +102,7 @@ const SignInLayer = () => {
               {" "}
               Sign In
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </section>

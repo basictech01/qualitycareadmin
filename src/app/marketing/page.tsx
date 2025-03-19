@@ -45,14 +45,14 @@ const AddNewBanner = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [link, setLink] = useState<string>('');
 
-  const handleENFileChange = (e) => {
+  const handleENFileChange = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
       const src = URL.createObjectURL(e.target.files[0]);
       setENImagePreview(src);
     }
   };
 
-  const handleARFileChange = (e) => {
+  const handleARFileChange = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
       const src = URL.createObjectURL(e.target.files[0]);
       setARImagePreview(src);

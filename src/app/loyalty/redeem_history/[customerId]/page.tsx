@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import { fetchRedemptionHistory } from '../../actions';
 import { filterRedemptionHistory } from '../../store';
-import { RootState } from '@/store';
+import { AppDispatch, RootState } from '@/store';
 import Link from 'next/link';
 
 export default function RedeemHistory() {
     const { customerId } = useParams();
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const { filteredHistory } = useSelector(
         (state: RootState) => state.redemption
@@ -21,6 +21,7 @@ export default function RedeemHistory() {
         dispatch(fetchRedemptionHistory()).then(() => {
             dispatch(filterRedemptionHistory(customerId));
         });
+
     }, [dispatch, customerId]);
 
     return (

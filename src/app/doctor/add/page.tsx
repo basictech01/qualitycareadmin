@@ -3,17 +3,14 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
 
 const AddUserLayer = () => {
-  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleImageChange = (e: any) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const src = URL.createObjectURL(e.target.files[0]);
+      setImagePreviewUrl(src);
     }
+    
   };
   return (
     <div>
