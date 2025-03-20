@@ -4,29 +4,50 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Modal from 'react-bootstrap/Modal';
 import AddUserLayer from '../doctor/add/page';
+import { Icon } from '@iconify/react/dist/iconify.js';
+import TimeSlotCreator from './time-range-selector';
+import AddService from './addService';
 
 const ServicePage: React.FC = () => {
-    const   [showCreateServiceModel, setShowCreateServiceModel ] = useState(false);
-      const [showEditServiceModel, setShowEditServiceModel ] = useState(false);
-    return (
-        <div className='row gy-4'>
-          <Modal show={showCreateServiceModel} fullscreen onHide={() => setShowCreateServiceModel(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Register New Doctor </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <AddUserLayer />
-          </Modal.Body>
-        </Modal>
+    const [showCreateServiceModel, setShowCreateServiceModel ] = useState(false);
+    const [showEditServiceModel, setShowEditServiceModel ] = useState(false);
 
-        <Modal show={showEditServiceModel} fullscreen onHide={() => setShowEditServiceModel(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Doctor </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <AddUserLayer />
-          </Modal.Body>
-        </Modal>
+    return (
+      <div className='card h-100 p-0 radius-12'>
+        <div className='card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between'>
+          <div className='d-flex align-items-center flex-wrap gap-3'>
+            <span className='text-md fw-medium text-secondary-light mb-0'>
+            </span>
+          </div>
+          <button
+            onClick={() => setShowCreateServiceModel(true)}
+            className='btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2'
+          >
+            <Icon
+              icon='ic:baseline-plus'
+              className='icon text-xl line-height-1'
+            />
+            Add New Service
+          </button>
+        </div>
+          <div className='row gy-4'>
+            <Modal show={showCreateServiceModel} size='lg' onHide={() => setShowCreateServiceModel(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Register New Service </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <AddService />
+            </Modal.Body>
+          </Modal>
+
+          <Modal show={showEditServiceModel} fullscreen onHide={() => setShowEditServiceModel(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Edit Doctor </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <AddUserLayer />
+            </Modal.Body>
+          </Modal>
           <Service />
           <Service />
           <Service />
@@ -34,6 +55,7 @@ const ServicePage: React.FC = () => {
           <Service />
           <Service />
           <Service />
+          </div>
         </div>
       );
 };
