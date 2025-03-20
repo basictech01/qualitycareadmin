@@ -1,0 +1,91 @@
+import { createContext, useContext, useEffect, useState } from "react";
+
+
+    // const cities = [
+    //     'New York',
+    //     'London',
+    //     'Tokyo',
+    //     'Paris',
+    //     'Berlin',
+    //     'Mumbai',
+    //     'Sydney',
+    //     'Toronto',
+    //     'Chicago',
+    //     'Los Angeles',
+    //     'San Francisco',
+    //     'Seattle',
+    //     'Austin',
+    //     'Denver',
+    //     'Miami',
+    //     'Boston',
+    //     'Philadelphia',
+    //     'Atlanta',
+    //     'Phoenix',
+    //     'San Diego',
+    //   ];
+
+
+
+// Create a context
+const UserContext = createContext();
+
+export const UserProvider = ({ children }) => {
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  // Function to fetch branch data
+  const fetchBranchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/branch");
+      if (!response.ok) {
+        throw new Error("Failed to fetch branch data");
+      }
+      const data = await response.json();
+      setUser((prev) => ({ ...prev, branch: data }));
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching branch data:", error);
+      setError("Failed to load branch data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch service categories
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/categories");
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+      setCategories(data);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setError("Failed to load categories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBranchData();
+    fetchCategories();
+  }, []);
+
+  return (
+    <UserContext.Provider value={{ user, setUser, loading, error, categories, fetchCategories }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+// Custom hook to use the UserContext
+export const useUser = () => {
+  return useContext(UserContext);
+};
