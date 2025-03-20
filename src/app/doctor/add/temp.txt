@@ -1,0 +1,188 @@
+"use client";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { useState } from "react";
+
+const AddUserLayer = () => {
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
+
+  const handleImageChange = (e: any) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const src = URL.createObjectURL(e.target.files[0]);
+      setImagePreviewUrl(src);
+    }
+    
+  };
+  return (
+    <div>
+      <h6 className='text-md text-primary-light mb-16'>
+        Profile Image
+      </h6>
+      {/* Upload Image Start */}
+      <div className='mb-24 mt-16'>
+        <div className='avatar-upload'>
+          <div className='avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer'>
+            <input
+              type='file'
+              id='imageUpload'
+              accept='.png, .jpg, .jpeg'
+              hidden
+              onChange={handleImageChange}
+            />
+            <label
+              htmlFor='imageUpload'
+              className='w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle'
+            >
+              <Icon
+                icon='solar:camera-outline'
+                className='icon'
+              ></Icon>
+            </label>
+          </div>
+          <div className='avatar-preview'>
+            <div
+              id='imagePreview'
+              style={{
+                backgroundImage: imagePreviewUrl
+                  ? `url(${imagePreviewUrl})`
+                  : "",
+              }}
+            ></div>
+          </div>
+        </div>
+      </div>
+      {/* Upload Image End */}
+      <form action='#'>
+        <div className='mb-20'>
+          <label
+            htmlFor='name'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            Full Name (English)
+          </label>
+          <input
+            type='text'
+            className='form-control radius-8'
+            id='name'
+            placeholder='Enter Full Name'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='name'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            Full Name (Arabic) 
+          </label>
+          <input
+            type='text'
+            className='form-control radius-8'
+            id='name'
+            placeholder='Enter Full Name'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='email'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            attended patient <span className='text-danger-600'>*</span>
+          </label>
+          <input
+            type='number'
+            className='form-control radius-8'
+            id='email'
+            placeholder='Enter email address'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='email'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            session fees <span className='text-danger-600'>*</span>
+          </label>
+          <input
+            type='number'
+            className='form-control radius-8'
+            id='email'
+            placeholder='Enter email address'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='email'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            total experience <span className='text-danger-600'>*</span>
+          </label>
+          <input
+            type='number'
+            className='form-control radius-8'
+            id='email'
+            placeholder='Enter email address'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='number'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            Phone
+          </label>
+          <input
+            type='email'
+            className='form-control radius-8'
+            id='number'
+            placeholder='Enter phone number'
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='desc'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            about (english)
+          </label>
+          <textarea
+            name='#0'
+            className='form-control radius-8'
+            id='desc'
+            placeholder='Write description...'
+            defaultValue={""}
+          />
+        </div>
+        <div className='mb-20'>
+          <label
+            htmlFor='desc'
+            className='form-label fw-semibold text-primary-light text-sm mb-8'
+          >
+            about (arabic)
+          </label>
+          <textarea
+            name='#0'
+            className='form-control radius-8'
+            id='desc'
+            placeholder='Write description...'
+            defaultValue={""}
+          />
+        </div>
+        <div className='d-flex align-items-center justify-content-center gap-3'>
+          <button
+            type='button'
+            className='border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8'
+          >
+            Cancel
+          </button>
+          <button
+            type='submit'
+            className='btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8'
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default AddUserLayer;
