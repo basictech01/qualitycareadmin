@@ -1,5 +1,6 @@
 import { get } from "@/utils/network";
 import { useEffect, useState } from "react";
+import TimeSlotCreator from "./time-range-selector";
 
 // Define interfaces for your data types
 interface Category {
@@ -344,6 +345,7 @@ const handleARRemoveImage = () => {
                 <label className="form-check-label" htmlFor="canRedeem">Can Redeem</label>
               </div>
             </div>
+            <TimeSlotCreator title={"Time Slot"} onTimeRangesChange={()=>{}} ></TimeSlotCreator>
             <div className="col-12">
               <button type="submit" className="btn btn-primary">Submit</button>
             </div>

@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState, useEffect } from "react";
 
 interface Doctor {
+  id?: number;
   nameEn?: string;
   nameAr?: string;
   attendedPatients?: number;
@@ -15,30 +16,43 @@ interface Doctor {
 }
 
 interface AddUserLayerProps {
-  doctor?: Doctor; // Accept doctor data as an optional prop
+  doctor?: any; // Doctor data from API (or undefined)
 }
 
 const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>(
-    doctor?.imageUrl || ""
-  );
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
   const [formData, setFormData] = useState<Doctor>({
-    nameEn: doctor?.nameEn || "",
-    nameAr: doctor?.nameAr || "",
-    attendedPatients: doctor?.attendedPatients || 0,
-    sessionFees: doctor?.sessionFees || 0,
-    experience: doctor?.experience || 0,
-    phone: doctor?.phone || "",
-    aboutEn: doctor?.aboutEn || "",
-    aboutAr: doctor?.aboutAr || "",
+    id: undefined,
+    nameEn: "",
+    nameAr: "",
+    attendedPatients: 0,
+    sessionFees: 0,
+    experience: 0,
+    phone: "",
+    aboutEn: "",
+    aboutAr: "",
+    imageUrl: "",
   });
 
+  // Prefill form when doctor data is provided
   useEffect(() => {
-    return () => {
-      // Cleanup image URL object to prevent memory leaks
-      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
-    };
-  }, [imagePreviewUrl]);
+    if (doctor) {
+      setFormData({
+        id: doctor.id || undefined,
+        nameEn: doctor.name_en || "",
+        nameAr: doctor.name_ar || "",
+        attendedPatients: doctor.attended_patient || 0,
+        sessionFees: doctor.session_fees || 0,
+        experience: doctor.total_experience || 0,
+        phone: doctor.phone || "",
+        aboutEn: doctor.about_en || "",
+        aboutAr: doctor.about_ar || "",
+        imageUrl: doctor.photo_url || "",
+      });
+
+      setImagePreviewUrl(doctor.photo_url || "");
+    }
+  }, [doctor]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -195,15 +209,6 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             value={formData.aboutAr}
             onChange={handleChange}
           />
-        </div>
-
-        <div className="d-flex align-items-center justify-content-center gap-3">
-          <button type="button" className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-            Cancel
-          </button>
-          <button type="submit" className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-            {doctor ? "Update Doctor" : "Save"}
-          </button>
         </div>
       </form>
     </div>

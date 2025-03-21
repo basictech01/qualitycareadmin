@@ -30,8 +30,16 @@ const DoctorDashboard = () => {
     fetchDoctors();
   }, []);
 
-  const handleEditDoctor = (doctor: any) => {
-    setSelectedDoctor(doctor);
+  const handleEditDoctor = async (doctorId: any) => {
+    const doctorToEdit = doctors.find((doctor) => doctor.id === doctorId);
+
+    if (!doctorToEdit) {
+      console.error("Doctor not found in state!");
+      return;
+    }
+
+    console.log("Editing Doctor:", doctorToEdit); // Debugging log
+    setSelectedDoctor(doctorToEdit);
     setShowEditUserModel(true);
   };
 
@@ -40,7 +48,7 @@ const DoctorDashboard = () => {
       {/* Create Doctor Modal */}
       <Modal
         show={showCreateDoctorModel}
-        fullscreen
+        size="lg"
         onHide={() => setShowCreateDoctorModel(false)}
       >
         <Modal.Header closeButton>
@@ -54,7 +62,7 @@ const DoctorDashboard = () => {
       {/* Edit Doctor Modal */}
       <Modal
         show={showEditUserModel}
-        fullscreen
+        size="lg"
         onHide={() => setShowEditUserModel(false)}
       >
         <Modal.Header closeButton>
@@ -100,7 +108,7 @@ const DoctorDashboard = () => {
               <DoctorCard
                 key={doctor.id}
                 doctor={doctor}
-                onEdit={() => handleEditDoctor(doctor)}
+                onEdit={() => handleEditDoctor(doctor.id)}
               />
             ))}
           </div>
@@ -115,7 +123,7 @@ const DoctorCard = ({
   onEdit,
 }: {
   doctor: any;
-  onEdit: () => void;
+  onEdit: () =>void;
 }) => {
   return (
     <div className="col-xxl-3 col-md-6 user-grid-card">
