@@ -127,31 +127,30 @@ const DoctorCard = ({
 }) => {
   return (
     <div className="col-xxl-3 col-md-6 user-grid-card">
+      
       <div className="position-relative border radius-16 overflow-hidden">
-        <div className="ps-16 pb-16 pe-16 text-center mt-10">
           <img
-            src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
-            alt={doctor.name_en}
-            className="border br-white border-width-2-px w-100-px h-100-px rounded-circle object-fit-cover"
-          />
-          <h6 className="text-lg mb-0 mt-4">{doctor.name}</h6>
-          <span className="text-secondary-light mb-16">{doctor.email}</span>
+      src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
+      alt={doctor.name_en}
+      className="w-100 object-fit-cover"
+      style={{ height: "150px" }} 
+/>
+        <div className="ps-16 pb-16 pe-16 text-center mt-10">
+       
+          <h6 className="text-lg mb-0 mt-4">{doctor.name_en}</h6>
+          <div style={{ height: "10px", }}></div>
           <div className="center-border position-relative bg-danger-gradient-light radius-8 p-12 d-flex align-items-center gap-4">
             <div className="text-center w-50">
               <h6 className="text-md mb-0">
                 {doctor.about_en || "Department"}
               </h6>
-              <span className="text-secondary-light text-sm mb-0">
-                Department
-              </span>
+             
             </div>
             <div className="text-center w-50">
               <h6 className="text-md mb-0">
                 {doctor.qualification || "Designation"}
               </h6>
-              <span className="text-secondary-light text-sm mb-0">
-                Designation
-              </span>
+             
             </div>
           </div>
           <Link

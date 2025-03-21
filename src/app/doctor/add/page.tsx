@@ -1,6 +1,8 @@
 "use client";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState, useEffect } from "react";
+import BranchSelection from "./addBranch";
+import TimeSlotCreator from "./time-range-selector";
 
 interface Doctor {
   id?: number;
@@ -14,12 +16,22 @@ interface Doctor {
   aboutAr?: string;
   imageUrl?: string;
 }
-
+interface Branch {
+  id: number;
+  name_en: string;
+  name_ar: string;
+  city_en: string;
+  city_ar: string;
+  latitude: string;
+  longitude: string;
+}
 interface AddUserLayerProps {
   doctor?: any; // Doctor data from API (or undefined)
 }
 
 const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
+    const [branches, setBranches] = useState<Branch[]>([]);
+    const [selectedBranches, setSelectedBranches] = useState([]);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
   const [formData, setFormData] = useState<Doctor>({
     id: undefined,
@@ -210,6 +222,11 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             onChange={handleChange}
           />
         </div>
+            {/* Branch Selection */}
+            <BranchSelection branches={branches} selectedBranches={selectedBranches} setSelectedBranches={setSelectedBranches} />
+
+{/* Time Slot */}
+<TimeSlotCreator title="Time Slot" onTimeRangesChange={() => {}} />
       </form>
     </div>
   );
