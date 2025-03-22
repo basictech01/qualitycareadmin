@@ -19,9 +19,16 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
   ]);
 
   useEffect(() => {
+<<<<<<< Updated upstream
     console.log(selectedTimeSlots)
     createTimeOptions();
   }, [selectedTimeSlots]);
+=======
+    console.log(serviceTimeSlots,"timeslot")
+    // Notify parent component when timeRanges change
+    onTimeRangesChange && onTimeRangesChange(timeRanges);
+  }, [timeRanges, serviceTimeSlots,onTimeRangesChange]);
+>>>>>>> Stashed changes
 
   const handleAddTimeRange = () => {
     setSelectedTimeSlots([...selectedTimeSlots, { start_time: '09:00:00', end_time: '17:00:00' }]);

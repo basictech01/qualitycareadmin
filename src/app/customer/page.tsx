@@ -57,20 +57,34 @@ const CustomerTable = () => {
         users.map((user) => (
           <tr key={user.id}>
             <td>
-              <div className="flex items-center gap-2">
-                {user.photo_url ? (
-                  <img 
-                    src={user.photo_url} 
-                    alt={`${user.full_name}'s photo`} 
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm">
-                    {getInitials(user.full_name)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ 
+                    width: '35px', 
+                    height: '35px', 
+                    borderRadius: '50%', 
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                    color: '#666',
+                    border: '1px solid #eaeaea'
+                  }}>
+                    {user.photo_url ? (
+                      <img 
+                        src={user.photo_url} 
+                        alt=""
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover',
+                        }}
+                      />
+                    ) : (
+                      getInitials(user.full_name)
+                    )}
                   </div>
-                )}
-                
-              </div>
+                </div>
             </td>
             <td>{user.id}</td>
             

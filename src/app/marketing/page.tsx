@@ -36,7 +36,33 @@ const DatePicker: React.FC<DatePickerProps> = ({ id, placeholder, onChange }) =>
     />
   );
 };
-
+// const deleteBanner = (id) => {
+//   // Show confirmation dialog
+//   if (confirm("Are you sure you want to delete this banner?")) {
+//     // Call your API to delete the banner
+//     get(`/api/banners/${id}`, {
+//       method: 'DELETE',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     })
+//     .then(response => {
+//       if (response.ok) {
+//         // Handle successful deletion, maybe refresh the list or remove from DOM
+//         // For example:
+//         // setBanners(banners.filter(banner => banner.id !== id));
+//         // or
+//         // document.getElementById(`banner-${id}`).remove();
+//       } else {
+//         alert("Error deleting banner");
+//       }
+//     })
+//     .catch(error => {
+//       console.error('Error:', error);
+//       alert("Error deleting banner");
+//     });
+//   }
+// };
 
 const AddNewBanner = () => {
 
@@ -279,16 +305,33 @@ const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp
     
 
   return (
-    <div className="col-xxl-4 col-md-6 col-sm-12">
+    <div className="col-xxl-2 col-md-3 col-sm-6">
     <div className="border rounded-lg overflow-hidden shadow-sm">
       {/* Arabic/Top Image with constrained height */}
-      <div className="max-h-64 overflow-hidden">
-        <img
-          src={image_ar}
-          alt=""
-          className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </div>
+      <button 
+      onClick={() => deleteBanner(id)} 
+      className="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-red-600 transition-colors"
+      title="Delete banner"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+        <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+      </svg>
+    </button>
+      <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+  <img
+    src={image_ar}
+    alt=""
+    style={{ 
+      width: '100%', 
+      height: '150px', 
+      objectFit: 'cover',
+      transition: 'transform 0.3s',
+    }}
+    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+  />
+</div>
       
       {/* Content Section */}
       <div className="p-4 bg-white">
@@ -304,29 +347,21 @@ const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp
       </div>
       
       {/* English/Bottom Image with constrained height */}
-      <div className="max-h-64 overflow-hidden">
-        <img
-          src={image_en}
-          alt=""
-          className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </div>
+      <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+  <img
+    src={image_en}
+    alt=""
+    style={{ 
+      width: '100%', 
+      height: '150px', 
+      objectFit: 'cover',
+      transition: 'transform 0.3s',
+    }}
+    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+  />
+</div>
     </div>
-    
-    {/* Delete Button */}
-    <Link
-      href="#"
-      onClick={(e) => {
-        e.preventDefault();
-        
-      }}
-      className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white text-sm font-medium rounded flex items-center justify-center gap-2 w-full mt-4 py-3"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-      Delete
-    </Link>
   </div>
   )
 }
