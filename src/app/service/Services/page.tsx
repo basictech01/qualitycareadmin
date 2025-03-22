@@ -23,7 +23,6 @@ const ServicePage = () => {
     const fetchServices = async () => {
       try {
         const data = await get('/service'); // Replace with your actual API endpoint
-       console.log(data)
         setService(Array.isArray(data) ? data : []);
       } catch (err: any) {
         setError(err.message);
@@ -36,23 +35,15 @@ const ServicePage = () => {
   }, []);
 
   const handleEditService = async (serviceId: number) => {
-    console.log(serviceId)
     const timeSlots = await get(`/service/time_slot?service_id=${serviceId}`);
-    console.log(timeSlots,"stage 1")
     const branch = await get(`/branch/service?service_id=${serviceId}`);
-    console.log(branch,"stage1b")
 
     setServiceBranches(branch)
     SetServiceTimeSlots(timeSlots)
-    // const serviceBarches = 
     const serviceToEdit = services.find((service) => service.id === serviceId);
-    console.log(serviceToEdit)
     if (!serviceToEdit) {
-      console.error('Service not found in state!');
       return;
     }
-
-    console.log('Editing Service:', serviceToEdit); // Debugging log
     setSelectedService(serviceToEdit);
     setShowEditServiceModel(true); // ✅ Corrected state update
   };

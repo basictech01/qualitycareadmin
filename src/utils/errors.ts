@@ -35,4 +35,19 @@ export const ERRORS = {
     TYPE_REQUIRED: new CustomError('Type is required', 20003),
     IMAGE_REQUIRED: new CustomError('Image is required', 20004),
 
+    // For Service Errors
+    SERVICE_NAME_EN_REQUIRED: new CustomError('English name is required', 40001),
+    SERVICE_NAME_AR_REQUIRED: new CustomError('Arabic name is required', 40002),
+    CATEGORY_REQUIRED: new CustomError('Category is required', 40003),
+    ABOUT_EN_REQUIRED: new CustomError('English about is required', 40005),
+    ABOUT_AR_REQUIRED: new CustomError('Arabic about is required', 40006),
+    ACTUAL_PRICE_REQUIRED: new CustomError('Actual price is required', 40007),
+    DISCOUNTED_PRICE_REQUIRED: new CustomError('Discounted price is required', 40008),
+    CATEGORY_ID_REQUIRED: new CustomError('Category id is required', 40009),
+    SERVICE_IMAGE_EN_REQUIRED: new CustomError('English image is required', 40010),
+    SERVICE_IMAGE_AR_REQUIRED: new CustomError('Arabic image is required', 40011),
+    CAN_REDEEM_REQUIRED: new CustomError('Can redeem is required', 40012),
+
+    BRANCH_REQUIRED: new CustomError('Branch is required', 40013),
+    TIME_SLOT_REQUIRED: new CustomError('Service is required', 40014),
 }

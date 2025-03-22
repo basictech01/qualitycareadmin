@@ -44,7 +44,8 @@ const BranchSelection: React.FC<{
 
   const addBranchRow = () => {
     setSelectedBranches([...selectedBranches, {
-      id: 0, name_en: "", maximum_booking_per_slot: 0,
+      branch_id: 0, name_en: "", 
+      maximum_booking_per_slot: 0,
       name_ar: "",
       city_en: "",
       city_ar: "",
@@ -57,7 +58,7 @@ const BranchSelection: React.FC<{
     const branch = branches.find((b) => b.id === Number(id));
     if (branch) {
       const updatedBranches = [...selectedBranches];
-      updatedBranches[index] = { ...updatedBranches[index], id: branch.id, name_en: branch.name_en };
+      updatedBranches[index] = { ...updatedBranches[index], branch_id: branch.id, name_en: branch.name_en };
       setSelectedBranches(updatedBranches);
     }
   };
@@ -127,7 +128,7 @@ const BranchSelection: React.FC<{
                         <Form.Select
                           value={branch.branch_id}
                           onChange={(e) => handleBranchChange(index, e.target.value)}
-                          className={!branch.id ? 'border-danger' : ''}
+                          className={!branch.branch_id ? 'border-danger' : ''}
                         >
                           <option key={-1} value="">Select Branch</option>
                           {branches.map((b) => (
@@ -151,7 +152,7 @@ const BranchSelection: React.FC<{
                     </Col>
 
                     <Col md={3} className="d-flex align-items-center justify-content-end">
-                      {!branch.id && (
+                      {!branch.branch_id && (
                         <small className="text-danger me-2">Select branch</small>
                       )}
                       <Button

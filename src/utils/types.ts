@@ -6,3 +6,8 @@ export interface Category {
     image_en: string;
     image_ar: string;
 }
+
+export interface TimeRange {
+    start_time: string;
+    end_time: string;
+  }
