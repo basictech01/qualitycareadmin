@@ -305,7 +305,7 @@ const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp
     
 
   return (
-    <div className="col-xxl-2 col-md-3 col-sm-6">
+    <div className="col-xxl-3 col-md-4 col-sm-6">
     <div className="border rounded-lg overflow-hidden shadow-sm">
       {/* Arabic/Top Image with constrained height */}
       <button 
@@ -382,6 +382,8 @@ export default function MarketingPage() {
   useEffect(() => {
     const fetchBanners = async () => {
       const banners: Banner[] = await get('/banner/all');
+
+      console.log(banners,"dede")
       if (!banners) {
         return;
       }

@@ -44,12 +44,7 @@ const BranchSelection: React.FC<{
 
   const addBranchRow = () => {
     setSelectedBranches([...selectedBranches, {
-<<<<<<< Updated upstream
-      branch_id: 0, name_en: "", 
-      maximum_booking_per_slot: 0,
-=======
       branch_id: 0, name_en: "", maximum_booking_per_slot: 0,
->>>>>>> Stashed changes
       name_ar: "",
       city_en: "",
       city_ar: "",
