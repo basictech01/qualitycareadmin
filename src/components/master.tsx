@@ -113,22 +113,25 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                     <Icon icon='radix-icons:cross-2' />
                 </button>
-                <div>
+                <div >
                     <Link href='/' className='sidebar-logo'>
                         <img
                             src='/images/light-logo.png'
                             alt='site logo'
                             className='light-logo'
+                           
                         />
                         <img
-                            src='/assets/images/logo-light.png'
+                            src='/images/dark-logo.png'
                             alt='site logo'
                             className='dark-logo'
+                         
                         />
                         <img
-                            src='/assets/images/logo-icon.png'
+                            src='/images/splash.png'
                             alt='site logo'
                             className='logo-icon'
+                      
                         />
                     </Link>
                 </div>
@@ -243,7 +246,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 <span>Review</span>
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <Link
                                 href='/loyalty'
                                 className={pathname === "/loyalty" ? "active-page" : ""}
@@ -254,13 +257,13 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 />
                                 <span>Loyalty</span>
                             </Link>
-                        </li>
+                        </li> */}
                         <li>
                             <Link
                                 href='/customer'
                                 className={pathname === "/customer" ? "active-page" : ""}
                             >
-                                <Icon icon='mage:email' className='menu-icon' />
+                                <Icon icon='mdi:account' className='menu-icon' />
                                 <span>Customer</span>
                             </Link>
                         </li>

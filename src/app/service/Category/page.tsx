@@ -51,9 +51,7 @@ const [categories, setCategories] = useState<any[]>([]);
     <div className="card h-100 p-0 radius-12">
     <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
       <div className="d-flex align-items-center flex-wrap gap-3">
-        <span className="text-md fw-medium text-secondary-light mb-0">
-          Available Categories
-        </span>
+      <h1 className="text-xl font-bold mb-4">Available Categories</h1>
       </div>
   <button
           onClick={() => {setShowCreateCategoryModel(true)}}
@@ -87,7 +85,7 @@ const [categories, setCategories] = useState<any[]>([]);
 
 
 
-      <div className="row gy-4 px-4 mb-5">
+      <div className="row gy-4 p-24 card-body  mb-5">
         {loading ? (
           <p className="text-center">Loading categories...</p>
         ) : error ? (
@@ -109,21 +107,21 @@ const [categories, setCategories] = useState<any[]>([]);
 const CategoryCard = ({ category, onEdit }: { category: any; onEdit: () => void  }) => {
   
   return (
-<div className="col-xxl-3 col-lg-4 col-md-4 col-sm-6">
-  <div className="card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
-    <div className="card-body p-3 d-flex flex-column align-items-center">
-      {/* Category Image with Border and Shadow */}
-      <div className="position-relative mb-4">
-        <div className="rounded-circle p-1 bg-primary-100 shadow-sm mb-2">
-          <img
+<div className="col-xxl-3  col-lg-4 user-grid-card col-md-4 col-sm-6">
+  <div className="card h-100  shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
+  <img
             src={category.image_en}
             alt={category.name_en}
-            width={120}
-            height={120}
-            className="rounded-circle object-fit-cover"
+            style={{ height: "150px" }} 
+            className="w-100 object-fit-cover"
           />
-        </div>
-      </div>
+    <div className="card-body d-flex flex-column align-items-center">
+      {/* Category Image with Border and Shadow */}
+    
+       
+          
+       
+      
       
       {/* Category Names */}
       <div className="text-center mb-4">

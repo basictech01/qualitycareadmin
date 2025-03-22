@@ -58,6 +58,7 @@ const BranchSelection: React.FC<{
         : branch
     );
     setSelectedBranches(updatedBranches);
+    console.log(updatedBranches)
   };
 
   const removeBranch = (index: number) => {
@@ -124,24 +125,25 @@ const BranchSelection: React.FC<{
                   <Form.Group controlId={`available-days-${index}`} className="mb-3 d-flex justify-content-center align-items-center">
                     <div className="d-flex flex-wrap gap-1 justify-content-center align-items-center">
                       {["M", "T", "W", "T", "F", "S", "S"].map((shortDay, dayIndex) => {
-                        const fullDayInt = [1,2,3,4,5,6,7][dayIndex];
-                        const isSelected = branch.availableDays.includes(fullDayInt);
+                        const fullDay = [1,2,3,4,5,6,7][dayIndex];
+                        const isSelected = branch.availableDays.includes(fullDay);
                         
                         return (
                           <Button 
-                            key={fullDayInt}
+                            key={fullDay}
                             variant={isSelected ? "primary" : "outline-secondary"}
                             size="sm"
-                            onClick={() => handleDaySelection(index, fullDayInt, !isSelected)}
+                            onClick={() => handleDaySelection(index, fullDay, !isSelected)}
                             className="rounded-circle d-flex align-items-center justify-content-center"
                             style={{ width: "32px", height: "32px", padding: "0" }}
                           >
                             {shortDay}
                           </Button>
-                        );
-                      })}
-                    </div>
-                  </Form.Group>
+                         
+                  );
+                })}
+              </div>
+</Form.Group>
                   </Col>
 
                   <Col md={2} className="d-flex align-items-center justify-content-end">

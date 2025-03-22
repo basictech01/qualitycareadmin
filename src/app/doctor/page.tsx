@@ -76,10 +76,8 @@ const DoctorDashboard = () => {
       <div className="card h-100 p-0 radius-12">
         <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
           <div className="d-flex align-items-center flex-wrap gap-3">
-            <span className="text-md fw-medium text-secondary-light mb-0">
-              Search Doctor
-            </span>
-            <form className="navbar-search">
+          <h1 className="text-xl font-bold mb-4">Doctors</h1>
+            {/* <form className="navbar-search">
               <input
                 type="text"
                 className="bg-base h-40-px w-auto"
@@ -87,7 +85,7 @@ const DoctorDashboard = () => {
                 placeholder="Search"
               />
               <Icon icon="ion:search-outline" className="icon" />
-            </form>
+            </form> */}
           </div>
           <button
             onClick={() => setShowCreateDoctorModel(true)}

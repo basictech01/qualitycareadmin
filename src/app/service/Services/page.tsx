@@ -8,7 +8,6 @@ import AddService from './addService';
 import { get } from '@/utils/network';
 import CategoryPage from '../Category/page';
 
-
 const ServicePage = () => {
   const [showCreateServiceModel, setShowCreateServiceModel] = useState(false);
   const [showEditServiceModel, setShowEditServiceModel] = useState(false);
@@ -52,9 +51,7 @@ const ServicePage = () => {
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div className="d-flex align-items-center flex-wrap gap-3">
-          <span className="text-md fw-medium text-secondary-light mb-0">
-            Available Services
-          </span>
+        <h1 className="text-xl font-bold mb-4">Available Services</h1>
         </div>
         <button
           onClick={() => setShowCreateServiceModel(true)}
@@ -87,7 +84,7 @@ const ServicePage = () => {
 
       {/* Service Cards */}
   
-      <div className="row gy-4 px-4 mb-5">
+      <div className="row gy-4 p-24 mb-5">
         {loading ? (
           <p className="text-center">Loading services...</p>
         ) : error ? (
@@ -141,12 +138,35 @@ const Service = ({ service, onEdit }: { service: any; onEdit: () => void }) => {
           <div className="price-container">
             {service.actual_price && (
               <span className="text-decoration-line-through text-neutral-400 me-2 fs-6">
-                ${service.actual_price}
+                <img 
+              src="/assets/symbols/Riyal.png" 
+              alt="Currency Symbol" 
+              style={{width: '14px',
+                height: 'auto',
+                marginRight: '4px',
+                verticalAlign: 'middle'}}
+              className="currency-symbol" 
+            />
+            
+            {service.actual_price}
               </span>
             )}
-            <span className="fw-bold text-primary-700 fs-4">
-              ${service.discounted_price}
-            </span>
+          <span className="fw-bold text-primary-700 fs-4">
+          <img 
+            src="/assets/symbols/Riyal.png" 
+            alt="Currency Symbol" 
+            style={{
+              width: '14px',
+              height: 'auto',
+              marginRight: '4px',
+              verticalAlign: 'middle'
+            }}
+            className="currency-symbol" 
+          />
+          <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+    {service.discounted_price}
+  </span>
+</span>
           </div>
           </div>
           <Link

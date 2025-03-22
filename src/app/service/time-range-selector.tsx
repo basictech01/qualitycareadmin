@@ -15,7 +15,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
   setSelectedTimeSlots 
 }) => {
   const [timeRanges, setTimeRanges] = useState<TimeRange[]>([
-    { start_time: '09:00:00', end_time: '17:00:00' }
+    { start_time: '09:00:00', end_time: '10:00:00' }
   ]);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
   }, [selectedTimeSlots]);
 
   const handleAddTimeRange = () => {
-    setSelectedTimeSlots([...selectedTimeSlots, { start_time: '09:00:00', end_time: '17:00:00' }]);
+    setSelectedTimeSlots([...selectedTimeSlots, { start_time: '09:00:00', end_time: '10:00:00' }]);
   };
 
   const handleRemoveTimeRange = (index: number) => {
@@ -110,11 +110,12 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
           </div>
         ) : (
           <>
-            <div className="d-flex justify-content-between mb-2">
+          {/* Total time calcualtor commented for now as not working */}
+            {/* <div className="d-flex justify-content-between mb-2">
               <Badge bg="info" className="fs-6 py-1 px-3">
                 Total scheduled: {calculateTotalHours()}
               </Badge>
-            </div>
+            </div> */}
             
             <div className="time-slots-container">
               {selectedTimeSlots.map((range, index) => (
@@ -152,7 +153,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
                         variant="outline-danger" 
                         size="sm"
                         onClick={() => handleRemoveTimeRange(index)}
-                        disabled={timeRanges.length === 1}
+                     
                       >
                         Remove
                       </Button>
