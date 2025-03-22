@@ -1,6 +1,6 @@
 import { get } from "@/utils/network";
 import { useEffect, useState } from "react";
-import TimeSlotCreator from "./time-range-selector";
+import TimeSlotCreator from "../time-range-selector";
 import BranchSelection from "./addBranch";
 
 // Define interfaces
@@ -19,8 +19,12 @@ interface Branch {
   city_ar: string;
   latitude: string;
   longitude: string;
+  maximum_booking_per_slot:number;
 }
-
+interface TimeRange {
+  startTime: string;
+  endTime: string;
+}
 interface Service {
   id: number;
   name_ar: string;
@@ -39,15 +43,18 @@ interface Service {
 
 interface Props {
   editData?: Service; // This prop will contain prefilled data when editing
+  serviceBranches?: Branch[];
+  serviceTimeSlots?: TimeRange[];
 }
 
-const AddService = ({ editData }: Props) => {
+const AddService = ({ editData,serviceBranches,serviceTimeSlots }: Props) => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | "">("");
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [selectedBranches, setSelectedBranches] =  useState<Branch[]>([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeRange[]>([]);
   // Form data state
   const [formData, setFormData] = useState({
     name_en: "",
@@ -63,11 +70,21 @@ const AddService = ({ editData }: Props) => {
     service_image_ar_url: "",
   });
 
-  const [selectedBranches, setSelectedBranches] = useState([]);
+
 
   // Prefill data when `editData` is available
   useEffect(() => {
+    console.log(serviceBranches,"gggg")
+      // Set the state
+      console.log("Setting formatted branches:", serviceBranches);
+      setSelectedBranches(serviceBranches);
     
+
+    if (serviceTimeSlots && serviceTimeSlots.length > 0) {
+      setSelectedTimeSlots(serviceTimeSlots);
+    }
+    console.log(selectedBranches,"branchss")
+    console.log(selectedTimeSlots,"creceve")
     if (editData) {
       console.log(editData,"crwc")
       setFormData({
@@ -82,11 +99,13 @@ const AddService = ({ editData }: Props) => {
         can_redeem: editData.can_redeem === 1,
         service_image_en_url: editData.service_image_en_url,
         service_image_ar_url: editData.service_image_ar_url,
+
       });
       console.log(setFormData,"rushabh");
     }
     fetchCategories();  
-  }, [editData]);
+  }, [editData,serviceBranches,serviceTimeSlots]);
+
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -194,10 +213,10 @@ const AddService = ({ editData }: Props) => {
               </div>
 
               {/* Branch Selection */}
-              <BranchSelection branches={branches} selectedBranches={selectedBranches} setSelectedBranches={setSelectedBranches} />
+              <BranchSelection  selectedBranches={selectedBranches} setSelectedBranches={setSelectedBranches} />
 
               {/* Time Slot */}
-              <TimeSlotCreator title="Time Slot" onTimeRangesChange={() => {}} />
+              <TimeSlotCreator title="Time Slot" serviceTimeSlots={serviceTimeSlots} onTimeRangesChange={() => {}} />
 
               {/* Submit Button */}
               <div className="col-12">

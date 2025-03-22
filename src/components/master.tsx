@@ -172,14 +172,37 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 <span>Doctor</span>
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                href='/service'
-                                className={pathname === "/service" ? "active-page" : ""}
-                            >
-                                <Icon icon='mage:email' className='menu-icon' />
+                      
+                        {/* Service */}
+                        <li className='dropdown'>
+                            <Link href='/settings'>
+                                <Icon icon='hugeicons:invoice-03' className='menu-icon' />
                                 <span>Service</span>
                             </Link>
+                            <ul className='sidebar-submenu'>
+                                <li>
+                                    <Link
+                                        href='/service/Services'
+                                        className={
+                                            pathname === "/service/Services" ? "active-page" : ""
+                                        }
+                                    >
+                                        <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
+                                        Services
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href='/service/Category'
+                                        className={
+                                            pathname === "/service/Category" ? "active-page" : ""
+                                        }
+                                    >
+                                        <i className='ri-circle-fill circle-icon text-warning-main w-auto' />
+                                        Category
+                                    </Link>
+                                </li>
+                            </ul>
                         </li>
                         <li>
                             <Link

@@ -8,12 +8,14 @@ interface TimeRange {
 }
 
 interface TimeSlotCreatorProps {
+  serviceTimeSlots:TimeRange[]
   title: string;
   onTimeRangesChange?: (timeRanges: TimeRange[]) => void;
 }
 
 const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({ 
   title = "Schedule Availability", 
+  serviceTimeSlots,
   onTimeRangesChange 
 }) => {
   const [timeRanges, setTimeRanges] = useState<TimeRange[]>([
@@ -21,6 +23,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
   ]);
 
   useEffect(() => {
+    console.log(serviceTimeSlots,"timeslot")
     // Notify parent component when timeRanges change
     onTimeRangesChange && onTimeRangesChange(timeRanges);
   }, [timeRanges, onTimeRangesChange]);

@@ -7,6 +7,9 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import Modal from 'react-bootstrap/Modal';
 import AddCategory from './addCategory';
 import Link from 'next/link';
+
+
+
 const CategoryPage = () => {
 const [showCreateCategoryModel, setShowCreateCategoryModel] = useState(false);
  const [showEditCategoryModel, setShowEditCategoryModel] = useState(false); 
@@ -106,6 +109,7 @@ const [categories, setCategories] = useState<any[]>([]);
 
 // Category Card Component
 const CategoryCard = ({ category, onEdit }: { category: any; onEdit: () => void  }) => {
+  
   return (
 <div className="col-xxl-3 col-lg-4 col-sm-6">
   <div className="card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">

@@ -6,7 +6,8 @@ import Modal from 'react-bootstrap/Modal';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import AddService from './addService';
 import { get } from '@/utils/network';
-import CategoryPage from './Category';
+import CategoryPage from '../Category/page';
+
 
 const ServicePage = () => {
   const [showCreateServiceModel, setShowCreateServiceModel] = useState(false);
@@ -16,7 +17,7 @@ const ServicePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [serviceTimeSlots, SetServiceTimeSlots] = useState<any>(null);
-  const [serviceBarches, setServiceBranches] = useState<any>(null);
+  const [serviceBranches, setServiceBranches] = useState<any>(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -37,8 +38,12 @@ const ServicePage = () => {
   const handleEditService = async (serviceId: number) => {
     console.log(serviceId)
     const timeSlots = await get(`/service/time_slot?service_id=${serviceId}`);
-    console.log(timeSlots)
-    const serviceTimeSlots = timeSlots
+    console.log(timeSlots,"stage 1")
+    const branch = await get(`/branch/service?service_id=${serviceId}`);
+    console.log(branch,"stage1b")
+
+    setServiceBranches(branch)
+    SetServiceTimeSlots(timeSlots)
     // const serviceBarches = 
     const serviceToEdit = services.find((service) => service.id === serviceId);
     console.log(serviceToEdit)
@@ -85,7 +90,7 @@ const ServicePage = () => {
           <Modal.Title>Edit Service</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddService editData={selectedService} serviceBranch={serviceBarches} serviceTimeSlots ={serviceTimeSlots} />
+          <AddService editData={selectedService} serviceBranches={serviceBranches} serviceTimeSlots ={serviceTimeSlots} />
         </Modal.Body>
       </Modal>
 
@@ -104,12 +109,6 @@ const ServicePage = () => {
           ))
         )}
       </div>
-
-      
-      <CategoryPage />
-    
-    
-   
     </div>
   );
 };

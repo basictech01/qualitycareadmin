@@ -9,8 +9,13 @@ interface Branch {
 
 interface SelectedBranch {
   id: number;
-  name: string;
-  timeSlots: number;
+  name_en: string;
+  name_ar: string;
+  city_en: string;
+  city_ar: string;
+  latitude: string;
+  longitude: string;
+  maximum_booking_per_slot:number;
 }
 
 const BranchSelection: React.FC<{
@@ -22,6 +27,11 @@ const BranchSelection: React.FC<{
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(selectedBranches,"branch")
+
+  // Pre-fill selected branches if available from props
+
+
     const fetchBranches = async () => {
       setLoading(true);
       try {
@@ -38,21 +48,28 @@ const BranchSelection: React.FC<{
   }, []);
 
   const addBranchRow = () => {
-    setSelectedBranches([...selectedBranches, { id: 0, name: "", timeSlots: 0 }]);
+    setSelectedBranches([...selectedBranches, {
+      id: 0, name_en: "", maximum_booking_per_slot: 0,
+      name_ar: "",
+      city_en: "",
+      city_ar: "",
+      latitude: "",
+      longitude: ""
+    }]);
   };
 
   const handleBranchChange = (index: number, id: string) => {
     const branch = branches.find((b) => b.id === Number(id));
     if (branch) {
       const updatedBranches = [...selectedBranches];
-      updatedBranches[index] = { ...updatedBranches[index], id: branch.id, name: branch.name_en };
+      updatedBranches[index] = { ...updatedBranches[index], id: branch.id, name_en: branch.name_en };
       setSelectedBranches(updatedBranches);
     }
   };
 
   const handleTimeSlotsChange = (index: number, value: number) => {
     const updatedBranches = [...selectedBranches];
-    updatedBranches[index].timeSlots = value;
+    updatedBranches[index].maximum_booking_per_slot = value;
     setSelectedBranches(updatedBranches);
   };
 
@@ -62,7 +79,7 @@ const BranchSelection: React.FC<{
 
   // Calculate total time slots
   const calculateTotalTimeSlots = (): number => {
-    return selectedBranches.reduce((total, branch) => total + branch.timeSlots, 0);
+    return selectedBranches.reduce((total, branch) => total + branch.maximum_booking_per_slot, 0);
   };
 
   return (
@@ -132,7 +149,7 @@ const BranchSelection: React.FC<{
                         <Form.Control
                           type="number"
                           min="0"
-                          value={branch.timeSlots}
+                          value={branch.maximum_booking_per_slot}
                           onChange={(e) => handleTimeSlotsChange(index, Number(e.target.value))}
                         />
                       </FloatingLabel>

@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import Modal from 'react-bootstrap/Modal';
 import { ERRORS } from "@/utils/errors";
 import { get, post, upload } from "@/utils/network";
+import Link from "next/link";
 
 interface DatePickerProps {
   id: string;
@@ -279,38 +280,61 @@ const AddNewBanner = () => {
   );
 }
 
-const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp, image_ar, image_en }) => {
+const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp, image_ar, image_en }
+) => {
+  
+    
+
   return (
-    <div className='col-xxl-4 col-md-6 col-sm-12'>
-      <div className='hover-scale-img border radius-16 overflow-hidden'>
-        <div className='max-h-266-px overflow-hidden'>
-          <img
-            src={image_ar}
-            alt=''
-            className='hover-scale-img__img w-100 h-100 object-fit-cover'
-          />
-        </div>
-        
-          <div className="card shadow-sm p-4">
-            <p className="mb-3">
-              {link}
-            </p>
-            <p className="mb-1 text-muted small">
-              <strong>Start Time:</strong> {start_timestamp}
-            </p>
-            <p className="mb-0 text-muted small">
-              <strong>End Time:</strong> {end_timestamp}
-            </p>
-          </div>
-        <div className='max-h-266-px overflow-hidden'>
-          <img
-            src={image_en}
-            alt=''
-            className='hover-scale-img__img w-100 h-100 object-fit-cover'
-          />
-        </div>
+    <div className="col-xxl-4 col-md-6 col-sm-12">
+    <div className="border rounded-lg overflow-hidden shadow-sm">
+      {/* Arabic/Top Image with constrained height */}
+      <div className="max-h-64 overflow-hidden">
+        <img
+          src={image_ar}
+          alt=""
+          className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </div>
+      
+      {/* Content Section */}
+      <div className="p-4 bg-white">
+        <p className="mb-3 font-medium truncate">
+          {link}
+        </p>
+        <p className="mb-1 text-gray-600 text-sm">
+          <strong>Start Time:</strong> {start_timestamp}
+        </p>
+        <p className="mb-0 text-gray-600 text-sm">
+          <strong>End Time:</strong> {end_timestamp}
+        </p>
+      </div>
+      
+      {/* English/Bottom Image with constrained height */}
+      <div className="max-h-64 overflow-hidden">
+        <img
+          src={image_en}
+          alt=""
+          className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
+        />
       </div>
     </div>
+    
+    {/* Delete Button */}
+    <Link
+      href="#"
+      onClick={(e) => {
+        e.preventDefault();
+        
+      }}
+      className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white text-sm font-medium rounded flex items-center justify-center gap-2 w-full mt-4 py-3"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Delete
+    </Link>
+  </div>
   )
 }
 
