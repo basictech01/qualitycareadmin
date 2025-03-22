@@ -15,6 +15,7 @@ export const ERRORS = {
     FORM_NOT_FILLED: new CustomError('Please fill in all fields', 10001),
     LANG_LAT_NOT_NUMBER: new CustomError('Latitude and longitude must be numbers', 10002),
     UNAUTHORIZED: new CustomError('Unauthorized', 10003),
+    NO_CHANGES: new CustomError('No changes made', 10004),
     
     
     // LOGIN ERRORS
@@ -27,5 +28,11 @@ export const ERRORS = {
     START_DATE_REQUIRED: new CustomError('Start date is required', 10006),
     END_DATE_REQUIRED: new CustomError('End date is required', 10007),
     LINK_REQUIRED: new CustomError('Link is required', 10008),
+
+    // For Category Errors
+    NAME_EN_REQUIRED: new CustomError('English name is required', 20001),
+    NAME_AR_REQUIRED: new CustomError('Arabic name is required', 20002),
+    TYPE_REQUIRED: new CustomError('Type is required', 20003),
+    IMAGE_REQUIRED: new CustomError('Image is required', 20004),
 
 }

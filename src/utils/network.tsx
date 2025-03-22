@@ -97,8 +97,11 @@ export async function put(url: string, body: any, options: any = {}) : Promise<a
 	}
 }
 
-export async function upload(formData: FormData): Promise<string> {
+export async function uploadImage(url: string): Promise<string> {
 	try {
+		const formData = new FormData();
+		let enFile = await fetch(url).then(r => r.blob())
+		formData.append("photo", enFile);
 		let token = typeof window !== 'undefined' ? localStorage.getItem('x-access-token') : null;
 		if (!token) {
 			throw ERRORS.UNAUTHORIZED;
