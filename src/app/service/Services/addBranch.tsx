@@ -8,7 +8,7 @@ interface Branch {
 }
 
 interface SelectedBranch {
-  id: number;
+  branch_id: number;
   name_en: string;
   name_ar: string;
   city_en: string;
@@ -25,13 +25,8 @@ const BranchSelection: React.FC<{
 }> = ({ selectedBranches, setSelectedBranches, title = "Branch Locations" }) => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    console.log(selectedBranches,"branch")
-
-  // Pre-fill selected branches if available from props
-
-
+    // Pre-fill selected branches if available from props
     const fetchBranches = async () => {
       setLoading(true);
       try {
@@ -130,11 +125,11 @@ const BranchSelection: React.FC<{
                     <Col md={5}>
                       <FloatingLabel controlId={`branch-${index}`} label="Branch">
                         <Form.Select
-                          value={branch.id}
+                          value={branch.branch_id}
                           onChange={(e) => handleBranchChange(index, e.target.value)}
                           className={!branch.id ? 'border-danger' : ''}
                         >
-                          <option value="">Select Branch</option>
+                          <option key={-1} value="">Select Branch</option>
                           {branches.map((b) => (
                             <option key={b.id} value={b.id}>
                               {b.name_en}

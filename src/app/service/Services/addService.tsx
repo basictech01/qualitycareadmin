@@ -12,7 +12,7 @@ interface Category {
 }
 
 interface Branch {
-  id: number;
+  branch_id: number;
   name_en: string;
   name_ar: string;
   city_en: string;
@@ -47,7 +47,7 @@ interface Props {
   serviceTimeSlots?: TimeRange[];
 }
 
-const AddService = ({ editData,serviceBranches,serviceTimeSlots }: Props) => {
+const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | "">("");
@@ -74,19 +74,17 @@ const AddService = ({ editData,serviceBranches,serviceTimeSlots }: Props) => {
 
   // Prefill data when `editData` is available
   useEffect(() => {
-    console.log(serviceBranches,"gggg")
       // Set the state
       console.log("Setting formatted branches:", serviceBranches);
-      setSelectedBranches(serviceBranches);
+      if (serviceBranches && serviceBranches.length > 0) {
+        setSelectedBranches(serviceBranches);
+      }
     
 
     if (serviceTimeSlots && serviceTimeSlots.length > 0) {
       setSelectedTimeSlots(serviceTimeSlots);
     }
-    console.log(selectedBranches,"branchss")
-    console.log(selectedTimeSlots,"creceve")
     if (editData) {
-      console.log(editData,"crwc")
       setFormData({
         name_en: editData.name_en,
         name_ar: editData.name_ar,
@@ -101,10 +99,9 @@ const AddService = ({ editData,serviceBranches,serviceTimeSlots }: Props) => {
         service_image_ar_url: editData.service_image_ar_url,
 
       });
-      console.log(setFormData,"rushabh");
     }
     fetchCategories();  
-  }, [editData,serviceBranches,serviceTimeSlots]);
+  }, [editData, serviceBranches, serviceTimeSlots]);
 
 
   // Fetch categories
