@@ -3,18 +3,19 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState, useEffect } from "react";
 import BranchSelection from "./addBranch";
 import TimeSlotCreator from "./time-range-selector";
+import { SelectedBranch } from "@/utils/types";
 
 interface Doctor {
   id?: number;
-  nameEn?: string;
-  nameAr?: string;
-  attendedPatients?: number;
-  sessionFees?: number;
-  experience?: number;
+  name_en?: string;
+  name_ar?: string;
+  attended_patient?: number;
+  session_fees?: number;
+  total_experience?: number;
   phone?: string;
-  aboutEn?: string;
-  aboutAr?: string;
-  imageUrl?: string;
+  about_en?: string;
+  about_ar?: string;
+  photo_url?: string;
 }
 interface Branch {
   id: number;
@@ -26,24 +27,24 @@ interface Branch {
   longitude: string;
 }
 interface AddUserLayerProps {
-  doctor?: any; // Doctor data from API (or undefined)
+  doctor?: Doctor; // Doctor data from API (or undefined)
 }
 
 const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
-    const [branches, setBranches] = useState<Branch[]>([]);
-    const [selectedBranches, setSelectedBranches] = useState([]);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranches, setSelectedBranches] = useState<SelectedBranch[]>([]);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
   const [formData, setFormData] = useState<Doctor>({
     id: undefined,
-    nameEn: "",
-    nameAr: "",
-    attendedPatients: 0,
-    sessionFees: 0,
-    experience: 0,
+    name_en: "",
+    name_ar: "",
+    attended_patient: 0,
+    session_fees: 0,
+    total_experience: 0,
     phone: "",
-    aboutEn: "",
-    aboutAr: "",
-    imageUrl: "",
+    about_en: "",
+    about_ar: "",
+    photo_url: "",
   });
 
   // Prefill form when doctor data is provided
@@ -51,15 +52,15 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
     if (doctor) {
       setFormData({
         id: doctor.id || undefined,
-        nameEn: doctor.name_en || "",
-        nameAr: doctor.name_ar || "",
-        attendedPatients: doctor.attended_patient || 0,
-        sessionFees: doctor.session_fees || 0,
-        experience: doctor.total_experience || 0,
+        name_en: doctor.name_en || "",
+        name_ar: doctor.name_ar || "",
+        attended_patient: doctor.attended_patient || 0,
+        session_fees: doctor.session_fees || 0,
+        total_experience: doctor.total_experience || 0,
         phone: doctor.phone || "",
-        aboutEn: doctor.about_en || "",
-        aboutAr: doctor.about_ar || "",
-        imageUrl: doctor.photo_url || "",
+        about_en: doctor.about_en || "",
+        about_ar: doctor.about_ar || "",
+        photo_url: doctor.photo_url || "",
       });
 
       setImagePreviewUrl(doctor.photo_url || "");
@@ -122,7 +123,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="nameEn"
             placeholder="Enter Full Name"
-            value={formData.nameEn}
+            value={formData.name_en}
             onChange={handleChange}
           />
         </div>
@@ -136,7 +137,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="nameAr"
             placeholder="Enter Full Name"
-            value={formData.nameAr}
+            value={formData.name_ar}
             onChange={handleChange}
           />
         </div>
@@ -150,7 +151,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="attendedPatients"
             placeholder="Enter number of attended patients"
-            value={formData.attendedPatients}
+            value={formData.attended_patient}
             onChange={handleChange}
           />
         </div>
@@ -164,7 +165,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="sessionFees"
             placeholder="Enter session fees"
-            value={formData.sessionFees}
+            value={formData.session_fees}
             onChange={handleChange}
           />
         </div>
@@ -178,7 +179,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="experience"
             placeholder="Enter years of experience"
-            value={formData.experience}
+            value={formData.total_experience}
             onChange={handleChange}
           />
         </div>
@@ -205,7 +206,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="aboutEn"
             placeholder="Write description..."
-            value={formData.aboutEn}
+            value={formData.about_en}
             onChange={handleChange}
           />
         </div>
@@ -218,12 +219,12 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
             className="form-control radius-8"
             id="aboutAr"
             placeholder="Write description..."
-            value={formData.aboutAr}
+            value={formData.about_ar}
             onChange={handleChange}
           />
         </div>
             {/* Branch Selection */}
-            <BranchSelection branches={branches} selectedBranches={selectedBranches} setSelectedBranches={setSelectedBranches} />
+        <BranchSelection selectedBranches={selectedBranches} setSelectedBranches={(branches) => setSelectedBranches(branches)} />
 
 {/* Time Slot */}
 <TimeSlotCreator title="Time Slot" onTimeRangesChange={() => {}} />

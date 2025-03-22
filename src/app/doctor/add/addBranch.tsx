@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Row, Col, Form, FloatingLabel, Badge } from "react-bootstrap";
 import { get } from "@/utils/network";
+import { SelectedBranch } from "@/utils/types";
 
 interface Branch {
   id: number;
   name_en: string;
-}
-
-interface SelectedBranch {
-  id: number;
-  name: string;
-  availableDays: string[];
 }
 
 const BranchSelection: React.FC<{

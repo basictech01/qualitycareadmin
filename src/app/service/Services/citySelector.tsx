@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Form, Button, ListGroup, Badge } from 'react-bootstrap';
 
-const CityMultiSelector = ({ cities }) => {
-  const [selectedCities, setSelectedCities] = useState([]);
+interface CityMultiSelectorProps {
+  cities: string[];
+}
+
+const CityMultiSelector = ({ cities }: CityMultiSelectorProps ) => {
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleCityToggle = (city) => {
+  const handleCityToggle = (city: string) => {
     if (selectedCities.includes(city)) {
       setSelectedCities(selectedCities.filter((c) => c !== city));
     } else {
@@ -13,7 +17,7 @@ const CityMultiSelector = ({ cities }) => {
     }
   };
 
-  const handleCityRemove = (city) => {
+  const handleCityRemove = (city: string) => {
     setSelectedCities(selectedCities.filter((c) => c !== city));
   };
 

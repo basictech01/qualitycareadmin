@@ -2,10 +2,19 @@
 import { get } from '@/utils/network';
 import { useState, useEffect } from 'react';
 
+interface User {
+  id: number;
+  full_name: string;
+  photo_url: string;
+  points: number;
+  redeemed: boolean;
+  total_visits: number;
+}
+
 const CustomerTable = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User []>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -14,7 +23,7 @@ const CustomerTable = () => {
         const response = await get("/user/userMetrics");
         console.log(response)
         setUsers(response)
-      } catch (err) {
+      } catch (err: any) {
         setError("Error fetching user data: " + err.message);
       } finally {
         setLoading(false);
@@ -23,7 +32,7 @@ const CustomerTable = () => {
 
     fetchUsers();
   }, []);
-  const getInitials = (name) => {
+  const getInitials = (name: string) => {
     if (!name) return "U";
     return name
       .split(' ')

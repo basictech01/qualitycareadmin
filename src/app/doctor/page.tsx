@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import Modal from "react-bootstrap/Modal";
-import AddUserLayer from "./add/page";
+import AddUserLayer from "./add/addDoctor";
 import { get } from "@/utils/network";
 
 const DoctorDashboard = () => {
@@ -55,7 +55,7 @@ const DoctorDashboard = () => {
           <Modal.Title>Register New Doctor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddUserLayer />
+          <AddUserLayer  />
         </Modal.Body>
       </Modal>
 

@@ -302,6 +302,8 @@ const AddNewBanner = () => {
 const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp, image_ar, image_en }
 ) => {
   
+  const deleteBanner = (id: number) => {
+  }
     
 
   return (
