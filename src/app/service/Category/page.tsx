@@ -111,9 +111,9 @@ const [categories, setCategories] = useState<any[]>([]);
 const CategoryCard = ({ category, onEdit }: { category: any; onEdit: () => void  }) => {
   
   return (
-<div className="col-xxl-3 col-lg-4 col-sm-6">
+<div className="col-xxl-3 col-lg-4 col-md-4 col-sm-6">
   <div className="card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
-    <div className="card-body p-5 d-flex flex-column align-items-center">
+    <div className="card-body p-3 d-flex flex-column align-items-center">
       {/* Category Image with Border and Shadow */}
       <div className="position-relative mb-4">
         <div className="rounded-circle p-1 bg-primary-100 shadow-sm mb-2">
