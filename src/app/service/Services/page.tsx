@@ -85,7 +85,7 @@ const ServicePage = () => {
       </Modal>
 
       {/* Edit Service Modal */}
-      <Modal show={showEditServiceModel} fullscreen onHide={() => setShowEditServiceModel(false)}>
+      <Modal show={showEditServiceModel} size='lg' onHide={() => setShowEditServiceModel(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Service</Modal.Title>
         </Modal.Header>
