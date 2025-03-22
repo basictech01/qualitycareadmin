@@ -1,7 +1,9 @@
-import { get } from "@/utils/network";
+import { get, post, uploadImage } from "@/utils/network";
 import { useEffect, useState } from "react";
 import TimeSlotCreator from "../time-range-selector";
 import BranchSelection from "./addBranch";
+import { TimeRange } from "@/utils/types";
+import { ERRORS } from "@/utils/errors";
 
 // Define interfaces
 interface Category {
@@ -21,10 +23,6 @@ interface Branch {
   longitude: string;
   maximum_booking_per_slot:number;
 }
-interface TimeRange {
-  startTime: string;
-  endTime: string;
-}
 interface Service {
   id: number;
   name_ar: string;
@@ -34,11 +32,26 @@ interface Service {
   type: string;
   category_en: string;
   category_ar: string;
+  category_id: number;
   actual_price: string;
   discounted_price: string;
   service_image_en_url: string;
   service_image_ar_url: string;
   can_redeem: number;
+}
+
+interface ServiceFormData {
+  id?: number;
+  name_ar: string;
+  name_en: string;
+  about_ar: string;
+  about_en: string;
+  category_id: number;
+  actual_price: string;
+  discounted_price: string;
+  service_image_en_url: string;
+  service_image_ar_url: string;
+  can_redeem: boolean;
 }
 
 interface Props {
@@ -48,26 +61,24 @@ interface Props {
 }
 
 const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
-  const [branches, setBranches] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | "">("");
+  const [selectedCategory, setSelectedCategory] = useState<number>(-1);
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedBranches, setSelectedBranches] =  useState<Branch[]>([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeRange[]>([]);
   // Form data state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ServiceFormData>({
     name_en: "",
     name_ar: "",
-    category_ar:"",
-    category_en:"",
+    category_id: 0,
     about_en: "",
     about_ar: "",
     actual_price: "",
     discounted_price: "",
-    can_redeem: false,
     service_image_en_url: "",
     service_image_ar_url: "",
+    can_redeem: false
   });
 
 
@@ -75,10 +86,12 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
   // Prefill data when `editData` is available
   useEffect(() => {
       // Set the state
-      console.log("Setting formatted branches:", serviceBranches);
-      if (serviceBranches && serviceBranches.length > 0) {
-        setSelectedBranches(serviceBranches);
-      }
+    () => {
+
+    } 
+    if (serviceBranches && serviceBranches.length > 0) {
+      setSelectedBranches(serviceBranches);
+    }
     
 
     if (serviceTimeSlots && serviceTimeSlots.length > 0) {
@@ -89,8 +102,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
         name_en: editData.name_en,
         name_ar: editData.name_ar,
         about_en: editData.about_en,
-        category_ar: editData.category_ar,
-        category_en: editData.category_en,
+        category_id: editData.category_id,
         about_ar: editData.about_ar,
         actual_price: editData.actual_price,
         discounted_price: editData.discounted_price,
@@ -111,6 +123,10 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     try {
       const response = await get("/service/category");
       setCategories(Array.isArray(response) ? response : []);
+      const category = response.find((category: Category) => category.name_en === editData?.category_en);
+      if (category) {
+        setSelectedCategory(category.id);
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
       setError("Failed to load categories");
@@ -129,13 +145,119 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCategory(e.target.value === "" ? "" : Number(e.target.value));
+    if (e.target.value === "") {
+      return;
+    }
+    formData.category_id = Number(e.target.value);
+    setSelectedCategory(Number(e.target.value));
   };
+  
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting:", formData);
-    setError(null);
+    if(editData) {
+      handleUpdate()
+    }
+    else {
+      handleCreate()
+    }
   };
+
+  const handleUpdate= () => {
+
+  }
+
+  const handleCreate = async () => {
+    //      name_en: z.string(),
+    //     name_ar: z.string(),
+    //     category_id: z.number(),
+    //     about_en: z.string(),
+    //     about_ar: z.string(),
+    //     actual_price: z.number(),
+    //     discounted_price: z.number(),
+    //     category_id: z.integer(),
+    //     service_image_en_url: z.string(),
+    //     service_image_ar_url: z.string(),
+    //     can_redeem: z.boolean().default(false)
+    try {
+      if(!formData.name_en) {
+        throw ERRORS.SERVICE_NAME_EN_REQUIRED
+      }
+      if(!formData.name_ar) {
+        throw ERRORS.SERVICE_NAME_AR_REQUIRED
+      }
+      if(!formData.about_ar) {
+        throw ERRORS.ABOUT_AR_REQUIRED
+      }
+      if(!formData.about_en) {
+        throw ERRORS.ABOUT_EN_REQUIRED
+      }
+      if(!formData.actual_price) {
+        throw ERRORS.ACTUAL_PRICE_REQUIRED
+      }
+      if(!formData.discounted_price) {
+        throw ERRORS.DISCOUNTED_PRICE_REQUIRED
+      }
+      if(formData.category_id < 0) {
+        throw ERRORS.CATEGORY_ID_REQUIRED
+      }
+      if(!formData.service_image_ar_url) {
+        throw ERRORS.SERVICE_IMAGE_AR_REQUIRED
+      }
+      if(!formData.service_image_en_url) {
+        throw ERRORS.SERVICE_IMAGE_EN_REQUIRED
+      }
+      if(!formData.can_redeem) {
+        throw ERRORS.CAN_REDEEM_REQUIRED
+      }
+
+      if(selectedBranches.length === 0) {
+        throw ERRORS.BRANCH_REQUIRED
+      }
+      if(selectedTimeSlots.length === 0) {
+        throw ERRORS.TIME_SLOT_REQUIRED
+      }
+
+
+      const imageEN = await uploadImage(formData.service_image_en_url)
+      const imageAR = await uploadImage(formData.service_image_ar_url)
+
+      const data: ServiceFormData =  {
+        name_en: formData.name_en,
+        name_ar: formData.name_ar,
+        about_en: formData.about_en,
+        about_ar: formData.about_ar,
+        actual_price: formData.actual_price,
+        discounted_price: formData.discounted_price,
+        category_id: formData.category_id,
+        service_image_en_url: imageEN,
+        service_image_ar_url: imageAR,
+        can_redeem: formData.can_redeem
+      }
+      const response = await post("/service", data)
+      const serviceID = response.id
+
+      for(const timeSlot of selectedTimeSlots) {
+        await post(`/service/time_slot`, 
+          {
+            service_id: serviceID,
+            start_time: timeSlot.start_time,
+            end_time: timeSlot.end_time
+          }
+        )
+      }
+      for(const branch of selectedBranches) {
+        await post(`/service/branch`, 
+          {
+            service_id: serviceID,
+            branch_id: branch.branch_id,
+            maximum_booking_per_slot: branch.maximum_booking_per_slot
+          }
+        )
+      }
+    } catch (error) {
+      console.error("Error creating service:", error);
+    }
+
+  }
 
   return (
     <div>
@@ -145,7 +267,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
         </div>
         <div className="card-body">
           {error && <div className="alert alert-danger">{error}</div>}
-          <form onSubmit={handleSubmit}>
+          <div>
             <div className="row gy-3">
             <div className="col-12">
               <label className="form-label">Category</label>
@@ -213,17 +335,17 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
               <BranchSelection  selectedBranches={selectedBranches} setSelectedBranches={setSelectedBranches} />
 
               {/* Time Slot */}
-              <TimeSlotCreator title="Time Slot" serviceTimeSlots={serviceTimeSlots} onTimeRangesChange={() => {}} />
+              <TimeSlotCreator title="Time Slot" selectedTimeSlots={selectedTimeSlots} setSelectedTimeSlots={setSelectedTimeSlots} />
 
               {/* Submit Button */}
               <div className="col-12">
-                <button type="submit" className="btn btn-primary">
+                <button onClick={handleSubmit} className="btn btn-primary">
                   {editData ? "Update Service" : "Add Service"}
                 </button>
               </div>
 
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

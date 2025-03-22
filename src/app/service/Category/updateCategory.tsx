@@ -1,17 +1,31 @@
 import { useEffect, useState } from "react";
-import { get, post, uploadImage } from "@/utils/network";
+import { get, post, put, uploadImage } from "@/utils/network";
 import { ERRORS } from "@/utils/errors";
 import { Category } from "@/utils/types";
 
+interface Props {
+  editData: Category | null | undefined;
+}
 
-const AddCategory = () => {
+const UpdateCategory = ({ editData }: Props) => {
   const [formData, setFormData] = useState<Category>({
     name_en: "",
     name_ar: "",
     type: "",
-    image_ar: "",
     image_en: "",
+    image_ar: "",
   });
+
+  useEffect(() => {
+    if (!editData) return;
+    setFormData({
+      name_en: editData.name_en,
+      name_ar: editData.name_ar,
+      type: editData.type,
+      image_en: editData.image_en,
+      image_ar: editData.image_ar,
+    });
+  }, [editData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -38,32 +52,31 @@ const AddCategory = () => {
 
   const handleSubmit = async () => {
     try  {
-      console.log(formData)
-      if (!formData.name_en) {
-        throw ERRORS.NAME_EN_REQUIRED;
+      if(!editData) {
+        return
       }
-      if (!formData.name_ar) {
-        throw ERRORS.NAME_AR_REQUIRED;
+      let data: any = {}
+      if (formData.name_en && formData.name_en != editData.name_en) {
+        data.name_en = formData.name_en
       }
-      if (!formData.type) {
-        throw ERRORS.TYPE_REQUIRED;
+      if (formData.name_ar && formData.name_ar != editData.name_ar) {
+        data.name_ar = formData.name_ar
       }
-      if (!formData.image_en) {
-        throw ERRORS.IMAGE_REQUIRED;
+      if (formData.type && formData.type != editData.type) {
+        data.type = formData.type
       }
-      if (!formData.image_ar) {
-        throw ERRORS.IMAGE_REQUIRED;
+      if (formData.image_en && formData.image_en != editData.image_en) {
+        const imageURL = await uploadImage(formData.image_en)
+        data.image_en = imageURL
       }
-      const image_en = await uploadImage(formData.image_en);
-      const image_ar = await uploadImage(formData.image_ar);
-      const data =  {
-        name_en: formData.name_en,
-        name_ar: formData.name_ar,
-        type: formData.type,
-        image_en: image_en,
-        image_ar: image_ar,
+      if (formData.image_ar && formData.image_ar != editData.image_ar) {
+        const imageURL = await uploadImage(formData.image_ar)
+        data.image_ar = imageURL
       }
-      await post('/service/category', data);
+      if (Object.keys(data).length === 0) {
+        throw ERRORS.NO_CHANGES
+      }
+      await put(`/service/category/${editData.id}`, data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -72,7 +85,7 @@ const AddCategory = () => {
   return (
     <div className="card">
       <div className="card-header">
-        <h6 className="card-title mb-0"> Add Category</h6>
+        <h6 className="card-title mb-0">{editData ? "Edit Category" : "Add Category"}</h6>
       </div>
       <div className="card-body">
         <div>
@@ -96,18 +109,17 @@ const AddCategory = () => {
               <label className="form-label">Category Image</label>
               <div className="upload-image-wrapper">
                 {formData.image_en ? (
-                  <img src={formData.image_ar} className="img-preview" alt="Preview" />
+                  <img src={formData.image_en} className="img-preview" alt="Preview" />
                 ) : (
                   <input type="file" accept="image/*" onChange={handleENFileChange} />
                 )}
               </div>
             </div>
-
             <div className="col-md-6">
               <label className="form-label">Category Image</label>
               <div className="upload-image-wrapper">
                 {formData.image_ar ? (
-                  <img src={formData.image_en} className="img-preview" alt="Preview" />
+                  <img src={formData.image_ar} className="img-preview" alt="Preview" />
                 ) : (
                   <input type="file" accept="image/*" onChange={handleARFileChange} />
                 )}
@@ -116,7 +128,7 @@ const AddCategory = () => {
 
             <div className="col-12">
               <button onClick={handleSubmit} className="btn btn-primary">
-                 Add Category
+                {editData ? "Update Category" : "Add Category"}
               </button>
             </div>
           </div>
@@ -126,4 +138,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default UpdateCategory;

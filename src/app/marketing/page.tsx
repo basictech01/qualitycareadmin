@@ -5,7 +5,7 @@ import flatpickr from "flatpickr";
 import { Icon } from "@iconify/react";
 import Modal from 'react-bootstrap/Modal';
 import { ERRORS } from "@/utils/errors";
-import { get, post, upload } from "@/utils/network";
+import { get, post, uploadImage } from "@/utils/network";
 import Link from "next/link";
 
 interface DatePickerProps {
@@ -78,15 +78,8 @@ const AddNewBanner = () => {
         throw ERRORS.LINK_REQUIRED;
       }
   
-      const formDataEN = new FormData();
-      let enFile = await fetch(enImagePreview).then(r => r.blob())
-      formDataEN.append("photo", enFile);
-      const enImage = await upload(formDataEN);
-
-      const formDataAR = new FormData();
-      let arFile = await fetch(arImagePreview).then(r => r.blob())
-      formDataAR.append("photo", arFile);
-      const arImage = await upload(formDataAR);
+      const enImage = await uploadImage(enImagePreview);
+      const arImage = await uploadImage(arImagePreview);
 
       const body = {
         link: link,

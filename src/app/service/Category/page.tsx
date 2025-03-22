@@ -7,6 +7,8 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import Modal from 'react-bootstrap/Modal';
 import AddCategory from './addCategory';
 import Link from 'next/link';
+import UpdateCategory from './updateCategory';
+import { Category } from '@/utils/types';
 
 
 
@@ -16,15 +18,13 @@ const [showCreateCategoryModel, setShowCreateCategoryModel] = useState(false);
 const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const data = await get('/service/category'); // Replace with your actual API endpoint
         setCategories(Array.isArray(data) ? data : []);
-        console.log(setCategories,"ggrgreg")
-        console.log(data,"bhbhbh")
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -43,10 +43,8 @@ const [categories, setCategories] = useState<any[]>([]);
         console.error('Service not found in state!');
         return;
       }
-      
-    console.log('Editing Service:', categoryToEdit); // Debugging log
-    setSelectedCategory(categoryToEdit);
-    setShowEditCategoryModel(true); 
+      setSelectedCategory(categoryToEdit);
+      setShowEditCategoryModel(true); 
     }
     
   return (
@@ -78,12 +76,12 @@ const [categories, setCategories] = useState<any[]>([]);
       </Modal>
 
       {/* Edit Category Modal */}
-      <Modal show={showEditCategoryModel} fullscreen onHide={() => setShowEditCategoryModel(false)}>
+      <Modal show={showEditCategoryModel} size="lg" onHide={() => setShowEditCategoryModel(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Category</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddCategory/>
+          <UpdateCategory editData={selectedCategory}/>
         </Modal.Body>
       </Modal>
 
