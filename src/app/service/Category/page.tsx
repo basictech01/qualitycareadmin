@@ -117,8 +117,8 @@ const CategoryCard = ({ category, onEdit }: { category: any; onEdit: () => void 
       {/* Category Image with Border and Shadow */}
       <div className="position-relative mb-4">
         <div className="rounded-circle p-1 bg-primary-100 shadow-sm mb-2">
-          <Image
-            src={category.image}
+          <img
+            src={category.image_en}
             alt={category.name_en}
             width={120}
             height={120}
