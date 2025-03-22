@@ -161,6 +161,26 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     }
   };
 
+  const handleENImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const src = URL.createObjectURL(e.target.files[0]);
+      setFormData((prev) => ({
+        ...prev,
+        service_image_en_url: src,
+      }));
+    }
+  }
+
+  const handleARImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const src = URL.createObjectURL(e.target.files[0]);
+      setFormData((prev) => ({
+        ...prev,
+        service_image_ar_url: src,
+      }));
+    }
+  }
+
   const handleUpdate= () => {
 
   }
@@ -205,9 +225,6 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       if(!formData.service_image_en_url) {
         throw ERRORS.SERVICE_IMAGE_EN_REQUIRED
       }
-      if(!formData.can_redeem) {
-        throw ERRORS.CAN_REDEEM_REQUIRED
-      }
 
       if(selectedBranches.length === 0) {
         throw ERRORS.BRANCH_REQUIRED
@@ -220,13 +237,13 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       const imageEN = await uploadImage(formData.service_image_en_url)
       const imageAR = await uploadImage(formData.service_image_ar_url)
 
-      const data: ServiceFormData =  {
+      const data: any =  {
         name_en: formData.name_en,
         name_ar: formData.name_ar,
         about_en: formData.about_en,
         about_ar: formData.about_ar,
-        actual_price: formData.actual_price,
-        discounted_price: formData.discounted_price,
+        actual_price: parseInt(formData.actual_price),
+        discounted_price: parseInt(formData.discounted_price),
         category_id: formData.category_id,
         service_image_en_url: imageEN,
         service_image_ar_url: imageAR,
@@ -315,7 +332,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
                   {formData.service_image_en_url ? (
                     <img src={formData.service_image_en_url} className="img-preview" alt="Preview" />
                   ) : (
-                    <input type="file" accept="image/*" onChange={(e) => {}} />
+                    <input type="file" accept="image/*" onChange={handleENImageChange} />
                   )}
                 </div>
               </div>
@@ -326,7 +343,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
                   {formData.service_image_ar_url ? (
                     <img src={formData.service_image_ar_url} className="img-preview" alt="Preview" />
                   ) : (
-                    <input type="file" accept="image/*" onChange={(e) => {}} />
+                    <input type="file" accept="image/*" onChange={handleARImageChange} />
                   )}
                 </div>
               </div>
