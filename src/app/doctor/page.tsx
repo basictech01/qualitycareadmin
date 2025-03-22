@@ -126,7 +126,7 @@ const DoctorCard = ({
   onEdit: () =>void;
 }) => {
   return (
-    <div className="col-xxl-2 col-md-4 user-grid-card">
+    <div className="col-xxl-3 col-md-4 col-sm-6 user-grid-card">
       
       <div className="position-relative border radius-16 overflow-hidden">
           <img

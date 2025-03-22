@@ -255,7 +255,15 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 <span>Loyalty</span>
                             </Link>
                         </li>
-
+                        <li>
+                            <Link
+                                href='/customer'
+                                className={pathname === "/customer" ? "active-page" : ""}
+                            >
+                                <Icon icon='mage:email' className='menu-icon' />
+                                <span>Customer</span>
+                            </Link>
+                        </li>
                         {/* Settings */}
                         <li className='dropdown'>
                             <Link href='/settings'>
