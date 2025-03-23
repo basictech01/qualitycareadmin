@@ -105,10 +105,11 @@ const ServicePage = () => {
 const Service = ({ service, onEdit }: { service: any; onEdit: () => void }) => {
   return (
     <div className="col-xxl-3 col-lg-3 col-md-4 col-sm-6">
-    <div className="card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
+    <div   className=" card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
       {/* Card Header with Image */}
       <div className="position-relative">
         <img
+        style={{ height: '200px' }}
           src={service.service_image_en_url}
           alt={service.name_en}
           className="w-100 h-56 object-fit-cover"

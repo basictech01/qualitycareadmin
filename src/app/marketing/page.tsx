@@ -353,7 +353,9 @@ const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp
     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
   />
+
 </div>
+
     </div>
   </div>
   )
