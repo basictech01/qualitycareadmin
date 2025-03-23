@@ -123,6 +123,7 @@ const CustomerDashboard = () => {
   };
 
   return (
+    <div className="overflow-x-auto">
     <table className="table bordered-table sm-table mb-0">
       <thead>
         <tr>
@@ -168,6 +169,7 @@ const CustomerDashboard = () => {
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 
@@ -335,7 +337,8 @@ interface AppointmentsTableProps {
 // Doctor Appointments Table Component
 const DoctorAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointments }) => {
   return (
-    <div>
+    <div  className="overflow-x-auto">
+      
       <table className="table bordered-table sm-table mb-0">
         <thead>
           <tr>
@@ -377,7 +380,7 @@ const DoctorAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointment
 // Service Appointments Table Component
 const ServiceAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointments }) => {
   return (
-    <div>
+    <div className="overflow-x-auto" >
       <table className="table bordered-table sm-table mb-0">
         <thead>
           <tr>

@@ -162,22 +162,29 @@ const BookingInvoice = () => {
     borderRadius: '3px',
     cursor: 'pointer',
     fontSize: '13px',
-    marginRight: '8px'
+    marginRight: '8px',
+    marginBottom: '8px' // Added for better mobile layout
   });
   
   const tableContainerStyle = {
     height: '300px',
     overflow: 'auto',
     border: '1px solid #e2e8f0',
-    borderRadius: '4px'
+    borderRadius: '4px',
+    width: '100%',
+    position: 'relative', // Added to create a positioning context
+    maxWidth: '100%' // Ensure the container doesn't overflow
   };
   
+  // Modified sticky header style to work better on mobile
   const stickyHeaderStyle = {
     position: 'sticky',
     top: 0,
     backgroundColor: '#f8f9fa',
-    zIndex: 10,
-    boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+    zIndex: 1, // Lower z-index to avoid overlapping with sidebar
+    boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+    width: '100%',
+    left: 0
   };
   
   // Improved heading styles
@@ -193,11 +200,26 @@ const BookingInvoice = () => {
   
   const sectionHeadingContainerStyle = {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'column', // Changed to column for mobile
+    gap: '12px', // Added gap for spacing in column layout
     marginBottom: '16px',
     paddingBottom: '8px',
-    borderBottom: '1px solid #e2e8f0'
+    borderBottom: '1px solid #e2e8f0',
+    width: '100%'
+  };
+  
+  // Media query for desktop
+  const getHeadingContainerStyle = () => {
+    // Check if we're in a browser environment with window object
+    if (typeof window !== 'undefined' && window.innerWidth > 768) {
+      return {
+        ...sectionHeadingContainerStyle,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      };
+    }
+    return sectionHeadingContainerStyle;
   };
   
   const sectionHeadingStyle = (color) => ({
@@ -206,7 +228,8 @@ const BookingInvoice = () => {
     color: color,
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '8px',
+    flexWrap: 'wrap' // Allow wrapping on small screens
   });
   
   const countBadgeStyle = (color) => ({
@@ -233,12 +256,30 @@ const BookingInvoice = () => {
     fontWeight: '500'
   };
   
+  // New responsive styles for table
+  const tableWrapperStyle = {
+    width: '100%',
+    overflowX: 'auto', // Enable horizontal scrolling for tables
+    position: 'relative'
+  };
+
+  const tableStyle = {
+    minWidth: '900px', // Ensure table has minimum width for all columns
+    width: '100%',
+    tableLayout: 'fixed', // Fixed layout for better control
+    borderCollapse: 'collapse'
+  };
+
+  const actionColumnStyle = {
+    whiteSpace: 'nowrap'
+  };
+  
   if (isLoading) {
     return <div className="text-center py-3">Loading invoices...</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-full p-4">
       {/* Main Heading with decorative element */}
       <div style={mainHeadingStyle}>
         Booking Invoices
@@ -254,8 +295,8 @@ const BookingInvoice = () => {
       </div>
       
       {/* Upcoming Bookings Section */}
-      <div className="mb-10">
-        <div style={sectionHeadingContainerStyle}>
+      <div className="mb-10 w-full">
+        <div style={getHeadingContainerStyle()}>
           <div style={sectionHeadingStyle('#3182ce')}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -266,7 +307,7 @@ const BookingInvoice = () => {
               {getFilteredUpcomingBookings().length}
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ color: '#718096', fontSize: '14px' }}>
               {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
@@ -287,7 +328,7 @@ const BookingInvoice = () => {
         </div>
         
         {/* Tabs for Upcoming Bookings */}
-        <div className="mb-3">
+        <div className="mb-3 w-full" style={{ display: 'flex', flexWrap: 'wrap' }}>
           <button
             style={getTabButtonStyle(upcomingActiveTab === 'all')}
             onClick={() => setUpcomingActiveTab('all')}
@@ -309,89 +350,91 @@ const BookingInvoice = () => {
         </div>
         
         {getFilteredUpcomingBookings().length === 0 ? (
-          <div className="text-center py-2">No upcoming bookings found for the selected filter.</div>
+          <div className="text-center py-2 w-full">No upcoming bookings found for the selected filter.</div>
         ) : (
-          <div style={tableContainerStyle}>
-            <table className="table bordered-table sm-table mb-0 w-full">
-              <thead>
-                <tr style={stickyHeaderStyle}>
-                  <th scope="col">Order ID</th>
-                  <th scope="col">Customer Name</th>
-                  <th scope="col">Booking Type</th>
-                  <th scope="col">Date</th>
-                  <th scope="col" className="text-right">Total Amount</th>
-                  <th scope="col" className="text-right">Discount Amount</th>
-                  <th scope="col" className="text-right">VAT (%) & Amount</th>
-                  <th scope="col" className="text-right">Final Total</th>
-                  <th scope="col" className="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getFilteredUpcomingBookings().map((booking) => {
-                  const details = getBookingTypeDetails(booking);
-                  return (
-                    <tr key={`${booking.type}-${booking.id}`}>
-                      <td>{booking.id}</td>
-                      <td>
-                        <div>
-                          <span>{booking.user_full_name}</span>
+          <div style={tableWrapperStyle}>
+            <div style={tableContainerStyle}>
+              <table style={tableStyle} className="table bordered-table sm-table mb-0">
+                <thead>
+                  <tr style={stickyHeaderStyle}>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Booking Type</th>
+                    <th scope="col">Date</th>
+                    <th scope="col" className="text-right">Total Amount</th>
+                    <th scope="col" className="text-right">Discount Amount</th>
+                    <th scope="col" className="text-right">VAT (%) & Amount</th>
+                    <th scope="col" className="text-right">Final Total</th>
+                    <th scope="col" className="text-center" style={actionColumnStyle}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getFilteredUpcomingBookings().map((booking) => {
+                    const details = getBookingTypeDetails(booking);
+                    return (
+                      <tr key={`${booking.type}-${booking.id}`}>
+                        <td>{booking.id}</td>
+                        <td>
                           <div>
-                            <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
+                            <span>{booking.user_full_name}</span>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <span>{details.type}</span>
+                        </td>
+                        <td>
                           <div>
-                            <span style={{ fontSize: '12px', color: '#666' }}>{details.name}</span>
+                            <span>{details.type}</span>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{details.name}</span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>{formatDate(booking.booking_date)}</td>
-                      <td className="text-right">${details.actual_price}</td>
-                      <td className="text-right">${details.discount_amount}</td>
-                      <td className="text-right">
-                        {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
-                      </td>
-                      <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
-                      <td className="text-center">
-                        <button style={{
-                          border: 'none',
-                          background: '#007bff',
-                          color: 'white',
-                          padding: '4px 8px',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          marginRight: '4px'
-                        }}>
-                          Edit
-                        </button>
-                        <button style={{
-                          border: 'none',
-                          background: '#28a745',
-                          color: 'white',
-                          padding: '4px 8px',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          fontSize: '12px'
-                        }}>
-                          Invoice
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td>{formatDate(booking.booking_date)}</td>
+                        <td className="text-right">${details.actual_price}</td>
+                        <td className="text-right">${details.discount_amount}</td>
+                        <td className="text-right">
+                          {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
+                        </td>
+                        <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
+                        <td className="text-center" style={actionColumnStyle}>
+                          <button style={{
+                            border: 'none',
+                            background: '#007bff',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            marginRight: '4px'
+                          }}>
+                            Edit
+                          </button>
+                          <button style={{
+                            border: 'none',
+                            background: '#28a745',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            fontSize: '12px'
+                          }}>
+                            Invoice
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
       
       {/* Completed Bookings Section */}
-      <div>
-        <div style={sectionHeadingContainerStyle}>
+      <div className="w-full">
+        <div style={getHeadingContainerStyle()}>
           <div style={sectionHeadingStyle('#38a169')}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -405,7 +448,8 @@ const BookingInvoice = () => {
           <div style={{ 
             display: 'flex', 
             alignItems: 'center',
-            gap: '12px'
+            gap: '12px',
+            flexWrap: 'wrap'
           }}>
             <div style={{ fontSize: '14px', color: '#718096' }}>
               <span>Total: ${getFilteredCompletedBookings().reduce((total, booking) => 
@@ -428,7 +472,7 @@ const BookingInvoice = () => {
         </div>
         
         {/* Tabs for Completed Bookings */}
-        <div className="mb-3">
+        <div className="mb-3 w-full" style={{ display: 'flex', flexWrap: 'wrap' }}>
           <button
             style={getTabButtonStyle(completedActiveTab === 'all')}
             onClick={() => setCompletedActiveTab('all')}
@@ -450,70 +494,72 @@ const BookingInvoice = () => {
         </div>
         
         {getFilteredCompletedBookings().length === 0 ? (
-          <div className="text-center py-2">No completed bookings found for the selected filter.</div>
+          <div className="text-center py-2 w-full">No completed bookings found for the selected filter.</div>
         ) : (
-          <div style={tableContainerStyle}>
-            <table className="table bordered-table sm-table mb-0 w-full">
-              <thead>
-                <tr style={stickyHeaderStyle}>
-                  <th scope="col">Order ID</th>
-                  <th scope="col">Customer Name</th>
-                  <th scope="col">Booking Type</th>
-                  <th scope="col">Date</th>
-                  <th scope="col" className="text-right">Total Amount</th>
-                  <th scope="col" className="text-right">Discount Amount</th>
-                  <th scope="col" className="text-right">VAT (%) & Amount</th>
-                  <th scope="col" className="text-right">Final Total</th>
-                  <th scope="col" className="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getFilteredCompletedBookings().map((booking) => {
-                  const details = getBookingTypeDetails(booking);
-                  return (
-                    <tr key={`${booking.type}-${booking.id}`}>
-                      <td>{booking.id}</td>
-                      <td>
-                        <div>
-                          <span>{booking.user_full_name}</span>
+          <div style={tableWrapperStyle}>
+            <div style={tableContainerStyle}>
+              <table style={tableStyle} className="table bordered-table sm-table mb-0">
+                <thead>
+                  <tr style={stickyHeaderStyle}>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Booking Type</th>
+                    <th scope="col">Date</th>
+                    <th scope="col" className="text-right">Total Amount</th>
+                    <th scope="col" className="text-right">Discount Amount</th>
+                    <th scope="col" className="text-right">VAT (%) & Amount</th>
+                    <th scope="col" className="text-right">Final Total</th>
+                    <th scope="col" className="text-center" style={actionColumnStyle}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getFilteredCompletedBookings().map((booking) => {
+                    const details = getBookingTypeDetails(booking);
+                    return (
+                      <tr key={`${booking.type}-${booking.id}`}>
+                        <td>{booking.id}</td>
+                        <td>
                           <div>
-                            <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
+                            <span>{booking.user_full_name}</span>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <span>{details.type}</span>
+                        </td>
+                        <td>
                           <div>
-                            <span style={{ fontSize: '12px', color: '#666' }}>{details.name}</span>
+                            <span>{details.type}</span>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{details.name}</span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>{formatDate(booking.booking_date)}</td>
-                      <td className="text-right">${details.actual_price}</td>
-                      <td className="text-right">${details.discount_amount}</td>
-                      <td className="text-right">
-                        {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
-                      </td>
-                      <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
-                      <td className="text-center">
-                        <button style={{
-                          border: 'none',
-                          background: '#28a745',
-                          color: 'white',
-                          padding: '4px 8px',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          fontSize: '12px'
-                        }}>
-                          View Invoice
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td>{formatDate(booking.booking_date)}</td>
+                        <td className="text-right">${details.actual_price}</td>
+                        <td className="text-right">${details.discount_amount}</td>
+                        <td className="text-right">
+                          {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
+                        </td>
+                        <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
+                        <td className="text-center" style={actionColumnStyle}>
+                          <button style={{
+                            border: 'none',
+                            background: '#28a745',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            fontSize: '12px'
+                          }}>
+                            View Invoice
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
