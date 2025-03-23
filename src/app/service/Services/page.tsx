@@ -164,9 +164,9 @@ const Service = ({ service, onEdit }: { service: any; onEdit: () => void }) => {
             className="currency-symbol" 
           />
           <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-    {service.discounted_price}
-  </span>
-</span>
+            {service.discounted_price}
+          </span>
+        </span>
           </div>
           </div>
           <Link

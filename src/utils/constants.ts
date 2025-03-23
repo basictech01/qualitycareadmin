@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://www.kumbhmilan.in"
+export const BACKEND_URL = "http://localhost:3001";
