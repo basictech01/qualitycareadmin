@@ -43,6 +43,11 @@ const DoctorDashboard = () => {
     setShowEditUserModel(true);
   };
 
+  const onSuccessDoctorCreate = (doctor) => {
+   setDoctors((state)=>{return [...state,doctor] })
+   setShowCreateDoctorModel(false)
+  }
+
   return (
     <>
       {/* Create Doctor Modal */}
@@ -55,7 +60,7 @@ const DoctorDashboard = () => {
           <Modal.Title>Register New Doctor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddUserLayer  />
+          <AddUserLayer onSuccess={onSuccessDoctorCreate}  />
         </Modal.Body>
       </Modal>
 
@@ -69,7 +74,7 @@ const DoctorDashboard = () => {
           <Modal.Title>Edit Doctor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddUserLayer doctor={selectedDoctor} />
+          <AddUserLayer onSuccess={onSuccessDoctorCreate} doctor={selectedDoctor} />
         </Modal.Body>
       </Modal>
 
@@ -133,6 +138,11 @@ const DoctorCard = ({
       className="w-100 object-fit-cover"
       style={{ height: "150px" }} 
 />
+<div className="position-absolute top-0 end-0 m-4">
+          <span className="badge bg-primary-600 text-white px-4 py-2 fs-6">
+            Block
+          </span>
+          </div>
         <div className="ps-16 pb-16 pe-16 text-center mt-10">
        
           <h6 className="text-lg mb-0 mt-4">{doctor.name_en}</h6>

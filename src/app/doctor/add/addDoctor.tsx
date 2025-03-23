@@ -31,9 +31,11 @@ interface Branch {
 }
 interface AddUserLayerProps {
   doctor?: Doctor; // Doctor data from API (or undefined)
+  onSuccess: (doctor:Doctor)=>{}
+
 }
 
-const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
+const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
   const [selectedBranches, setSelectedBranches] = useState<SelectedBranch[]>([]);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeRange[]>([]); 
@@ -150,10 +152,11 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor }) => {
           })
         }
       }
-
+      onSuccess(response)
     } catch(e) {
       console.log(e);
     }
+    
   }
 
   return (

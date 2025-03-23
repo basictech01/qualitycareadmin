@@ -125,3 +125,38 @@ export async function uploadImage(url: string): Promise<string> {
 		throw ERRORS.SERVER_ERROR;
 	}
 }
+
+
+
+
+
+export async function del(url: string, options: any = {}) : Promise<any> {
+	try {
+		let token = typeof window !== 'undefined' ? localStorage.getItem('x-access-token') : null;
+		const headers = new Headers(options.headers || {});
+		
+		if (token) {
+			headers.set('x-access-token', token);
+		}
+		headers.set('Content-Type', 'application/json');
+		const updatedOptions: RequestInit = {
+			...options,
+			headers,
+		};
+
+		const response = await fetch(`${BACKEND_URL}${url}`, {
+			method: 'DELETE',
+			...updatedOptions,
+		});
+		const result = await response.json();
+		if (!result.success) {
+			throw new CustomError(result.error.message, result.error.code);
+		}
+		return result.data;
+	} catch (error) {
+		if (error instanceof CustomError) {
+			throw error;
+		}
+		throw ERRORS.SERVER_ERROR
+	}
+}

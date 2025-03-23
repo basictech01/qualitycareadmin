@@ -116,33 +116,20 @@ const AddCategory = () => {
   };
 
   return (
-    <div className="card">
+    <div className="card ">
       <div className="card-header">
         <h6 className="card-title mb-0"> Add Category</h6>
       </div>
       <div className="card-body">
-        <div>
-          <div className="row gy-3">
-            <div className="col-12">
-                <label className="form-label">Category</label>
-              {categoriesLoading ? (
-                <p>Loading categories...</p>
-              ) : (
-                <select 
-                  className="form-control"
-                  value={selectedCategoryId}
-                  onChange={handleCategoryChange}
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name_en}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+                  <div className="col-12">
+          <label className="form-label">Category</label>
+          <select className="form-control">
+            <option value="">Select a category</option>
+            <option value="DENTIST">Dentist</option>
+            <option value="DERMATOLOGIST">Dermatology</option>
+          </select>
 
+        </div>
             <div className="col-12">
               <label className="form-label">Category Name (English)</label>
               <input type="text" name="name_en" className="form-control" value={formData.name_en} onChange={handleChange} required />
@@ -152,7 +139,7 @@ const AddCategory = () => {
               <label className="form-label">Category Name (Arabic)</label>
               <input type="text" name="name_ar" className="form-control" value={formData.name_ar} onChange={handleChange} required />
             </div>
-
+<div className="row">
             <div className="col-md-6">
                   <label className="form-label fw-bold text-neutral-900">
                               English Thumbnail
@@ -251,7 +238,7 @@ const AddCategory = () => {
               
             </div>
             </div>
-
+            </div>
             <div className="col-12">
               <button onClick={handleSubmit} className="btn btn-primary">
                  Add Category
@@ -259,8 +246,9 @@ const AddCategory = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+        
+    
+    
   );
 };
 

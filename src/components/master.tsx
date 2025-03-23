@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { usePathname } from "next/navigation";
 import ThemeToggleButton from "./themetoggle";
 import Link from "next/link";
@@ -13,7 +14,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (typeof window === "undefined") return;
-
+        
         // @ts-ignore
         const handleDropdownClick = (event) => {
             event.preventDefault();
@@ -137,6 +138,39 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 <div className='sidebar-menu-area'>
                     <ul className='sidebar-menu' id='sidebar-menu'>
+                    <li className='dropdown'>
+                            <Link href='/settings'>
+                                <Icon icon='hugeicons:invoice-03' className='menu-icon' />
+                                <span>Settings</span>
+                            </Link>
+                            <ul className='sidebar-submenu'>
+                                <li>
+                                    <Link
+                                        href='/settings/vat'
+                                        className={
+                                            pathname === "/settings/vat" ? "active-page" : ""
+                                        }
+                                    >
+                                        <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
+                                        Vat
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href='/settings/branch'
+                                        className={
+                                            pathname === "/settings/branch" ? "active-page" : ""
+                                        }
+                                    >
+                                        <i className='ri-circle-fill circle-icon text-warning-main w-auto' />
+                                        Branch
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
+
+
+
                         <li className='dropdown'>
                             <Link href='#'>
                                 <Icon
@@ -166,19 +200,8 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <Link
-                                href='/doctor'
-                                className={pathname === "/doctor" ? "active-page" : ""}
-                            >
-                                <Icon icon='mage:email' className='menu-icon' />
-                                <span>Doctor</span>
-                            </Link>
-                        </li>
-                      
-                        {/* Service */}
                         <li className='dropdown'>
-                            <Link href='/settings'>
+                            <Link href='/service'>
                                 <Icon icon='hugeicons:invoice-03' className='menu-icon' />
                                 <span>Service</span>
                             </Link>
@@ -207,6 +230,18 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                                 </li>
                             </ul>
                         </li>
+                        <li>
+                            <Link
+                                href='/doctor'
+                                className={pathname === "/doctor" ? "active-page" : ""}
+                            >
+                                <Icon icon='mage:email' className='menu-icon' />
+                                <span>Doctor</span>
+                            </Link>
+                        </li>
+                      
+                        {/* Service */}
+                      
                         <li>
                             <Link
                                 href='/marketing'
@@ -268,36 +303,7 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                             </Link>
                         </li>
                         {/* Settings */}
-                        <li className='dropdown'>
-                            <Link href='/settings'>
-                                <Icon icon='hugeicons:invoice-03' className='menu-icon' />
-                                <span>Settings</span>
-                            </Link>
-                            <ul className='sidebar-submenu'>
-                                <li>
-                                    <Link
-                                        href='/settings/vat'
-                                        className={
-                                            pathname === "/settings/vat" ? "active-page" : ""
-                                        }
-                                    >
-                                        <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
-                                        Vat
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href='/settings/branch'
-                                        className={
-                                            pathname === "/settings/branch" ? "active-page" : ""
-                                        }
-                                    >
-                                        <i className='ri-circle-fill circle-icon text-warning-main w-auto' />
-                                        Branch
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
+                       
 
                     </ul>
                 </div>

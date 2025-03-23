@@ -1,9 +1,71 @@
 "use client";
 
+import { useState } from "react";
+
+interface NotificationFormData {
+  title_ar: string | null;
+  title_en: string | null;
+  message_ar: string;
+  message_en: string;
+  scheduled_timestamp: string;
+}
+
 const AddNotificationLayer = () => {
+  const [formData, setFormData] = useState<NotificationFormData>({
+    title_ar: null,
+    title_en: null,
+    message_ar: "",
+    message_en: "",
+    scheduled_timestamp: new Date().toISOString(),
+  });
+
+  const handleSubmit = () => {
+    console.log(formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id.replace("-", "_")]: value,
+    });
+  };
+
   return (
-    <div>
-      <form action="#">
+    <div className="card">
+      
+        <div className="mb-20">
+          <label
+            htmlFor="title-en"
+            className="form-label fw-semibold text-primary-light text-sm mb-8"
+          >
+            Title (English)
+          </label>
+          <input
+            type="text"
+            className="form-control radius-8"
+            value={formData.title_en || ""}
+            onChange={handleChange}
+            id="title-en"
+            placeholder="Enter title in English"
+          />
+        </div>
+        <div className="mb-20">
+          <label
+            htmlFor="title-ar"
+            className="form-label fw-semibold text-primary-light text-sm mb-8"
+          >
+            Title (Arabic)
+          </label>
+          <input
+            type="text"
+            className="form-control radius-8"
+            value={formData.title_ar || ""}
+            onChange={handleChange}
+            id="title-ar"
+            placeholder="Enter title in Arabic"
+          />
+        </div>
         <div className="mb-20">
           <label
             htmlFor="message-en"
@@ -14,6 +76,8 @@ const AddNotificationLayer = () => {
           <input
             type="text"
             className="form-control radius-8"
+            value={formData.message_en}
+            onChange={handleChange}
             id="message-en"
             placeholder="Enter message in English"
           />
@@ -29,6 +93,8 @@ const AddNotificationLayer = () => {
           <input
             type="text"
             className="form-control radius-8"
+            value={formData.message_ar}
+            onChange={handleChange}
             id="message-ar"
             placeholder="Enter message in Arabic"
           />
@@ -36,15 +102,17 @@ const AddNotificationLayer = () => {
 
         <div className="mb-20">
           <label
-            htmlFor="schedule-time"
+            htmlFor="scheduled-timestamp"
             className="form-label fw-semibold text-primary-light text-sm mb-8"
           >
             Schedule Time <span className="text-danger-600">*</span>
           </label>
           <input
+            value={formData.scheduled_timestamp}
+            onChange={handleChange}
             type="datetime-local"
             className="form-control radius-8"
-            id="schedule-time"
+            id="scheduled-timestamp"
           />
         </div>
 
@@ -56,13 +124,13 @@ const AddNotificationLayer = () => {
             Cancel
           </button>
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
           >
             Save
           </button>
         </div>
-      </form>
+   
     </div>
   );
 };
