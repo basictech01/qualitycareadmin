@@ -14,6 +14,6 @@ export interface TimeRange {
 
 export interface SelectedBranch {
   id: number;
-  name: string;
-  availableDays: string[];
+  name_en: string;
+  availableDays: number[];
 }

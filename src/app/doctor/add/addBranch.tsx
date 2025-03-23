@@ -6,6 +6,7 @@ import { SelectedBranch } from "@/utils/types";
 interface Branch {
   id: number;
   name_en: string;
+  availableDays: number[];
 }
 
 const BranchSelection: React.FC<{
@@ -14,7 +15,7 @@ const BranchSelection: React.FC<{
   title?: string;
 }> = ({ selectedBranches, setSelectedBranches, title = "Branch Locations" }) => {
   const [loading, setLoading] = useState(false);
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const [branches, setBranches] = useState<SelectedBranch[]>([]);
 
   useEffect(() => {
     const fetchBranches = async () => {
@@ -33,19 +34,19 @@ const BranchSelection: React.FC<{
   }, []);
 
   const addBranchRow = () => {
-    setSelectedBranches([...selectedBranches, { id: 0, name: "", availableDays: [] }]);
+    setSelectedBranches([...selectedBranches, { id: 0, name_en: "", availableDays: [] }]);
   };
 
   const handleBranchChange = (index: number, id: string) => {
     const branch = branches.find((b) => b.id === Number(id));
     if (branch) {
       const updatedBranches = [...selectedBranches];
-      updatedBranches[index] = { ...updatedBranches[index], id: branch.id, name: branch.name_en, availableDays: [] };
+      updatedBranches[index] = { ...updatedBranches[index], id: branch.id, name_en: branch.name_en, availableDays: [] };
       setSelectedBranches(updatedBranches);
     }
   };
 
-  const handleDaySelection = (index: number, day: string, isChecked: boolean) => {
+  const handleDaySelection = (index: number, day: number, isChecked: boolean) => {
     const updatedBranches = selectedBranches.map((branch, i) =>
       i === index
         ? {
@@ -121,26 +122,26 @@ const BranchSelection: React.FC<{
                   <Col md={5}>
                  
                   <Form.Group controlId={`available-days-${index}`} className="mb-3 d-flex justify-content-center align-items-center">
-  <div className="d-flex flex-wrap gap-1 justify-content-center align-items-center">
-    {["M", "T", "W", "T", "F", "S", "S"].map((shortDay, dayIndex) => {
-      const fullDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][dayIndex];
-      const isSelected = branch.availableDays.includes(fullDay);
-      
-      return (
-        <Button 
-          key={fullDay}
-          variant={isSelected ? "primary" : "outline-secondary"}
-          size="sm"
-          onClick={() => handleDaySelection(index, fullDay, !isSelected)}
-          className="rounded-circle d-flex align-items-center justify-content-center"
-          style={{ width: "32px", height: "32px", padding: "0" }}
-        >
-          {shortDay}
-        </Button>
-      );
-    })}
-  </div>
-</Form.Group>
+                    <div className="d-flex flex-wrap gap-1 justify-content-center align-items-center">
+                      {["M", "T", "W", "T", "F", "S", "S"].map((shortDay, dayIndex) => {
+                        const fullDayInt = [1,2,3,4,5,6,7][dayIndex];
+                        const isSelected = branch.availableDays.includes(fullDayInt);
+                        
+                        return (
+                          <Button 
+                            key={fullDayInt}
+                            variant={isSelected ? "primary" : "outline-secondary"}
+                            size="sm"
+                            onClick={() => handleDaySelection(index, fullDayInt, !isSelected)}
+                            className="rounded-circle d-flex align-items-center justify-content-center"
+                            style={{ width: "32px", height: "32px", padding: "0" }}
+                          >
+                            {shortDay}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </Form.Group>
                   </Col>
 
                   <Col md={2} className="d-flex align-items-center justify-content-end">

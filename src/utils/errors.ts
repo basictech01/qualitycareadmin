@@ -50,4 +50,19 @@ export const ERRORS = {
 
     BRANCH_REQUIRED: new CustomError('Branch is required', 40013),
     TIME_SLOT_REQUIRED: new CustomError('Service is required', 40014),
+
+
+    DOCTOR_ABOUT_AR_REQUIRED: new CustomError('Arabic about is required', 50001),
+    DOCTOR_ABOUT_EN_REQUIRED: new CustomError('English about is required', 50002),
+    DOCTOR_ATTENDED_PATIENT_REQUIRED: new CustomError('Attended patient is required', 50003),
+    DOCTOR_SESSION_FEES_REQUIRED: new CustomError('Session fees is required', 50004),
+    DOCTOR_TOTAL_EXPERIENCE_REQUIRED: new CustomError('Total experience is required', 50005),
+    DOCTOR_NAME_AR_REQUIRED: new CustomError('Arabic name is required', 50006),
+    DOCTOR_NAME_EN_REQUIRED: new CustomError('English name is required', 50007),
+    DOCTOR_QUALIFICATION_REQUIRED: new CustomError('Qualification is required', 50008),
+    DOCTOR_LANGUAGES_REQUIRED: new CustomError('Languages is required', 50009),
+    DOCTOR_PHOTO_URL_REQUIRED: new CustomError('Photo url is required', 50010),
+    DOCTOR_BRANCH_REQUIRED: new CustomError('Branch is required', 50011),
+    DOCTOR_TIME_SLOT_REQUIRED: new CustomError('Time slot is required', 50012),
+    
 }

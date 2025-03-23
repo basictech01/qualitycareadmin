@@ -1,57 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Row, Col, Form, FloatingLabel, Badge } from 'react-bootstrap';
 import moment from 'moment';
-
-interface TimeRange {
-  startTime: string;
-  endTime: string;
-}
+import { TimeRange } from '@/utils/types';
 
 interface TimeSlotCreatorProps {
+  selectedTimeSlots:TimeRange[]
   title: string;
-  onTimeRangesChange?: (timeRanges: TimeRange[]) => void;
+  setSelectedTimeSlots: (timeRanges: TimeRange[]) => void;
 }
 
 const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({ 
   title = "Schedule Availability", 
-  onTimeRangesChange 
+  selectedTimeSlots,
+  setSelectedTimeSlots 
 }) => {
   const [timeRanges, setTimeRanges] = useState<TimeRange[]>([
-    { startTime: '09:00', endTime: '17:00' }
+    { start_time: '09:00:00', end_time: '17:00:00' }
   ]);
 
   useEffect(() => {
-    // Notify parent component when timeRanges change
-    onTimeRangesChange && onTimeRangesChange(timeRanges);
-  }, [timeRanges, onTimeRangesChange]);
+    console.log(selectedTimeSlots)
+    createTimeOptions();
+  }, [selectedTimeSlots]);
 
   const handleAddTimeRange = () => {
-    setTimeRanges([...timeRanges, { startTime: '09:00', endTime: '17:00' }]);
+    setSelectedTimeSlots([...selectedTimeSlots, { start_time: '09:00:00', end_time: '17:00:00' }]);
   };
 
   const handleRemoveTimeRange = (index: number) => {
-    const updatedTimeRanges = [...timeRanges];
+    const updatedTimeRanges = [...selectedTimeSlots];
     updatedTimeRanges.splice(index, 1);
-    setTimeRanges(updatedTimeRanges);
+    setSelectedTimeSlots(updatedTimeRanges);
   };
 
   const handleStartTimeChange = (index: number, value: string) => {
-    const updatedTimeRanges = [...timeRanges];
-    updatedTimeRanges[index].startTime = value;
-    setTimeRanges(updatedTimeRanges);
+    const updatedTimeRanges = [...selectedTimeSlots];
+    updatedTimeRanges[index].start_time = value;
+    setSelectedTimeSlots(updatedTimeRanges);
   };
 
   const handleEndTimeChange = (index: number, value: string) => {
-    const updatedTimeRanges = [...timeRanges];
-    updatedTimeRanges[index].endTime = value;
-    setTimeRanges(updatedTimeRanges);
+    const updatedTimeRanges = [...selectedTimeSlots];
+    updatedTimeRanges[index].end_time = value;
+    setSelectedTimeSlots(updatedTimeRanges);
   };
 
   const createTimeOptions = () => {
     const options = [];
     for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        const timeValue = moment().hour(hour).minute(minute).format('HH:mm');
+        const timeValue = moment().hour(hour).minute(minute).second(0).format('HH:mm:ss');
         const timeLabel = moment().hour(hour).minute(minute).format('h:mm A');
         options.push(
           <option key={timeValue} value={timeValue}>
@@ -68,8 +66,8 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
     let totalMinutes = 0;
     
     timeRanges.forEach(range => {
-      const startMoment = moment(range.startTime, 'HH:mm');
-      const endMoment = moment(range.endTime, 'HH:mm');
+      const startMoment = moment(range.start_time, 'HH:mm:ss');
+      const endMoment = moment(range.end_time, 'HH:mm:ss');
       
       if (endMoment.isAfter(startMoment)) {
         const duration = moment.duration(endMoment.diff(startMoment));
@@ -84,7 +82,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
   };
 
   const isValidTimeRange = (range: TimeRange): boolean => {
-    return moment(range.endTime, 'HH:mm').isAfter(moment(range.startTime, 'HH:mm'));
+    return moment(range.end_time, 'HH:mm:ss').isAfter(moment(range.start_time, 'HH:mm:ss'));
   };
 
   return (
@@ -119,13 +117,13 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
             </div>
             
             <div className="time-slots-container">
-              {timeRanges.map((range, index) => (
+              {selectedTimeSlots.map((range, index) => (
                 <div key={index} className={`rounded ${!isValidTimeRange(range) ? 'border-danger' : 'border-light'} mb-2 p-2 bg-white`}>
                   <Row className="align-items-center g-2">
                     <Col md={4}>
                       <FloatingLabel controlId={`start-time-${index}`} label="Start Time">
                         <Form.Select
-                          value={range.startTime}
+                          value={range.start_time}
                           onChange={(e) => handleStartTimeChange(index, e.target.value)}
                           className={!isValidTimeRange(range) ? 'border-danger' : ''}
                         >
@@ -137,7 +135,7 @@ const TimeSlotCreator: React.FC<TimeSlotCreatorProps> = ({
                     <Col md={4}>
                       <FloatingLabel controlId={`end-time-${index}`} label="End Time">
                         <Form.Select
-                          value={range.endTime}
+                          value={range.end_time}
                           onChange={(e) => handleEndTimeChange(index, e.target.value)}
                           className={!isValidTimeRange(range) ? 'border-danger' : ''}
                         >
