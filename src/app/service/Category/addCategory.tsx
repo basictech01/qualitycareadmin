@@ -122,12 +122,18 @@ const AddCategory = () => {
       </div>
       <div className="card-body">
                   <div className="col-12">
-          <label className="form-label">Category</label>
-          <select className="form-control">
-            <option value="">Select a category</option>
-            <option value="DENTIST">Dentist</option>
-            <option value="DERMATOLOGIST">Dermatology</option>
-          </select>
+                  <label className="form-label">Category</label>
+    <select 
+      className="form-control"
+      name="type"
+      onChange={handleChange}
+      value={formData.type}
+    >
+      <option value="">Select a category</option>
+      <option value="DENTIST">Dentist</option>
+      <option value="DERMATOLOGIST">Dermatology</option>
+    </select>
+  
 
         </div>
             <div className="col-12">
@@ -188,7 +194,6 @@ const AddCategory = () => {
                               )}
                             </div>
             </div>
-
             <div className="col-md-6">
             <label className="form-label fw-bold text-neutral-900">
                 Arabic Thumbnail
