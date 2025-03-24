@@ -59,6 +59,7 @@ const BranchSelection: React.FC<{
       const updatedBranches = [...selectedBranches];
       updatedBranches[index] = { ...updatedBranches[index], branch_id: branch.id, name_en: branch.name_en };
       setSelectedBranches(updatedBranches);
+      console.log(updatedBranches)
     }
   };
 

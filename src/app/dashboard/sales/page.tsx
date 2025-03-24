@@ -64,8 +64,8 @@ const ServicesTable: React.FC<ServicesTableProps> = ({ data, totalRevenue }) => 
   
   return (
     <div className="table-responsive" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-      <table className="table table-hover">
-        <thead className="bg-light sticky-top">
+      <table className="table table bordered-table sm-table mb-0 table-hover">
+        <thead className=" sticky-top">
           <tr>
             <th scope="col">Service Name</th>
             <th scope="col">Category</th>
@@ -85,7 +85,7 @@ const ServicesTable: React.FC<ServicesTableProps> = ({ data, totalRevenue }) => 
                   {service.category}
                 </span>
               </td>
-              <td className="text-end">${service.amount.toLocaleString()}</td>
+              <td className="text-end">﷼{service.amount.toLocaleString()}</td>
               <td className="text-end">{service.bookingsCount}</td>
               <td className="text-end">
                 {totalRevenue ? Math.round((service.amount / totalRevenue) * 100) : 0}%
@@ -93,10 +93,10 @@ const ServicesTable: React.FC<ServicesTableProps> = ({ data, totalRevenue }) => 
             </tr>
           ))}
         </tbody>
-        <tfoot className="bg-light sticky-bottom">
+        <tfoot className="sticky-bottom">
           <tr>
             <td colSpan={2} className="fw-bold">Total</td>
-            <td className="text-end fw-bold">${totalRevenue.toLocaleString()}</td>
+            <td className="text-end fw-bold">﷼{totalRevenue.toLocaleString()}</td>
             <td className="text-end fw-bold">{totalBookings}</td>
             <td className="text-end fw-bold">100%</td>
           </tr>
@@ -324,7 +324,7 @@ const ClinicSalesStatistics = () => {
           fontSize: '12px',
         },
         formatter: function (value: number) {
-          return '$' + value.toLocaleString();
+          return '﷼' + value.toLocaleString();
         }
       },
     },
@@ -343,7 +343,7 @@ const ClinicSalesStatistics = () => {
     tooltip: {
       y: {
         formatter: function (val: number) {
-          return "$" + val.toLocaleString();
+          return "﷼" + val.toLocaleString();
         }
       }
     }
@@ -395,21 +395,21 @@ const ClinicSalesStatistics = () => {
             <div className="row g-3 mb-4">
               <SalesCard 
                 title="Total Sales" 
-                value={`$${salesData.totalRevenue.toLocaleString()}`} 
+                value={`﷼${salesData.totalRevenue.toLocaleString()}`} 
                 description="Combined Revenue" 
                 bgColor="bg-primary-50" 
                 textColor="text-primary-600" 
               />
               <SalesCard 
                 title="Completed Bookings" 
-                value={`$${salesData.completedRevenue.toLocaleString()}`} 
+                value={`﷼${salesData.completedRevenue.toLocaleString()}`} 
                 description="From COMPLETED status" 
                 bgColor="bg-success-50" 
                 textColor="text-success-600" 
               />
               <SalesCard 
                 title="Upcoming Bookings" 
-                value={`$${salesData.upcomingRevenue.toLocaleString()}`} 
+                value={`﷼${salesData.upcomingRevenue.toLocaleString()}`} 
                 description="From SCHEDULED status" 
                 bgColor="bg-warning-50" 
                 textColor="text-warning-600" 
@@ -429,12 +429,12 @@ const ClinicSalesStatistics = () => {
                 <ServiceTypeIndicator 
                   color="bg-primary-600" 
                   label="Dental" 
-                  value={`$${salesData.dentalTotal.toLocaleString()}`} 
+                  value={`﷼${salesData.dentalTotal.toLocaleString()}`} 
                 />
                 <ServiceTypeIndicator 
                   color="bg-warning-500" 
                   label="Dermatology" 
-                  value={`$${salesData.dermatTotal.toLocaleString()}`} 
+                  value={`﷼${salesData.dermatTotal.toLocaleString()}`} 
                 />
               </ul>
             </div>

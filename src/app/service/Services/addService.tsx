@@ -233,7 +233,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       );
 
       if (updatedBranches.length > 0) {
-        await put(`/service/branches`, { branches: updatedBranches });
+        await put(`/service/branches`, { branches: selectedBranches, service_id: editData?.id  });
       }
 
       const timeSlots = selectedTimeSlots.map((timeSlot) => ({

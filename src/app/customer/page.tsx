@@ -127,7 +127,7 @@ const CustomerDashboard = () => {
     <table className="table bordered-table sm-table mb-0">
       <thead>
         <tr>
-          <th scope="col">DP</th>
+          <th scope="col"></th>
           <th scope="col">ID</th>
           <th scope="col">Customer</th>
           <th scope="col">Email</th>

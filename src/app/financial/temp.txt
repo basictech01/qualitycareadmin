@@ -24,10 +24,12 @@ interface BaseBooking {
 }
 
 interface DoctorBooking extends BaseBooking {
+ 
   doctor_name_en: string;
 }
 
 interface ServiceBooking extends BaseBooking {
+ 
   service_name_en: string;
 }
 
@@ -42,10 +44,14 @@ interface BookingTypeDetails {
   discount_amount: string;
 }
 
+interface VatData {
+  percentage?: number;
+}
+
 const BookingInvoice: React.FC = () => {
   // State variables with explicit typing
   const [doctorBookings, setDoctorBookings] = useState<DoctorBooking[]>([]);
-  const [vat, setVat] = useState<string | null>(null);
+  const [vat, setVat] = useState<VatData>({});
   const [serviceBookings, setServiceBookings] = useState<ServiceBooking[]>([]);
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
@@ -58,53 +64,26 @@ const BookingInvoice: React.FC = () => {
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
   const [cancelReason, setCancelReason] = useState<string>('');
   
-  // Process bookings with VAT calculation
-  const processBookings = (bookings: DoctorBooking[] | ServiceBooking[]) => {
-    if (vat === null) return bookings;
-    
-    const vatRate = parseFloat(vat);
-    
-    return bookings.map(booking => {
-      const discountedPrice = parseFloat(booking.discounted_price || booking.service_discounted_price || '0');
-      
-      // Calculate VAT amount
-      const vatAmount = (discountedPrice * (vatRate / 100)).toFixed(2);
-      
-      // Calculate final total (after VAT)
-      const finalTotal = (discountedPrice * (1 + vatRate / 100)).toFixed(2);
+  // Fetch data
+  useEffect(() => {
+    fetchBookings();
+    fetchVat();
+  }, []);
 
-      return {
-        ...booking,
-        vat_percentage: vatRate,
-        vat_amount: vatAmount,
-        final_total: finalTotal
-      };
-    });
-  };
+  const fetchVat = async () => {
+    const vat1: VatData = await get('/vat');
+    setVat(vat1);
+  }
 
-  // Fetch bookings and process data
   const fetchBookings = async () => {
     try {
       setIsLoading(true);
-      
-      // Fetch VAT first to ensure it's available for processing
-      const vatResponse = await get('/vat');
-      console.log(vatResponse)
-      setVat(vatResponse.vat);
-      console.log(vat)
-      // Fetch doctor and service bookings
       const doctorData: DoctorBooking[] = await get('/booking/doctor/metric');
       const serviceData: ServiceBooking[] = await get('/booking/service/metric');
-
-      // Process bookings with VAT
-      const processedDoctorData = processBookings(doctorData);
-      const processedServiceData = processBookings(serviceData);
-
-      // Add type to bookings
-      const doctorWithType = processedDoctorData.map(booking => ({ ...booking, type: 'doctor' }));
-      const serviceWithType = processedServiceData.map(booking => ({ ...booking, type: 'service' }));
       
-      // Update state
+      const doctorWithType = doctorData.map(booking => ({ ...booking, type: 'doctor' }));
+      const serviceWithType = serviceData.map(booking => ({ ...booking, type: 'service' }));
+      
       setDoctorBookings(doctorWithType);
       setServiceBookings(serviceWithType);
       
@@ -112,7 +91,6 @@ const BookingInvoice: React.FC = () => {
       
       const currentDate = new Date();
       
-      // Filter completed and upcoming bookings
       const completed = allBookings.filter(booking => 
         isBefore(parseISO(booking.booking_date), currentDate) || 
         booking.booking_status === "COMPLETED"
@@ -132,11 +110,6 @@ const BookingInvoice: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  // Fetch bookings on component mount
-  useEffect(() => {
-    fetchBookings();
-  }, []);
 
   // Function to handle opening the cancel modal
   const handleOpenCancelModal = (bookingId: string) => {
@@ -275,7 +248,7 @@ const BookingInvoice: React.FC = () => {
         formatDate(booking.booking_date),
         details.actual_price,
         details.discount_amount,
-        vat || 0,
+        vat.percentage || 15,
         booking.vat_amount || "0.00",
         booking.final_total || "0.00"
       ];
@@ -300,7 +273,7 @@ const BookingInvoice: React.FC = () => {
   };
 
   // Styled components
-  const getTabButtonStyle = (isActive: boolean): React.CSSProperties => ({
+  const getTabButtonStyle = (isActive:boolean) => ({
     border: 'none',
     background: isActive ? '#007bff' : '#f0f0f0',
     color: isActive ? 'white' : 'black',
@@ -312,7 +285,7 @@ const BookingInvoice: React.FC = () => {
     marginBottom: '8px' // Added for better mobile layout
   });
   
-  const tableContainerStyle: React.CSSProperties = {
+  const tableContainerStyle = {
     height: '300px',
     overflow: 'auto',
     border: '1px solid #e2e8f0',
@@ -323,7 +296,7 @@ const BookingInvoice: React.FC = () => {
   };
   
   // Modified sticky header style to work better on mobile
-  const stickyHeaderStyle: React.CSSProperties = {
+  const stickyHeaderStyle = {
     position: 'sticky',
     top: 0,
     backgroundColor: '#f8f9fa',
@@ -344,7 +317,7 @@ const BookingInvoice: React.FC = () => {
     position: 'relative'
   };
   
-  const sectionHeadingContainerStyle: React.CSSProperties = {
+  const sectionHeadingContainerStyle = {
     display: 'flex',
     flexDirection: 'column', // Changed to column for mobile
     gap: '12px', // Added gap for spacing in column layout
@@ -355,12 +328,12 @@ const BookingInvoice: React.FC = () => {
   };
   
   // Media query for desktop
-  const getHeadingContainerStyle = (): React.CSSProperties => {
+  const getHeadingContainerStyle = () => {
     // Check if we're in a browser environment with window object
     if (typeof window !== 'undefined' && window.innerWidth > 768) {
       return {
         ...sectionHeadingContainerStyle,
-        flexDirection: 'row' as 'row',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
       };
@@ -368,7 +341,7 @@ const BookingInvoice: React.FC = () => {
     return sectionHeadingContainerStyle;
   };
   
-  const sectionHeadingStyle = (color: string): React.CSSProperties => ({
+  const sectionHeadingStyle = (color:string) => ({
     fontSize: '20px',
     fontWeight: '600',
     color: color,
@@ -378,7 +351,7 @@ const BookingInvoice: React.FC = () => {
     flexWrap: 'wrap' // Allow wrapping on small screens
   });
   
-  const countBadgeStyle = (color: string): React.CSSProperties => ({
+  const countBadgeStyle = (color:string) => ({
     backgroundColor: color,
     color: 'white',
     fontSize: '14px',
@@ -388,7 +361,7 @@ const BookingInvoice: React.FC = () => {
     marginLeft: '8px'
   });
   
-  const csvButtonStyle: React.CSSProperties = {
+  const csvButtonStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
@@ -403,25 +376,25 @@ const BookingInvoice: React.FC = () => {
   };
   
   // New responsive styles for table
-  const tableWrapperStyle: React.CSSProperties = {
+  const tableWrapperStyle = {
     width: '100%',
     overflowX: 'auto', // Enable horizontal scrolling for tables
     position: 'relative'
   };
 
-  const tableStyle: React.CSSProperties = {
+  const tableStyle = {
     minWidth: '900px', // Ensure table has minimum width for all columns
     width: '100%',
     tableLayout: 'fixed', // Fixed layout for better control
     borderCollapse: 'collapse'
   };
 
-  const actionColumnStyle: React.CSSProperties = {
+  const actionColumnStyle = {
     whiteSpace: 'nowrap'
   };
   
   // Modal styles
-  const modalOverlayStyle: React.CSSProperties = {
+  const modalOverlayStyle = {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -434,7 +407,7 @@ const BookingInvoice: React.FC = () => {
     zIndex: 1000
   };
   
-  const modalContentStyle: React.CSSProperties = {
+  const modalContentStyle = {
     backgroundColor: 'white',
     borderRadius: '4px',
     padding: '24px',
@@ -443,14 +416,14 @@ const BookingInvoice: React.FC = () => {
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
   };
   
-  const modalHeaderStyle: React.CSSProperties = {
+  const modalHeaderStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '16px'
   };
   
-  const modalFooterStyle: React.CSSProperties = {
+  const modalFooterStyle = {
     display: 'flex',
     justifyContent: 'flex-end',
     marginTop: '24px',
@@ -574,12 +547,12 @@ const BookingInvoice: React.FC = () => {
                           </div>
                         </td>
                         <td>{formatDate(booking.booking_date)}</td>
-                        <td className="text-right">﷼{details.actual_price}</td>
-                        <td className="text-right">﷼{details.discount_amount}</td>
+                        <td className="text-right">${details.actual_price}</td>
+                        <td className="text-right">${details.discount_amount}</td>
                         <td className="text-right">
-                          {booking.vat_percentage || 15}% (﷼{booking.vat_amount || "0.00"})
+                          {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
                         </td>
-                        <td className="text-right font-medium">﷼{booking.final_total || "0.00"}</td>
+                        <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
                         <td className="text-center" style={actionColumnStyle}>
                           <button
                             onClick={() => handleOpenCancelModal(booking.id)}
@@ -627,7 +600,7 @@ const BookingInvoice: React.FC = () => {
           }}>
             <div style={{ fontSize: '14px', color: '#718096' }}>
               <span>Total: ${getFilteredCompletedBookings().reduce((total, booking) => 
-                total + parseFloat(booking.final_total || "0"), 0).toFixed(2)}</span>
+                total + parseFloat(booking.final_total || 0), 0).toFixed(2)}</span>
             </div>
             {getFilteredCompletedBookings().length > 0 && (
               <button 
@@ -683,6 +656,7 @@ const BookingInvoice: React.FC = () => {
                     <th scope="col" className="text-right">Discount Amount</th>
                     <th scope="col" className="text-right">VAT (%) & Amount</th>
                     <th scope="col" className="text-right">Final Total</th>
+                    <th scope="col" className="text-center" style={actionColumnStyle}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -708,13 +682,25 @@ const BookingInvoice: React.FC = () => {
                           </div>
                         </td>
                         <td>{formatDate(booking.booking_date)}</td>
-                        <td className="text-right">﷼{details.actual_price}</td>
-                        <td className="text-right">﷼{details.discount_amount}</td>
+                        <td className="text-right">${details.actual_price}</td>
+                        <td className="text-right">${details.discount_amount}</td>
                         <td className="text-right">
-                          {booking.vat_percentage || 15}% (﷼{booking.vat_amount || "0.00"})
+                          {booking.vat_percentage || 15}% (${booking.vat_amount || "0.00"})
                         </td>
-                        <td className="text-right font-medium">﷼{booking.final_total || "0.00"}</td>
-                       
+                        <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
+                        <td className="text-center" style={actionColumnStyle}>
+                          <button style={{
+                            border: 'none',
+                            background: '#28a745',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            fontSize: '12px'
+                          }}>
+                            View Invoice
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}

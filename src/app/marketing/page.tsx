@@ -293,7 +293,7 @@ const BannerCard: React.FC<BannerCardProps> = ({
   };
 
   // Format timestamps to be human readable
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp:string) => {
     if (!timestamp) return "Not specified";
     
     const date = new Date(timestamp);
