@@ -34,7 +34,7 @@ const ServicePage = () => {
   }, []);
 
   const handleEditService = async (serviceId: number) => {
-    const timeSlots = await get(`/service/time_slot?service_id=${serviceId}`);
+    const timeSlots = await get(`/service/time_slots?service_id=${serviceId}`);
     const branch = await get(`/branch/service?service_id=${serviceId}`);
 
     setServiceBranches(branch)

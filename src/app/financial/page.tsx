@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { format, isAfter, isBefore, parseISO } from 'date-fns';
-import { get } from '@/utils/network';
+import { get, post } from '@/utils/network';
 
 const BookingInvoice = () => {
-  // State variables remain the same
+  // State variables
   const [doctorBookings, setDoctorBookings] = useState([]);
   const [serviceBookings, setServiceBookings] = useState([]);
   const [completedBookings, setCompletedBookings] = useState([]);
@@ -12,45 +12,112 @@ const BookingInvoice = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [upcomingActiveTab, setUpcomingActiveTab] = useState('all');
   const [completedActiveTab, setCompletedActiveTab] = useState('all');
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState(null);
+  const [cancelError, setCancelError] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
   
-  // The useEffect and utility functions remain the same
+  // Fetch data
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const doctorData = await get('/booking/doctor/metric');
-        const serviceData = await get('/booking/service/metric');
-        
-        const doctorWithType = doctorData.map(booking => ({ ...booking, type: 'doctor' }));
-        const serviceWithType = serviceData.map(booking => ({ ...booking, type: 'service' }));
-        
-        setDoctorBookings(doctorWithType);
-        setServiceBookings(serviceWithType);
-        
-        const allBookings = [...doctorWithType, ...serviceWithType];
-        
-        const currentDate = new Date();
-        
-        const completed = allBookings.filter(booking => 
-          isBefore(parseISO(booking.booking_date), currentDate) || 
-          booking.booking_status === "COMPLETED"
-        );
-        
-        const upcoming = allBookings.filter(booking => 
-          isAfter(parseISO(booking.booking_date), currentDate) && 
-          booking.booking_status !== "COMPLETED"
-        );
-        
-        setCompletedBookings(completed);
-        setUpcomingBookings(upcoming);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
+    fetchBookings();
   }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setIsLoading(true);
+      const doctorData = await get('/booking/doctor/metric');
+      const serviceData = await get('/booking/service/metric');
+      
+      const doctorWithType = doctorData.map(booking => ({ ...booking, type: 'doctor' }));
+      const serviceWithType = serviceData.map(booking => ({ ...booking, type: 'service' }));
+      
+      setDoctorBookings(doctorWithType);
+      setServiceBookings(serviceWithType);
+      
+      const allBookings = [...doctorWithType, ...serviceWithType];
+      
+      const currentDate = new Date();
+      
+      const completed = allBookings.filter(booking => 
+        isBefore(parseISO(booking.booking_date), currentDate) || 
+        booking.booking_status === "COMPLETED"
+      );
+      
+      const upcoming = allBookings.filter(booking => 
+        isAfter(parseISO(booking.booking_date), currentDate) && 
+        booking.booking_status !== "COMPLETED" && 
+        booking.booking_status !== "CANCELLED"
+      );
+      
+      setCompletedBookings(completed);
+      setUpcomingBookings(upcoming);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      setIsLoading(false);
+    }
+  };
+
+  // Function to handle opening the cancel modal
+  const handleOpenCancelModal = (bookingId) => {
+    setCancelBookingId(bookingId);
+    setCancelReason('');
+    setCancelError(null);
+    setShowCancelModal(true);
+  };
+
+  // Function to handle closing the cancel modal
+  const handleCloseCancelModal = () => {
+    setShowCancelModal(false);
+    setCancelBookingId(null);
+    setCancelReason('');
+    setCancelError(null);
+  };
+
+  // Function to handle booking cancellation
+  const handleCancelBooking = async () => {
+    if (!cancelBookingId) return;
+    
+    if (!cancelReason.trim()) {
+      setCancelError('Please provide a reason for cancellation');
+      return;
+    }
+    
+    try {
+      setIsCancelling(true);
+      setCancelError(null);
+      
+      // Get the booking type (doctor or service)
+      const booking = upcomingBookings.find(b => b.id === cancelBookingId);
+      if (!booking) {
+        throw new Error('Booking not found');
+      }
+      
+      // API endpoint depends on booking type
+      const endpoint = booking.type === 'doctor' 
+        ? '/booking/doctor/cancel' 
+        : '/booking/service/cancel';
+      
+      // Send cancellation request
+      await post(endpoint, {
+        booking_id: cancelBookingId,
+      });
+      
+      // Close modal and refresh bookings
+      handleCloseCancelModal();
+      fetchBookings();
+      
+      // Show success notification - you might want to add a proper notification system
+      alert('Booking cancelled successfully');
+      
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      setCancelError(error.message || 'Failed to cancel booking');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   const formatDate = (date) => {
     return format(parseISO(date), 'MMM dd, yyyy');
@@ -274,6 +341,43 @@ const BookingInvoice = () => {
     whiteSpace: 'nowrap'
   };
   
+  // Modal styles
+  const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: showCancelModal ? 'flex' : 'none',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000
+  };
+  
+  const modalContentStyle = {
+    backgroundColor: 'white',
+    borderRadius: '4px',
+    padding: '24px',
+    width: '90%',
+    maxWidth: '500px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+  };
+  
+  const modalHeaderStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px'
+  };
+  
+  const modalFooterStyle = {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: '24px',
+    gap: '12px'
+  };
+  
   if (isLoading) {
     return <div className="text-center py-3">Loading invoices...</div>;
   }
@@ -398,28 +502,19 @@ const BookingInvoice = () => {
                         </td>
                         <td className="text-right font-medium">${booking.final_total || "0.00"}</td>
                         <td className="text-center" style={actionColumnStyle}>
-                          <button style={{
-                            border: 'none',
-                            background: '#007bff',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '3px',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                            marginRight: '4px'
-                          }}>
-                            Edit
-                          </button>
-                          <button style={{
-                            border: 'none',
-                            background: '#28a745',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '3px',
-                            cursor: 'pointer',
-                            fontSize: '12px'
-                          }}>
-                            Invoice
+                          <button
+                            onClick={() => handleOpenCancelModal(booking.id)}
+                            style={{
+                              border: 'none',
+                              background: '#007bff',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '3px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              marginRight: '4px'
+                            }}>
+                            Cancel/Refund
                           </button>
                         </td>
                       </tr>
@@ -563,6 +658,87 @@ const BookingInvoice = () => {
           </div>
         )}
       </div>
+      
+      {/* Cancel Booking Modal */}
+      <div style={modalOverlayStyle}>
+        <div style={modalContentStyle}>
+          <div style={modalHeaderStyle}>
+            <h3 style={{ margin: 0, fontSize: '18px' }}>Cancel Booking</h3>
+            <button
+              onClick={handleCloseCancelModal}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '20px'
+              }}
+            >
+              &times;
+            </button>
+          </div>
+          
+          <div>
+            <p>Are you sure you want to cancel this booking? This action cannot be undone.</p>
+            <p style={{ fontSize: '14px', color: '#666', marginTop: '12px' }}>
+              Booking ID: {cancelBookingId}
+            </p>
+            
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                Cancellation Reason:
+              </label>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Please provide a reason for cancellation"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  minHeight: '80px'
+                }}
+              />
+              {cancelError && (
+                <p style={{ color: 'red', fontSize: '14px', marginTop: '8px' }}>
+                  {cancelError}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <div style={modalFooterStyle}>
+            <button
+              onClick={handleCloseCancelModal}
+              style={{
+                background: '#f0f0f0',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '8px 16px',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCancelBooking}
+              disabled={isCancelling}
+              style={{
+                background: '#dc3545',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '8px 16px',
+                color: 'white',
+                cursor: isCancelling ? 'not-allowed' : 'pointer',
+                opacity: isCancelling ? 0.7 : 1
+              }}
+            >
+              {isCancelling ? 'Processing...' : 'Confirm Cancellation'}
+            </button>
+          </div>
+        </div>
+      </div>
+      
     </div>
   );
 };

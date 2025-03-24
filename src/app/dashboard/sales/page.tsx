@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import dynamic from "next/dynamic";
 import { get } from '@/utils/network';
-import BranchEarningsVisualization from './branchEarning';
+
 
 // Dynamically import ApexCharts with no SSR to prevent server-side rendering issues
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {

@@ -5,7 +5,7 @@ import flatpickr from "flatpickr";
 import { Icon } from "@iconify/react";
 import Modal from 'react-bootstrap/Modal';
 import { ERRORS } from "@/utils/errors";
-import { get, post, uploadImage } from "@/utils/network";
+import { del, get, post, uploadImage } from "@/utils/network";
 import Link from "next/link";
 
 interface DatePickerProps {
@@ -36,33 +36,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ id, placeholder, onChange }) =>
     />
   );
 };
-// const deleteBanner = (id) => {
-//   // Show confirmation dialog
-//   if (confirm("Are you sure you want to delete this banner?")) {
-//     // Call your API to delete the banner
-//     get(`/api/banners/${id}`, {
-//       method: 'DELETE',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     })
-//     .then(response => {
-//       if (response.ok) {
-//         // Handle successful deletion, maybe refresh the list or remove from DOM
-//         // For example:
-//         // setBanners(banners.filter(banner => banner.id !== id));
-//         // or
-//         // document.getElementById(`banner-${id}`).remove();
-//       } else {
-//         alert("Error deleting banner");
-//       }
-//     })
-//     .catch(error => {
-//       console.error('Error:', error);
-//       alert("Error deleting banner");
-//     });
-//   }
-// };
+
 
 const AddNewBanner = () => {
 
@@ -298,69 +272,6 @@ const AddNewBanner = () => {
     </>
   );
 }
-
-const BannerCard: React.FC<Banner> = ({ id, link, start_timestamp, end_timestamp, image_ar, image_en }
-) => {
-  
-  const deleteBanner = (id: number) => {
-  }
-    
-
-  return (
-    <div className="col-xxl-3 col-md-4 col-sm-6">
-    <div className="border rounded-lg overflow-hidden shadow-sm">
-      {/* Arabic/Top Image with constrained height */}
-    
-      <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
-  <img
-    src={image_ar}
-    alt=""
-    style={{ 
-      width: '100%', 
-      height: '150px', 
-      objectFit: 'cover',
-      transition: 'transform 0.3s',
-    }}
-    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-  />
-</div>
-      
-      {/* Content Section */}
-      <div className="p-4 bg-white">
-        <p className="mb-3 font-medium truncate">
-          {link}
-        </p>
-        <p className="mb-1 text-gray-600 text-sm">
-          <strong>Start Time:</strong> {start_timestamp}
-        </p>
-        <p className="mb-0 text-gray-600 text-sm">
-          <strong>End Time:</strong> {end_timestamp}
-        </p>
-      </div>
-      
-      {/* English/Bottom Image with constrained height */}
-      <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
-  <img
-    src={image_en}
-    alt=""
-    style={{ 
-      width: '100%', 
-      height: '150px', 
-      objectFit: 'cover',
-      transition: 'transform 0.3s',
-    }}
-    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-  />
-
-</div>
-
-    </div>
-  </div>
-  )
-}
-
 interface Banner {
   id: number;
   link: string;
@@ -369,10 +280,160 @@ interface Banner {
   image_en: string;
   image_ar: string;
 }
+
+interface BannerCardProps extends Banner {
+  deleteBanner: (id: number) => void;
+}
+
+const BannerCard: React.FC<BannerCardProps> = ({ 
+  id, link, start_timestamp, end_timestamp, image_ar, image_en, deleteBanner 
+}) => {
+  const handleDelete = () => {
+    deleteBanner(id);
+  };
+
+  // Format timestamps to be human readable
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "Not specified";
+    
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formattedStartDate = formatDate(start_timestamp);
+  const formattedEndDate = formatDate(end_timestamp);
+  
+  return (
+    <div className="col-xxl-3 col-md-4 col-sm-6">
+      <div className="border rounded-lg overflow-hidden shadow-sm position-relative">
+        {/* Delete button as cross in top right corner */}
+                <button 
+          onClick={handleDelete} 
+          className="position-absolute end-0 top-0 d-flex align-items-center justify-content-center m-2 p-2"
+          style={{ 
+            width: '32px', 
+            height: '32px', 
+            minWidth: 'unset',
+            zIndex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)', // Semi-transparent background
+            border: 'none',
+            borderRadius: '50%', // Makes it perfectly round
+            transition: 'background-color 0.2s ease'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(220, 53, 69, 0.8)'} // Hover effect
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'}
+        >
+          <Icon icon="radix-icons:cross-2" className="text-white" style={{ fontSize: '16px' }} />
+        </button>
+        
+        {/* Arabic/Top Image with constrained height */}
+        <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+          <img
+            src={image_ar}
+            alt=""
+            style={{ 
+              width: '100%', 
+              height: '150px', 
+              objectFit: 'cover',
+              transition: 'transform 0.3s',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          />
+        </div>
+        
+        {/* Content Section */}
+        <div className="p-4 bg-white">
+          <p className="mb-3 font-medium truncate">
+            <a href={link} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800">
+              {link}
+            </a>
+          </p>
+          <div className="mb-1 text-gray-600 text-sm">
+            <span className="font-semibold">Start:</span> {formattedStartDate}
+          </div>
+          <div className="mb-2 text-gray-600 text-sm">
+            <span className="font-semibold">End:</span> {formattedEndDate}
+          </div>
+          
+          {/* Add visual indicator for active/inactive status */}
+          {new Date() >= new Date(start_timestamp) && new Date() <= new Date(end_timestamp) ? (
+            <div className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+              Active
+            </div>
+          ) : new Date() > new Date(end_timestamp) ? (
+            <div className="inline-block px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">
+              Expired
+            </div>
+          ) : (
+            <div className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+              Scheduled
+            </div>
+          )}
+        </div>
+        
+        {/* English/Bottom Image with constrained height */}
+        <div style={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+          <img
+            src={image_en}
+            alt=""
+            style={{ 
+              width: '100%', 
+              height: '150px', 
+              objectFit: 'cover',
+              transition: 'transform 0.3s',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+//****************************************************************** * START OF THE MARKETING PAGE************************************************************************************
+
 export default function MarketingPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
 
   const [newBannerModel, setNewBannerModel] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleDeleteBanner = (id: number) => {
+    // Show confirmation dialog
+    if (confirm("Are you sure you want to delete this banner?")) {
+      // Call your API to delete the banner
+      del(`/banners/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          // Update the local state to remove the deleted banner
+          setBanners(banners.filter(banner => banner.id !== id));
+          // Or trigger a refresh
+          setRefreshTrigger(prev => prev + 1);
+        } else {
+          alert("Error deleting banner");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Error deleting banner");
+      });
+    }
+  };
+
+
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -383,10 +444,11 @@ export default function MarketingPage() {
         return;
       }
       setBanners(banners);
+      console.log(banners)
     }
     fetchBanners();
   }
-  , []);
+  , [refreshTrigger]);
 
 
   return (
@@ -419,7 +481,7 @@ export default function MarketingPage() {
         <div className='row gy-4'>
         {banners.map((banner) => {
           return (
-            <BannerCard key={banner.id} id={banner.id} image_ar={banner.image_ar} image_en={banner.image_en} link={banner.link} start_timestamp={banner.start_timestamp} end_timestamp={banner.start_timestamp}  />
+            <BannerCard key={banner.id} id={banner.id} image_ar={banner.image_ar} image_en={banner.image_en} link={banner.link} start_timestamp={banner.start_timestamp} end_timestamp={banner.start_timestamp}  deleteBanner={handleDeleteBanner}/>
           )
         })}
         </div>
