@@ -9,8 +9,16 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
+interface SalesCardProps {
+  title: string;
+  value: string;
+  description: string;
+  bgColor: string;
+  textColor: string;
+}
+
 // Separate components for better code organization and optimization
-const SalesCard = ({ title, value, description, bgColor, textColor }) => (
+const SalesCard: React.FC<SalesCardProps> = ({ title, value, description, bgColor, textColor }) => (
   <div className="col-md-3">
     <div className={`card ${bgColor} border-0 h-100`}>
       <div className="card-body">
@@ -22,7 +30,13 @@ const SalesCard = ({ title, value, description, bgColor, textColor }) => (
   </div>
 );
 
-const ServiceTypeIndicator = ({ color, label, value }) => (
+interface ServiceTypeIndicatorProps {
+  color: string;
+  label: string;
+  value: string;
+}
+
+const ServiceTypeIndicator: React.FC<ServiceTypeIndicatorProps> = ({ color, label, value }) => (
   <li className="d-flex align-items-center gap-2">
     <span className={`w-12-px h-12-px rounded-circle ${color}`} />
     <span className="text-secondary-light fw-semibold">
@@ -31,8 +45,18 @@ const ServiceTypeIndicator = ({ color, label, value }) => (
     </span>
   </li>
 );
+interface ServiceData {
+  name: string;
+  category: string;
+  amount: number;
+  bookingsCount: number;
+}
+interface ServicesTableProps {
+  data: ServiceData[];
+  totalRevenue: number;
+}
 
-const ServicesTable = ({ data, totalRevenue }) => {
+const ServicesTable: React.FC<ServicesTableProps> = ({ data, totalRevenue }) => {
   const totalBookings = useMemo(() => 
     data.reduce((total, service) => total + service.bookingsCount, 0), 
     [data]
@@ -71,7 +95,7 @@ const ServicesTable = ({ data, totalRevenue }) => {
         </tbody>
         <tfoot className="bg-light sticky-bottom">
           <tr>
-            <td colSpan="2" className="fw-bold">Total</td>
+            <td colSpan={2} className="fw-bold">Total</td>
             <td className="text-end fw-bold">${totalRevenue.toLocaleString()}</td>
             <td className="text-end fw-bold">{totalBookings}</td>
             <td className="text-end fw-bold">100%</td>
@@ -82,7 +106,12 @@ const ServicesTable = ({ data, totalRevenue }) => {
   );
 };
 
-const MonthlySalesChart = ({ options, series }) => (
+interface MonthlySalesChartProps {
+  options: any; // Define more specific types if possible
+  series: any[]; // Define more specific types if possible
+}
+
+const MonthlySalesChart: React.FC<MonthlySalesChartProps> = ({ options, series }) => (
   <div id="monthlySalesChart">
     <ReactApexChart
       options={options}
@@ -107,13 +136,34 @@ const LoadingSpinner = () => (
   </div>
 );
 
+interface SalesData {
+  totalRevenue: number;
+  completedRevenue: number;
+  upcomingRevenue: number;
+  dentalTotal: number;
+  dermatTotal: number;
+  serviceBreakdown: ServiceData[];
+  monthlySales: { month: string; dental: number; dermatology: number }[];
+}
+
+interface BookingData {
+  service_discounted_price: string;
+  service_actual_price: string;
+  booking_status: string;
+  service_category_type: string;
+  service_name_en: string;
+  booking_date: string;
+}
+
+
+
 const ClinicSalesStatistics = () => {
   // State for tracking time period filter
   const [timeFilter, setTimeFilter] = useState('Monthly');
   const [isLoading, setIsLoading] = useState(true);
   
   // State for API data
-  const [salesData, setSalesData] = useState({
+  const [salesData, setSalesData] = useState<SalesData>({
     totalRevenue: 0,
     completedRevenue: 0,
     upcomingRevenue: 0,
@@ -142,7 +192,7 @@ const ClinicSalesStatistics = () => {
   }, [timeFilter]);
   
   // Process API data - memoized to avoid unnecessary recalculations
-  const processAPIData = (bookingsData) => {
+  const processAPIData = (bookingsData: BookingData[]) => {
     // Initialize collections
     let completedRevenue = 0;
     let upcomingRevenue = 0;
@@ -150,10 +200,10 @@ const ClinicSalesStatistics = () => {
     let dermatTotal = 0;
     
     // Service breakdown
-    const serviceMap = {};
+    const serviceMap: { [key: string]: ServiceData }  = {};
     
     // Monthly data for chart
-    const monthlyMap = {};
+    const monthlyMap:  { [key: string]: { month: string; dental: number; dermatology: number } } = {};
     
     // Process each booking
     bookingsData.forEach(booking => {
@@ -273,7 +323,7 @@ const ClinicSalesStatistics = () => {
           colors: '#718096',
           fontSize: '12px',
         },
-        formatter: function (value) {
+        formatter: function (value: number) {
           return '$' + value.toLocaleString();
         }
       },
@@ -292,7 +342,7 @@ const ClinicSalesStatistics = () => {
     },
     tooltip: {
       y: {
-        formatter: function (val) {
+        formatter: function (val: number) {
           return "$" + val.toLocaleString();
         }
       }

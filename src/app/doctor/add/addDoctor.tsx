@@ -3,35 +3,12 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState, useEffect } from "react";
 import BranchSelection from "./addBranch";
 import TimeSlotCreator from "./time-range-selector";
-import { SelectedBranch, TimeRange } from "@/utils/types";
+import { Doctor, SelectedBranch, TimeRange } from "@/utils/types";
 import { ERRORS } from "@/utils/errors";
 import { get, post, put, uploadImage } from "@/utils/network";
-
-interface Doctor {
-  id?: number;
-  name_en: string;
-  name_ar: string;
-  attended_patient: number;
-  session_fees: number;
-  total_experience: number;
-  languages: string;
-  about_en: string;
-  about_ar: string;
-  photo_url: string;
-  qualification: string;
-}
-interface Branch {
-  id: number;
-  name_en: string;
-  name_ar: string;
-  city_en: string;
-  city_ar: string;
-  latitude: string;
-  longitude: string;
-}
 interface AddUserLayerProps {
   doctor?: Doctor; // Doctor data from API (or undefined)
-  onSuccess: (doctor:Doctor)=>{}
+  onSuccess: (doctor:Doctor)=> void
 
 }
 

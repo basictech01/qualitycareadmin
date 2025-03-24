@@ -17,3 +17,17 @@ export interface SelectedBranch {
   name_en: string;
   availableDays: number[];
 }
+
+export interface Doctor {
+  id?: number;
+  name_en: string;
+  name_ar: string;
+  attended_patient: number;
+  session_fees: number;
+  total_experience: number;
+  languages: string;
+  about_en: string;
+  photo_url: string;
+  about_ar: string;
+  qualification: string;
+}

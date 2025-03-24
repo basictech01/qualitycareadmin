@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Link from "next/link";
 import Modal from "react-bootstrap/Modal";
 import AddUserLayer from "./add/addDoctor";
 import { get } from "@/utils/network";
+import { Doctor } from "@/utils/types";
 
 const DoctorDashboard = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
@@ -30,7 +30,7 @@ const DoctorDashboard = () => {
     fetchDoctors();
   }, []);
 
-  const handleEditDoctor = async (doctorId: any) => {
+  const handleEditDoctor = async (doctorId: Doctor) => {
     const doctorToEdit = doctors.find((doctor) => doctor.id === doctorId);
 
     if (!doctorToEdit) {
@@ -46,13 +46,12 @@ const DoctorDashboard = () => {
     console.log("Doctors:", selectedDoctor); // Debugging log
   }, [selectedDoctor]);[]
 
-  const onSuccessDoctorCreate = (doctor) => {
+  const onSuccessDoctorCreate = (doctor: Doctor) => {
    setDoctors((state)=>{return [...state,doctor] })
    setShowCreateDoctorModel(false)
   }
 
-  const onSuccessDoctorEdit = (doctor) => {
-    console.log("editied" ,doctor)
+  const onSuccessDoctorEdit = (doctor: Doctor) => {
     setDoctors((state)=>{return state.map((d)=>d.id===doctor.id ? doctor : d)})
     setShowEditUserModel(false)
   }
