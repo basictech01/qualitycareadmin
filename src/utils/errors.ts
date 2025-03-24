@@ -64,5 +64,13 @@ export const ERRORS = {
     DOCTOR_PHOTO_URL_REQUIRED: new CustomError('Photo url is required', 50010),
     DOCTOR_BRANCH_REQUIRED: new CustomError('Branch is required', 50011),
     DOCTOR_TIME_SLOT_REQUIRED: new CustomError('Time slot is required', 50012),
+
+
+    NOTIFICATION_MESSAGE_AR_REQUIRED: new CustomError('Arabic message is required', 60001),
+    NOTIFICATION_MESSAGE_EN_REQUIRED: new CustomError('English message is required', 60002),
+    NOTIFICATION_SCHEDULED_TIMESTAMP_REQUIRED: new CustomError('Scheduled timestamp is required', 60003),
+    NOTIFICATION_TITLE_AR_REQUIRED: new CustomError('Arabic title is required', 60004),
+    NOTIFICATION_TITLE_EN_REQUIRED: new CustomError('English title is required', 60005),
+    
     
 }

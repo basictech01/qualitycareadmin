@@ -5,7 +5,7 @@ import BranchSelection from "./addBranch";
 import TimeSlotCreator from "./time-range-selector";
 import { SelectedBranch, TimeRange } from "@/utils/types";
 import { ERRORS } from "@/utils/errors";
-import { get, post, uploadImage } from "@/utils/network";
+import { get, post, put, uploadImage } from "@/utils/network";
 
 interface Doctor {
   id?: number;
@@ -35,6 +35,12 @@ interface AddUserLayerProps {
 
 }
 
+interface OldData {
+  doctor?: Doctor;
+  selectedBranches?: SelectedBranch[];
+  timeSlots?: TimeRange[];
+}
+
 function constructDayMap(arr: number[]): string {
   let result = '';
   for (let i = 1; i <= 7; i++) {
@@ -52,7 +58,8 @@ function constructAvailableDays(binaryString: string): number[] {
 const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
   const [selectedBranches, setSelectedBranches] = useState<SelectedBranch[]>([]);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>("");
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeRange[]>([]); 
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<TimeRange[]>([]);
+  const [oldData, setOldData] = useState<OldData >({});
   const [formData, setFormData] = useState<Doctor>({
     id: undefined,
     name_en: "",
@@ -94,7 +101,6 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
     try {
       const branches = await get(`/doctor/branches?doctor_id=${doctorID}`);
       const timeSlots = await get(`/doctor/time-slots?doctor_id=${doctorID}`);
-      console.log(branches, timeSlots);
       const selected_branches = branches.map((branch: any): SelectedBranch => {
         const availableDays = constructAvailableDays(branch.day_map);
         return {
@@ -103,9 +109,13 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
           availableDays: availableDays,
         }
       });
-      console.log(selected_branches);
-      setSelectedBranches(branches);
+      setSelectedBranches(selected_branches);
       setSelectedTimeSlots(timeSlots);
+      setOldData({
+        doctor: doctor,
+        selectedBranches: selected_branches,
+        timeSlots: timeSlots,
+      });
     }
     catch(e) {
       console.log(e);
@@ -138,8 +148,61 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
   }
 
   const handleUpdate = async () => {
+    if(!doctor) {
+      return;
+    }
     try {
-
+      const data: any = {}
+      if(formData.about_ar && formData.about_en != doctor?.about_en) {
+        data.about_ar = formData.about_ar;
+      }
+      if(formData.about_en && formData.about_en != doctor?.about_en) {
+        data.about_en = formData.about_en;
+      }
+      if(formData.attended_patient && formData.attended_patient != doctor?.attended_patient) {
+        data.attended_patient = formData.attended_patient;
+      }
+      if(formData.session_fees && formData.session_fees != doctor?.session_fees) {
+        data.session_fees = formData.session_fees;
+      }
+      if(formData.total_experience && formData.total_experience != doctor?.total_experience) {
+        data.total_experience = formData.total_experience;
+      }
+      if(formData.name_ar && formData.name_ar != doctor?.name_ar) {
+        data.name_ar = formData.name_ar;
+      }
+      if(formData.name_en && formData.name_en != doctor?.name_en) {
+        data.name_en = formData.name_en;
+      }
+      if(formData.qualification && formData.qualification != doctor?.qualification) {
+        data.qualification = formData.qualification;
+      }
+      if(formData.languages && formData.languages != doctor?.languages) {
+        data.languages = formData.languages;
+      }
+      if(formData.photo_url && formData.photo_url != doctor?.photo_url) {
+        const imageURL = await uploadImage(formData.photo_url);
+        data.photo_url = imageURL;
+      }
+      let newDoctor = doctor;
+      if (Object.keys(data).length > 0) {
+        newDoctor = await put(`/doctor/${doctor?.id}`, data);
+      }
+      
+      if (JSON.stringify(oldData.selectedBranches) !== JSON.stringify(selectedBranches)) {
+          const branches = selectedBranches.map(branch => {
+          const day_map = constructDayMap(branch.availableDays);
+          return {
+          branch_id: branch.id,
+          day_map: day_map
+          };
+        });
+        await put(`/doctor/branches/${doctor?.id}`, { branches });
+      }
+      if (JSON.stringify(oldData.timeSlots) !== JSON.stringify(selectedTimeSlots)) {
+        await put(`/doctor/time-slots/${doctor?.id}`, { time_slots: selectedTimeSlots });
+      }
+      onSuccess(newDoctor)
     } catch(e) {
       console.log(e);
     }

@@ -7,6 +7,7 @@ import { ERRORS } from "@/utils/errors";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { time } from "console";
 import { max } from "moment";
+import { on } from "events";
 
 // Define interfaces
 interface Category {
@@ -177,40 +178,45 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     //     service_image_en_url: z.string(),
     //     service_image_ar_url: z.string(),
     //     can_redeem: z.boolean().default(false)
+    console.log('hi')
+    console.log('editData',editData)
+    console.log('formData',formData)
     try {
       const data: any = {}
-      if(!formData.name_en && formData.name_en != editData?.name_en) {
+      if(formData.name_en && formData.name_en != editData?.name_en) {
         data.name_en = formData.name_en
       }
-      if(!formData.name_ar && formData.name_ar != editData?.name_ar) {
+      if(formData.name_ar && formData.name_ar != editData?.name_ar) {
         data.name_ar = formData.name_ar
       }
-      if(!formData.about_ar && formData.about_ar != editData?.about_ar) {
+      if(formData.about_ar && formData.about_ar != editData?.about_ar) {
         data.about_ar = formData.about_ar
       }
-      if(!formData.about_en && formData.about_en != editData?.about_en) {
+      if(formData.about_en && formData.about_en != editData?.about_en) {
         data.about_en = formData.about_en
       }
-      if(!formData.actual_price && formData.actual_price != editData?.actual_price) {
+      if(formData.actual_price && formData.actual_price != editData?.actual_price) {
         data.actual_price = parseInt(formData.actual_price)
       }
-      if(!formData.discounted_price && formData.discounted_price != editData?.discounted_price) {
+      if(formData.discounted_price && formData.discounted_price != editData?.discounted_price) {
         data.discounted_price = parseInt(formData.discounted_price)
       }
       if(formData.category_id < 0 && formData.category_id != editData?.category_id) {
         data.category_id = formData
       }
-      if(!formData.service_image_ar_url && formData.service_image_ar_url != editData?.service_image_ar_url) {
+      if(formData.service_image_ar_url && formData.service_image_ar_url != editData?.service_image_ar_url) {
         const imageAR = await uploadImage(formData.service_image_ar_url)
         data.service_image_ar_url = imageAR
       }
-      if(!formData.service_image_en_url && formData.service_image_en_url != editData?.service_image_en_url) {
+      if(formData.service_image_en_url && formData.service_image_en_url != editData?.service_image_en_url) {
         const imageEN = await uploadImage(formData.service_image_en_url)
         data.service_image_en_url = imageEN
       }
       if(formData.can_redeem != editData?.can_redeem) {
         data.can_redeem = formData.can_redeem
       }
+      console.log('hi',data)
+      const service = editData
       if(Object.keys(data).length !== 0) {
         await put(`/service/${editData?.id}`, data)
       }

@@ -38,14 +38,23 @@ const DoctorDashboard = () => {
       return;
     }
 
-    console.log("Editing Doctor:", doctorToEdit); // Debugging log
     setSelectedDoctor(doctorToEdit);
     setShowEditUserModel(true);
   };
 
+  useEffect(() => {
+    console.log("Doctors:", selectedDoctor); // Debugging log
+  }, [selectedDoctor]);[]
+
   const onSuccessDoctorCreate = (doctor) => {
    setDoctors((state)=>{return [...state,doctor] })
    setShowCreateDoctorModel(false)
+  }
+
+  const onSuccessDoctorEdit = (doctor) => {
+    console.log("editied" ,doctor)
+    setDoctors((state)=>{return state.map((d)=>d.id===doctor.id ? doctor : d)})
+    setShowEditUserModel(false)
   }
 
   return (
@@ -74,7 +83,7 @@ const DoctorDashboard = () => {
           <Modal.Title>Edit Doctor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddUserLayer onSuccess={onSuccessDoctorCreate} doctor={selectedDoctor} />
+          <AddUserLayer onSuccess={onSuccessDoctorEdit} doctor={selectedDoctor} />
         </Modal.Body>
       </Modal>
 
@@ -133,12 +142,12 @@ const DoctorCard = ({
       
       <div className="position-relative border radius-16 overflow-hidden">
           <img
-              src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
-              alt={doctor.name_en}
-              className="w-100 object-fit-cover"
-              style={{ height: "150px" }} 
-        />
-        <div className="position-absolute top-0 end-0 m-4">
+          src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
+          alt={doctor.name_en}
+          className="w-100 object-fit-cover"
+          style={{ height: "150px" }} 
+    />
+    <div className="position-absolute top-0 end-0 m-4">
           <span className="badge bg-primary-600 text-white px-4 py-2 fs-6">
             Block
           </span>
@@ -161,16 +170,12 @@ const DoctorCard = ({
              
             </div>
           </div>
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onEdit();
-            }}
+          <div
+            onClick={onEdit}
             className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
           >
             Edit Profile
-          </Link>
+          </div>
         </div>
       </div>
     </div>

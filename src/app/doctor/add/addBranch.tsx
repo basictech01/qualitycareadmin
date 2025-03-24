@@ -58,7 +58,6 @@ const BranchSelection: React.FC<{
         : branch
     );
     setSelectedBranches(updatedBranches);
-    console.log(updatedBranches)
   };
 
   const removeBranch = (index: number) => {
@@ -126,7 +125,7 @@ const BranchSelection: React.FC<{
                     <div className="d-flex flex-wrap gap-1 justify-content-center align-items-center">
                       {["M", "T", "W", "T", "F", "S", "S"].map((shortDay, dayIndex) => {
                         const fullDay = [1,2,3,4,5,6,7][dayIndex];
-                        const isSelected = branch.availableDays.includes(fullDay);
+                        const isSelected = branch.availableDays?.includes(fullDay);
                         
                         return (
                           <Button 

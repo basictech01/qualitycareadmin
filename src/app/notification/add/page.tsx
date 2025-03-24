@@ -1,5 +1,7 @@
 "use client";
 
+import { ERRORS } from "@/utils/errors";
+import { post } from "@/utils/network";
 import { useState } from "react";
 
 interface NotificationFormData {
@@ -20,7 +22,28 @@ const AddNotificationLayer = () => {
   });
 
   const handleSubmit = () => {
-    console.log(formData);
+    try {
+      if(!formData.message_ar) {
+        throw ERRORS.NOTIFICATION_MESSAGE_AR_REQUIRED;
+      }
+      if(!formData.message_en) {
+        throw ERRORS.NOTIFICATION_MESSAGE_EN_REQUIRED;
+      }
+      if(!formData.scheduled_timestamp) {
+        throw ERRORS.NOTIFICATION_SCHEDULED_TIMESTAMP_REQUIRED;
+      }
+      if(!formData.title_ar) {
+        throw ERRORS.NOTIFICATION_TITLE_AR_REQUIRED;
+      }
+      if(!formData.title_en) {
+        throw ERRORS.NOTIFICATION_TITLE_EN_REQUIRED;
+      }
+      formData.scheduled_timestamp = new Date(formData.scheduled_timestamp).toISOString();
+      post("/notification", formData);
+    } catch (err) {
+      console.error(err);
+
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

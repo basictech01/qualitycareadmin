@@ -20,12 +20,10 @@ const Dashboard: React.FC = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const data = await get("/notification");
-      console.log("Fetched Notifications:", data);
+      const data = await get("/notification/all");
       setNotifications(Array.isArray(data) ? data : []);
       setError(null);
     } catch (err) {
-      console.error("Fetching error:", err);
       setError("Failed to load notifications");
     } finally {
       setLoading(false);
@@ -41,7 +39,7 @@ const Dashboard: React.FC = () => {
     const [showCreateNotification, setShowCreateNotificationModel ] = useState(false);
     return (
       <>
-      <Modal show={showCreateNotification} fullscreen onHide={() => setShowCreateNotificationModel(false)}>
+      <Modal show={showCreateNotification} size="lg" onHide={() => setShowCreateNotificationModel(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add New Notification </Modal.Title>
         </Modal.Header>
