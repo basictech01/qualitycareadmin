@@ -410,23 +410,19 @@ export default function MarketingPage() {
     // Show confirmation dialog
     if (confirm("Are you sure you want to delete this banner?")) {
       // Call your API to delete the banner
-      del(`/banners/${id}`, {
+      del(`/banner/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      .then(response => {
-        if (response.ok) {
+      .then(()=> {
+         
           // Update the local state to remove the deleted banner
           setBanners(banners.filter(banner => banner.id !== id));
           // Or trigger a refresh
           setRefreshTrigger(prev => prev + 1);
-        } else {
-          alert("Error deleting banner");
-        }
-      })
-      .catch(error => {
+        }).catch(error => {
         console.error('Error:', error);
         alert("Error deleting banner");
       });

@@ -6,6 +6,7 @@ import { get, post } from '@/utils/network';
 const BookingInvoice = () => {
   // State variables
   const [doctorBookings, setDoctorBookings] = useState([]);
+  const [vat, setVat] = useState([]);
   const [serviceBookings, setServiceBookings] = useState([]);
   const [completedBookings, setCompletedBookings] = useState([]);
   const [upcomingBookings, setUpcomingBookings] = useState([]);
@@ -21,8 +22,15 @@ const BookingInvoice = () => {
   // Fetch data
   useEffect(() => {
     fetchBookings();
+      fetchVat();
   }, []);
 
+  const fetchVat = async ()=>{
+    const vat1 = await get('/vat');
+  
+    setVat(vat1);
+
+  }
   const fetchBookings = async () => {
     try {
       setIsLoading(true);
@@ -196,7 +204,7 @@ const BookingInvoice = () => {
         formatDate(booking.booking_date),
         details.actual_price,
         details.discount_amount,
-        booking.vat_percentage || 15,
+        vat || 15,
         booking.vat_amount || "0.00",
         booking.final_total || "0.00"
       ];
