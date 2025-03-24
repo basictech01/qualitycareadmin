@@ -138,12 +138,11 @@ const BranchSelection: React.FC<{
                             style={{ width: "32px", height: "32px", padding: "0" }}
                           >
                             {shortDay}
-                          </Button>
-                         
-                  );
-                })}
-              </div>
-</Form.Group>
+                          </Button>    
+                            );
+                          })}
+                    </div>
+                  </Form.Group>
                   </Col>
 
                   <Col md={2} className="d-flex align-items-center justify-content-end">

@@ -5,7 +5,7 @@ import BranchSelection from "./addBranch";
 import TimeSlotCreator from "./time-range-selector";
 import { SelectedBranch, TimeRange } from "@/utils/types";
 import { ERRORS } from "@/utils/errors";
-import { post, uploadImage } from "@/utils/network";
+import { get, post, uploadImage } from "@/utils/network";
 
 interface Doctor {
   id?: number;
@@ -34,6 +34,20 @@ interface AddUserLayerProps {
   onSuccess: (doctor:Doctor)=>{}
 
 }
+
+function constructDayMap(arr: number[]): string {
+  let result = '';
+  for (let i = 1; i <= 7; i++) {
+      result += arr.includes(i) ? '1' : '0';
+  }
+  return result;
+}
+
+
+function constructAvailableDays(binaryString: string): number[] {
+  return [...binaryString].map((bit, index) => bit === '1' ? index + 1 : -1).filter(index => index !== -1);
+}
+
 
 const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
   const [selectedBranches, setSelectedBranches] = useState<SelectedBranch[]>([]);
@@ -71,8 +85,32 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
       });
 
       setImagePreviewUrl(doctor.photo_url || "");
+      console.log(doctor);
+      fetchBranchesAndTimeSlots(doctor.id ?? 0);
     }
   }, [doctor]);
+
+  const fetchBranchesAndTimeSlots = async (doctorID: number) => {
+    try {
+      const branches = await get(`/doctor/branches?doctor_id=${doctorID}`);
+      const timeSlots = await get(`/doctor/time-slots?doctor_id=${doctorID}`);
+      console.log(branches, timeSlots);
+      const selected_branches = branches.map((branch: any): SelectedBranch => {
+        const availableDays = constructAvailableDays(branch.day_map);
+        return {
+          id: branch.id,
+          name_en: branch.name_en,
+          availableDays: availableDays,
+        }
+      });
+      console.log(selected_branches);
+      setSelectedBranches(branches);
+      setSelectedTimeSlots(timeSlots);
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -92,6 +130,22 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
   };
 
   const handleSubmit = async () => {
+    if(doctor) {
+      handleUpdate()
+    } else {
+      handleCreate()
+    }
+  }
+
+  const handleUpdate = async () => {
+    try {
+
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  const handleCreate = async () => {
     try {
       if(!formData.about_ar) {
         throw ERRORS.DOCTOR_ABOUT_AR_REQUIRED;
@@ -136,27 +190,26 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
       }
       const response = await post("/doctor", data);
       const doctorID = response.id
-      for (const timeSlot of selectedTimeSlots) {
-        await post('/doctor/time-slot', {
+      await post('/doctor/time-slots', {
+        doctor_id: doctorID,
+        time_slots: selectedTimeSlots,
+      })
+      const branches = selectedBranches.map(branch => {
+        const day_map = constructDayMap(branch.availableDays)
+        return ({
+        branch_id: branch.id,
+        day_map: day_map
+      })})
+      for(const branch of branches) {
+        await post('/doctor/branches', {
           doctor_id: doctorID,
-          start_time: timeSlot.start_time,
-          end_time: timeSlot.end_time,
+          branches: branches,
         })
-      }
-      for (const branch of selectedBranches) {
-        for(const day of branch.availableDays) {
-          await post('/doctor/branch', {
-            doctor_id: doctorID,
-            branch_id: branch.id,
-            day: day,
-          })
-        }
       }
       onSuccess(response)
     } catch(e) {
       console.log(e);
     }
-    
   }
 
   return (

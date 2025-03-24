@@ -1,10 +1,12 @@
-import { get, post, uploadImage } from "@/utils/network";
+import { get, post, put, uploadImage } from "@/utils/network";
 import { useEffect, useState } from "react";
 import TimeSlotCreator from "../time-range-selector";
 import BranchSelection from "./addBranch";
 import { TimeRange } from "@/utils/types";
 import { ERRORS } from "@/utils/errors";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { time } from "console";
+import { max } from "moment";
 
 // Define interfaces
 interface Category {
@@ -38,7 +40,7 @@ interface Service {
   discounted_price: string;
   service_image_en_url: string;
   service_image_ar_url: string;
-  can_redeem: number;
+  can_redeem: boolean;
 }
 
 interface ServiceFormData {
@@ -107,7 +109,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
         about_ar: editData.about_ar,
         actual_price: editData.actual_price,
         discounted_price: editData.discounted_price,
-        can_redeem: editData.can_redeem === 1,
+        can_redeem: editData.can_redeem,
         service_image_en_url: editData.service_image_en_url,
         service_image_ar_url: editData.service_image_ar_url,
 
@@ -162,28 +164,88 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     }
   };
 
-  const handleENImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const src = URL.createObjectURL(e.target.files[0]);
-      setFormData((prev) => ({
-        ...prev,
-        service_image_en_url: src,
-      }));
+
+  const handleUpdate= async () => {
+    //      name_en: z.string(),
+    //     name_ar: z.string(),
+    //     category_id: z.number(),
+    //     about_en: z.string(),
+    //     about_ar: z.string(),
+    //     actual_price: z.number(),
+    //     discounted_price: z.number(),
+    //     category_id: z.integer(),
+    //     service_image_en_url: z.string(),
+    //     service_image_ar_url: z.string(),
+    //     can_redeem: z.boolean().default(false)
+    try {
+      const data: any = {}
+      if(!formData.name_en && formData.name_en != editData?.name_en) {
+        data.name_en = formData.name_en
+      }
+      if(!formData.name_ar && formData.name_ar != editData?.name_ar) {
+        data.name_ar = formData.name_ar
+      }
+      if(!formData.about_ar && formData.about_ar != editData?.about_ar) {
+        data.about_ar = formData.about_ar
+      }
+      if(!formData.about_en && formData.about_en != editData?.about_en) {
+        data.about_en = formData.about_en
+      }
+      if(!formData.actual_price && formData.actual_price != editData?.actual_price) {
+        data.actual_price = parseInt(formData.actual_price)
+      }
+      if(!formData.discounted_price && formData.discounted_price != editData?.discounted_price) {
+        data.discounted_price = parseInt(formData.discounted_price)
+      }
+      if(formData.category_id < 0 && formData.category_id != editData?.category_id) {
+        data.category_id = formData
+      }
+      if(!formData.service_image_ar_url && formData.service_image_ar_url != editData?.service_image_ar_url) {
+        const imageAR = await uploadImage(formData.service_image_ar_url)
+        data.service_image_ar_url = imageAR
+      }
+      if(!formData.service_image_en_url && formData.service_image_en_url != editData?.service_image_en_url) {
+        const imageEN = await uploadImage(formData.service_image_en_url)
+        data.service_image_en_url = imageEN
+      }
+      if(formData.can_redeem != editData?.can_redeem) {
+        data.can_redeem = formData.can_redeem
+      }
+      if(Object.keys(data).length !== 0) {
+        await put(`/service/${editData?.id}`, data)
+      }
+
+      const branches = selectedBranches.map((branch) => ({
+        branch_id: branch.branch_id,
+        maximum_booking_per_slot: branch.maximum_booking_per_slot
+      }))
+      const updatedBranches = branches.filter(branch => 
+        !serviceBranches?.some(serviceBranch => 
+          serviceBranch.branch_id === branch.branch_id && 
+          serviceBranch.maximum_booking_per_slot === branch.maximum_booking_per_slot
+        )
+      );
+
+      if (updatedBranches.length > 0) {
+        await put(`/service/branches`, { branches: updatedBranches });
+      }
+
+      const timeSlots = selectedTimeSlots.map((timeSlot) => ({
+        start_time: timeSlot.start_time,
+        end_time: timeSlot.end_time
+      }))
+      const updatedTimeSlots = timeSlots.filter(timeSlot =>
+        !serviceTimeSlots?.some(serviceTimeSlot =>
+          serviceTimeSlot.start_time === timeSlot.start_time &&
+          serviceTimeSlot.end_time === timeSlot.end_time
+        )
+      );
+      if (updatedTimeSlots.length > 0) {
+        await put(`/service/time_slots`, { time_slots: updatedTimeSlots });
+      }
+    } catch (error) {
+      console.error("Error updating service:", error);
     }
-  }
-
-  const handleARImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const src = URL.createObjectURL(e.target.files[0]);
-      setFormData((prev) => ({
-        ...prev,
-        service_image_ar_url: src,
-      }));
-    }
-  }
-
-  const handleUpdate= () => {
-
   }
 
   
@@ -276,25 +338,23 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       }
       const response = await post("/service", data)
       const serviceID = response.id
-
-      for(const timeSlot of selectedTimeSlots) {
-        await post(`/service/time_slot`, 
-          {
-            service_id: serviceID,
-            start_time: timeSlot.start_time,
-            end_time: timeSlot.end_time
-          }
-        )
-      }
-      for(const branch of selectedBranches) {
-        await post(`/service/branch`, 
-          {
-            service_id: serviceID,
-            branch_id: branch.branch_id,
-            maximum_booking_per_slot: branch.maximum_booking_per_slot
-          }
-        )
-      }
+      selectedTimeSlots
+      await post(`/service/time_slots`, 
+        {
+          service_id: serviceID,
+          time_slots: selectedTimeSlots
+        }
+      )
+      const branches = selectedBranches.map((branch) => ({
+        branch_id: branch.branch_id,
+        maximum_booking_per_slot: branch.maximum_booking_per_slot
+      }))
+      await post(`/service/branches`,
+        {
+          service_id: serviceID,
+          branches: branches
+        }
+      )
     } catch (error) {
       console.error("Error creating service:", error);
     }

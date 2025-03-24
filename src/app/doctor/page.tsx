@@ -133,12 +133,12 @@ const DoctorCard = ({
       
       <div className="position-relative border radius-16 overflow-hidden">
           <img
-      src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
-      alt={doctor.name_en}
-      className="w-100 object-fit-cover"
-      style={{ height: "150px" }} 
-/>
-<div className="position-absolute top-0 end-0 m-4">
+              src={doctor.photo_url || "assets/images/user-grid/user-grid-img1.png"}
+              alt={doctor.name_en}
+              className="w-100 object-fit-cover"
+              style={{ height: "150px" }} 
+        />
+        <div className="position-absolute top-0 end-0 m-4">
           <span className="badge bg-primary-600 text-white px-4 py-2 fs-6">
             Block
           </span>
