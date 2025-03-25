@@ -7,9 +7,17 @@ import { get, post } from '@/utils/network';
 // Define interfaces for booking types
 interface BaseBooking {
   id: string;
+  service_id?: number,
+  doctor_id?:number
   type: string;
   user_full_name: string;
   user_email: string;
+  branch_id: number;
+  branch_name_en: string;
+  branch_name_ar: string;
+  time_slot_id: 1,
+  time_slot_start_time: string,
+  time_slot_end_time: string,
   booking_date: string;
   booking_status: string;
   actual_price?: string;
@@ -21,6 +29,11 @@ interface BaseBooking {
   final_total?: string;
   doctor_name_en?: string;
   service_name_en?: string;
+}
+interface RescheduleState {
+  bookingId: string | null;
+  startTime: string;
+  endTime: string;
 }
 
 interface DoctorBooking extends BaseBooking {
@@ -57,6 +70,15 @@ const BookingInvoice: React.FC = () => {
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState<boolean>(false);
+  const [rescheduleData, setRescheduleData] = useState<RescheduleState>({
+    bookingId: null,
+    startTime: '',
+    endTime: ''
+  });
+  const [isRescheduling, setIsRescheduling] = useState<boolean>(false);
+  const [rescheduleError, setRescheduleError] = useState<string | null>(null);
+
   
   // Process bookings with VAT calculation
   const processBookings = (bookings: DoctorBooking[] | ServiceBooking[]) => {
@@ -95,7 +117,8 @@ const BookingInvoice: React.FC = () => {
       // Fetch doctor and service bookings
       const doctorData: DoctorBooking[] = await get('/booking/doctor/metric');
       const serviceData: ServiceBooking[] = await get('/booking/service/metric');
-
+      console.log(doctorData,"dd")
+      console.log(serviceData,"sd")
       // Process bookings with VAT
       const processedDoctorData = processBookings(doctorData);
       const processedServiceData = processBookings(serviceData);
@@ -143,6 +166,76 @@ const BookingInvoice: React.FC = () => {
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  const handleOpenRescheduleModal = (bookingId: string) => {
+    if (upcomingActiveTab === 'canceled') return;
+    
+    setRescheduleData({
+      bookingId,
+      startTime: '',
+      endTime: ''
+    });
+    setRescheduleError(null);
+    setShowRescheduleModal(true);
+  };
+
+  // Function to handle closing the reschedule modal
+  const handleCloseRescheduleModal = () => {
+    setShowRescheduleModal(false);
+    setRescheduleData({
+      bookingId: null,
+      startTime: '',
+      endTime: ''
+    });
+    setRescheduleError(null);
+  };
+
+  // Function to handle reschedule submission
+  const handleRescheduleBooking = async () => {
+    if (!rescheduleData.bookingId) return;
+    
+    // Basic validation
+    if (!rescheduleData.startTime || !rescheduleData.endTime) {
+      setRescheduleError('Please provide both start and end times');
+      return;
+    }
+
+    try {
+      setIsRescheduling(true);
+      setRescheduleError(null);
+      
+      // Get the booking type (doctor or service)
+      const booking = upcomingBookings.find(b => b.id === rescheduleData.bookingId);
+      if (!booking) {
+        throw new Error('Booking not found');
+      }
+      
+      // API endpoint depends on booking type
+      const endpoint = booking.type === 'doctor' 
+        ? '/booking/doctor/reschedule' 
+        : '/booking/service/reschedule';
+      
+      // Send reschedule request
+      await put(endpoint, {
+        booking_id: rescheduleData.bookingId,
+        start_time: rescheduleData.startTime,
+        end_time: rescheduleData.endTime
+      });
+      
+      // Close modal and refresh bookings
+      handleCloseRescheduleModal();
+      fetchBookings();
+      
+      // Show success notification
+      alert('Booking rescheduled successfully');
+      
+    } catch (error) {
+      console.error("Error rescheduling booking:", error);
+      setRescheduleError((error as Error).message || 'Failed to reschedule booking');
+    } finally {
+      setIsRescheduling(false);
+    }
+  };
 
   // Function to handle opening the cancel modal
   const handleOpenCancelModal = (bookingId: string) => {
@@ -589,6 +682,12 @@ const BookingInvoice: React.FC = () => {
                         </td>
                         <td className="text-right font-medium">﷼{booking.final_total || "0.00"}</td>
                          <td className="text-center" style={actionColumnStyle}>
+                         <div style={{
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          alignItems: 'center', 
+                          gap: '4px' // Add some space between buttons
+                        }}>
                            <button
                            disabled={upcomingActiveTab=='canceled'}
                             onClick={() => handleOpenCancelModal(booking.id)}
@@ -604,6 +703,24 @@ const BookingInvoice: React.FC = () => {
                             }}>
                             Cancel/Refund
                           </button>
+                          <button
+                            disabled={upcomingActiveTab === 'canceled'}
+                            onClick={() => handleOpenRescheduleModal(booking.id)}
+                            style={{
+                              border: 'none',
+                              background: upcomingActiveTab === 'canceled' ? '#808080' : '#c70000',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '3px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              marginRight: '4px'
+                            }}
+                          >
+                            Reschedule
+                          </button>
+
+                          </div>
                         </td>
                       </tr>
                     );
@@ -733,7 +850,154 @@ const BookingInvoice: React.FC = () => {
           </div>
         )}
       </div>
+        {/* Reschedule Booking Modal */}
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: showRescheduleModal ? 'flex' : 'none',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000
+  }}>
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '4px',
+      padding: '24px',
+      width: '90%',
+      maxWidth: '500px',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+    }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '16px'
+      }}>
+        <h3 style={{ margin: 0, fontSize: '18px' }}>Reschedule Booking</h3>
+        <button
+          onClick={handleCloseRescheduleModal}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '20px'
+          }}
+        >
+          &times;
+        </button>
+      </div>
       
+      {rescheduleError && (
+        <div style={{
+          backgroundColor: '#ffdddd',
+          color: '#f44336',
+          padding: '10px',
+          borderRadius: '4px',
+          marginBottom: '16px'
+        }}>
+          {rescheduleError}
+        </div>
+      )}
+      
+      <div>
+        <div style={{ marginBottom: '16px' }}>
+          <label 
+            htmlFor="start-time" 
+            style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontWeight: 'bold' 
+            }}
+          >
+            Start Time
+          </label>
+          <input
+            id="start-time"
+            type="datetime-local"
+            value={rescheduleData.startTime}
+            onChange={(e) => setRescheduleData(prev => ({
+              ...prev,
+              startTime: e.target.value
+            }))}
+            style={{
+              width: '100%',
+              padding: '8px',
+              borderRadius: '4px',
+              border: '1px solid #ccc'
+            }}
+          />
+        </div>
+        
+        <div style={{ marginBottom: '16px' }}>
+          <label 
+            htmlFor="end-time" 
+            style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              fontWeight: 'bold' 
+            }}
+          >
+            End Time
+          </label>
+          <input
+            id="end-time"
+            type="datetime-local"
+            value={rescheduleData.endTime}
+            onChange={(e) => setRescheduleData(prev => ({
+              ...prev,
+              endTime: e.target.value
+            }))}
+            style={{
+              width: '100%',
+              padding: '8px',
+              borderRadius: '4px',
+              border: '1px solid #ccc'
+            }}
+          />
+        </div>
+      </div>
+      
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginTop: '24px',
+        gap: '12px'
+      }}>
+        <button
+          onClick={handleCloseRescheduleModal}
+          style={{
+            background: '#f0f0f0',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            cursor: 'pointer'
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleRescheduleBooking}
+          disabled={isRescheduling}
+          style={{
+            background: '#28a745',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            color: 'white',
+            cursor: isRescheduling ? 'not-allowed' : 'pointer',
+            opacity: isRescheduling ? 0.7 : 1
+          }}
+        >
+          {isRescheduling ? 'Rescheduling...' : 'Reschedule'}
+        </button>
+      </div>
+    </div>
+  </div>
+
       {/* Cancel Booking Modal */}
       <div style={modalOverlayStyle}>
         <div style={modalContentStyle}>
