@@ -47,6 +47,16 @@ const ServicePage = () => {
     setShowEditServiceModel(true); // ✅ Corrected state update
   };
 
+  const onSuccessServiceCreate = (service: any) => {
+    setService((state) => [...state, service]);
+    setShowCreateServiceModel(false);
+  }
+
+  const onSuccessServiceEdit = (service: any) => {
+    setService((state) => state.map((s) => s.id === service.id ? service : s));
+    setShowEditServiceModel(false);
+  }
+
   return (
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
@@ -68,7 +78,7 @@ const ServicePage = () => {
           <Modal.Title>Register New Service</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddService />
+          <AddService onSuccess={onSuccessServiceCreate} />
         </Modal.Body>
       </Modal>
 
@@ -78,7 +88,7 @@ const ServicePage = () => {
           <Modal.Title>Edit Service</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddService editData={selectedService} serviceBranches={serviceBranches} serviceTimeSlots ={serviceTimeSlots} />
+          <AddService onSuccess={onSuccessServiceEdit} editData={selectedService} serviceBranches={serviceBranches} serviceTimeSlots ={serviceTimeSlots} />
         </Modal.Body>
       </Modal>
 

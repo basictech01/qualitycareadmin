@@ -62,9 +62,10 @@ interface Props {
   editData?: Service; // This prop will contain prefilled data when editing
   serviceBranches?: Branch[];
   serviceTimeSlots?: TimeRange[];
+  onSuccess: (service: Service) => void;
 }
 
-const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
+const AddService = ({ editData, serviceBranches, serviceTimeSlots, onSuccess }: Props) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
@@ -178,9 +179,9 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     //     service_image_en_url: z.string(),
     //     service_image_ar_url: z.string(),
     //     can_redeem: z.boolean().default(false)
-    console.log('hi')
-    console.log('editData',editData)
-    console.log('formData',formData)
+    if(!editData) {
+      return
+    }
     try {
       const data: any = {}
       if(formData.name_en && formData.name_en != editData?.name_en) {
@@ -215,10 +216,9 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       if(formData.can_redeem != editData?.can_redeem) {
         data.can_redeem = formData.can_redeem
       }
-      console.log('hi',data)
-      const service = editData
+      let service = editData
       if(Object.keys(data).length !== 0) {
-        await put(`/service/${editData?.id}`, data)
+        service = await put(`/service/${editData?.id}`, data)
       }
 
       const branches = selectedBranches.map((branch) => ({
@@ -249,6 +249,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
       if (updatedTimeSlots.length > 0) {
         await put(`/service/time_slots`, { time_slots: updatedTimeSlots });
       }
+      onSuccess(service);
     } catch (error) {
       console.error("Error updating service:", error);
     }
@@ -279,17 +280,6 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
     setFormData(prev => ({ ...prev, service_image_en_url: "" }));
   };
   const handleCreate = async () => {
-    //      name_en: z.string(),
-    //     name_ar: z.string(),
-    //     category_id: z.number(),
-    //     about_en: z.string(),
-    //     about_ar: z.string(),
-    //     actual_price: z.number(),
-    //     discounted_price: z.number(),
-    //     category_id: z.integer(),
-    //     service_image_en_url: z.string(),
-    //     service_image_ar_url: z.string(),
-    //     can_redeem: z.boolean().default(false)
     try {
       if(!formData.name_en) {
         throw ERRORS.SERVICE_NAME_EN_REQUIRED
@@ -361,6 +351,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots }: Props) => {
           branches: branches
         }
       )
+      onSuccess(response);
     } catch (error) {
       console.error("Error creating service:", error);
     }
