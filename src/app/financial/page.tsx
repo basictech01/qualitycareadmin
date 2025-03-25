@@ -31,6 +31,10 @@ interface BaseBooking {
   service_name_en?: string;
 }
 interface RescheduleState {
+
+  doctorId: string | null;
+  branchId: string | null;
+  selectedDate: string;
   bookingId: string | null;
   startTime: string;
   endTime: string;
