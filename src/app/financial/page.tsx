@@ -48,15 +48,15 @@ const BookingInvoice: React.FC = () => {
   const [vat, setVat] = useState<string | null>(null);
   const [serviceBookings, setServiceBookings] = useState<ServiceBooking[]>([]);
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
+  const [canceledBooking, setcanceledBookings] = useState<Booking[]>([]);
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [upcomingActiveTab, setUpcomingActiveTab] = useState<'all' | 'doctor' | 'service'>('all');
-  const [completedActiveTab, setCompletedActiveTab] = useState<'all' | 'doctor' | 'service'>('all');
+  const [upcomingActiveTab, setUpcomingActiveTab] = useState<'all' | 'doctor' | 'service' | 'canceled'>('all');
+  const [completedActiveTab, setCompletedActiveTab] = useState<'all' | 'doctor' | 'service ' >('all');
   const [isCancelling, setIsCancelling] = useState<boolean>(false);
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
-  const [cancelReason, setCancelReason] = useState<string>('');
   
   // Process bookings with VAT calculation
   const processBookings = (bookings: DoctorBooking[] | ServiceBooking[]) => {
@@ -101,8 +101,8 @@ const BookingInvoice: React.FC = () => {
       const processedServiceData = processBookings(serviceData);
 
       // Add type to bookings
-      const doctorWithType = processedDoctorData.map(booking => ({ ...booking, type: 'doctor' }));
-      const serviceWithType = processedServiceData.map(booking => ({ ...booking, type: 'service' }));
+      const doctorWithType = doctorData.map(booking => ({ ...booking, type: 'doctor' }));
+      const serviceWithType = serviceData.map(booking => ({ ...booking, type: 'service' }));
       
       // Update state
       setDoctorBookings(doctorWithType);
@@ -115,15 +115,21 @@ const BookingInvoice: React.FC = () => {
       // Filter completed and upcoming bookings
       const completed = allBookings.filter(booking => 
         isBefore(parseISO(booking.booking_date), currentDate) || 
-        booking.booking_status === "COMPLETED"
+        booking.booking_status === "COMPLETED" 
       );
       
       const upcoming = allBookings.filter(booking => 
         isAfter(parseISO(booking.booking_date), currentDate) && 
         booking.booking_status !== "COMPLETED" && 
-        booking.booking_status !== "CANCELLED"
+        booking.booking_status !== "CANCELED"
+      );
+      const canceled = allBookings.filter(booking =>  
+        booking.booking_status === "CANCELED"
       );
       
+      console.log(upcoming,"upcoming")
+      console.log(canceled,"canceled")
+      setcanceledBookings(canceled);
       setCompletedBookings(completed);
       setUpcomingBookings(upcoming);
       setIsLoading(false);
@@ -141,7 +147,6 @@ const BookingInvoice: React.FC = () => {
   // Function to handle opening the cancel modal
   const handleOpenCancelModal = (bookingId: string) => {
     setCancelBookingId(bookingId);
-    setCancelReason('');
     setCancelError(null);
     setShowCancelModal(true);
   };
@@ -150,7 +155,6 @@ const BookingInvoice: React.FC = () => {
   const handleCloseCancelModal = () => {
     setShowCancelModal(false);
     setCancelBookingId(null);
-    setCancelReason('');
     setCancelError(null);
   };
 
@@ -158,10 +162,6 @@ const BookingInvoice: React.FC = () => {
   const handleCancelBooking = async () => {
     if (!cancelBookingId) return;
     
-    if (!cancelReason.trim()) {
-      setCancelError('Please provide a reason for cancellation');
-      return;
-    }
     
     try {
       setIsCancelling(true);
@@ -188,7 +188,7 @@ const BookingInvoice: React.FC = () => {
       fetchBookings();
       
       // Show success notification - you might want to add a proper notification system
-      alert('Booking cancelled successfully');
+      alert('Booking canceled successfully');
       
     } catch (error) {
       console.error("Error cancelling booking:", error);
@@ -230,6 +230,8 @@ const BookingInvoice: React.FC = () => {
         return upcomingBookings.filter(booking => booking.type === 'doctor');
       case 'service':
         return upcomingBookings.filter(booking => booking.type === 'service');
+      case 'canceled':
+        return canceledBooking;
       default:
         return upcomingBookings;
     }
@@ -530,6 +532,12 @@ const BookingInvoice: React.FC = () => {
           >
             Services
           </button>
+          <button
+            style={getTabButtonStyle(upcomingActiveTab === 'canceled')}
+            onClick={() => setUpcomingActiveTab('canceled')}
+          >
+            Canceled
+          </button>
         </div>
         
         {getFilteredUpcomingBookings().length === 0 ? (
@@ -580,12 +588,13 @@ const BookingInvoice: React.FC = () => {
                           {booking.vat_percentage || 15}% (﷼{booking.vat_amount || "0.00"})
                         </td>
                         <td className="text-right font-medium">﷼{booking.final_total || "0.00"}</td>
-                        <td className="text-center" style={actionColumnStyle}>
-                          <button
+                         <td className="text-center" style={actionColumnStyle}>
+                           <button
+                           disabled={upcomingActiveTab=='canceled'}
                             onClick={() => handleOpenCancelModal(booking.id)}
                             style={{
                               border: 'none',
-                              background: '#007bff',
+                              background: upcomingActiveTab =='canceled'? '#808080' :'#007bff' ,
                               color: 'white',
                               padding: '4px 8px',
                               borderRadius: '3px',
@@ -748,29 +757,6 @@ const BookingInvoice: React.FC = () => {
             <p style={{ fontSize: '14px', color: '#666', marginTop: '12px' }}>
               Booking ID: {cancelBookingId}
             </p>
-            
-            <div style={{ marginTop: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                Cancellation Reason:
-              </label>
-              <textarea
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Please provide a reason for cancellation"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  borderRadius: '4px',
-                  border: '1px solid #ddd',
-                  minHeight: '80px'
-                }}
-              />
-              {cancelError && (
-                <p style={{ color: 'red', fontSize: '14px', marginTop: '8px' }}>
-                  {cancelError}
-                </p>
-              )}
-            </div>
           </div>
           
           <div style={modalFooterStyle}>
