@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import dynamic from "next/dynamic";
 import { get } from '@/utils/network';
+import { ApexOptions } from 'apexcharts';
 
 // Dynamically import ApexCharts with no SSR to prevent server-side rendering issues
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
@@ -179,7 +180,7 @@ const DoctorAppointmentStatistics = () => {
   };
 
   // Chart options for monthly sales
-  const monthlySalesOptions = useMemo(() => ({
+  const monthlySalesOptions = useMemo(() : ApexOptions => ({
     chart: {
       type: 'bar',
       stacked: false,

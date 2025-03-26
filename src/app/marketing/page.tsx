@@ -37,8 +37,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ id, placeholder, onChange }) =>
   );
 };
 
+interface AddNewBannerProps {
+  onSuccess: (banner: Banner) => void;
+}
 
-const AddNewBanner = () => {
+const AddNewBanner: React.FC<AddNewBannerProps> = ({ onSuccess }) => {
 
   const [enImagePreview, setENImagePreview] = useState<string | null >(null);
   const [arImagePreview, setARImagePreview] = useState<string | null>(null);
@@ -89,6 +92,7 @@ const AddNewBanner = () => {
         image_ar: arImage,
       }
       const result = await post('/banner', body);
+      onSuccess(result);
       
     } catch (error) {
       console.log(error);
@@ -446,6 +450,11 @@ export default function MarketingPage() {
   }
   , [refreshTrigger]);
 
+  const onSuccess = (banner: Banner) => {
+    setBanners((state)=>{return [...state,banner]})
+    setNewBannerModel(false)
+  }
+
 
   return (
     <>
@@ -454,7 +463,7 @@ export default function MarketingPage() {
       <h3>Add New Banner</h3>
       </Modal.Header>
       <Modal.Body>
-        <AddNewBanner />
+        <AddNewBanner onSuccess={onSuccess} />
       </Modal.Body>
     </Modal>
     <div className='card h-100 p-0 radius-12'>

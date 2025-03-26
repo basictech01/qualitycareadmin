@@ -12,6 +12,14 @@ export interface TimeRange {
     end_time: string;
   }
 
+export interface Notification {
+    
+    message_ar: string;
+    message_en: string;
+    scheduled_timestamp: string;
+}
+  
+
 export interface SelectedBranch {
   id: number;
   name_en: string;

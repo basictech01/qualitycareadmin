@@ -18,7 +18,17 @@ const [showCreateCategoryModel, setShowCreateCategoryModel] = useState(false);
 const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  
+  const onSuccessCreate = (category: Category) => {
+    setCategories((state) => [...state, category]);
+    setShowCreateCategoryModel(false);
+  }
+
+  const onUpdatedCategory = (category: Category) => {
+    setCategories((state) => state.map((c) => c.id === category.id ? category : c));
+    setShowEditCategoryModel(false);
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,7 +79,7 @@ const [categories, setCategories] = useState<any[]>([]);
           <Modal.Title>Register New Category</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddCategory />
+          <AddCategory onSuccess={onSuccessCreate} />
         </Modal.Body>
       </Modal>
 
@@ -79,7 +89,7 @@ const [categories, setCategories] = useState<any[]>([]);
           <Modal.Title>Edit Category</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <UpdateCategory editData={selectedCategory}/>
+          <UpdateCategory onSuccess={onUpdatedCategory} editData={selectedCategory}/>
         </Modal.Body>
       </Modal>
 

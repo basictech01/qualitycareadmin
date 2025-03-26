@@ -69,7 +69,7 @@ const BookingInvoice: React.FC = () => {
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [upcomingActiveTab, setUpcomingActiveTab] = useState<'all' | 'doctor' | 'service' | 'canceled'>('all');
-  const [completedActiveTab, setCompletedActiveTab] = useState<'all' | 'doctor' | 'service ' >('all');
+  const [completedActiveTab, setCompletedActiveTab] = useState<'all' | 'doctor' | 'service' >('all');
   const [isCancelling, setIsCancelling] = useState<boolean>(false);
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState<string | null>(null);

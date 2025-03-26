@@ -5,12 +5,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import AddNotificationLayer from "./add/page";
+import { Notification } from "@/utils/types";
 
-interface Notification {
-  message_ar: string;
-  message_en: string;
-  scheduled_timestamp: string;
-}
 
 const Dashboard: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -30,6 +26,11 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const onSuccess = (notification: Notification) => {
+    setNotifications((state) => [...state, notification]);
+    setShowCreateNotificationModel(false);
+  }
+
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
@@ -44,7 +45,7 @@ const Dashboard: React.FC = () => {
           <Modal.Title>Add New Notification </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddNotificationLayer />
+          <AddNotificationLayer onSuccess={onSuccess} />
         </Modal.Body>
       </Modal>
   
