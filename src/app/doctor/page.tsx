@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Modal from "react-bootstrap/Modal";
 import AddUserLayer from "./add/addDoctor";
-import { get } from "@/utils/network";
+import { get, put } from "@/utils/network";
 import { Doctor } from "@/utils/types";
 
 const DoctorDashboard = () => {
@@ -13,13 +13,14 @@ const DoctorDashboard = () => {
   const [showCreateDoctorModel, setShowCreateDoctorModel] = useState(false);
   const [showEditUserModel, setShowEditUserModel] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [refresh, setRefresh] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         const data = await get("/doctor"); // Replace with your actual API endpoint
         setDoctors(Array.isArray(data) ? data : []);
-        console.log(setDoctors)
+        console.log(data)
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -28,7 +29,7 @@ const DoctorDashboard = () => {
     };
 
     fetchDoctors();
-  }, []);
+  }, [refresh]);
 
   const handleEditDoctor = async (doctorId: Doctor) => {
     const doctorToEdit = doctors.find((doctor) => doctor.id === doctorId);
@@ -55,7 +56,25 @@ const DoctorDashboard = () => {
     setDoctors((state)=>{return state.map((d)=>d.id===doctor.id ? doctor : d)})
     setShowEditUserModel(false)
   }
+  const changeActiveStatus = async (doctor: any) => {
 
+    try {
+      const updatedDoctor = { ...doctor, is_active: !doctor.is_active };
+      console.log(updatedDoctor)
+      const data = await put(`/doctor/${doctor?.id}`, updatedDoctor);
+      
+      // Update the doctors state to reflect the change
+      setDoctors((state) => {
+        return state.map((d) => (d.id === doctor.id ? updatedDoctor : d));
+      });
+      
+      // Trigger refresh
+      setRefresh(prev => !prev);
+    } catch (err: any) {
+      console.error("Error updating doctor status:", err);
+      setError(err.message);
+    }
+  };
   return (
     <>
       {/* Create Doctor Modal */}
@@ -120,6 +139,7 @@ const DoctorDashboard = () => {
                 key={doctor.id}
                 doctor={doctor}
                 onEdit={() => handleEditDoctor(doctor.id)}
+                onStatusChange={()=>changeActiveStatus(doctor)}
               />
             ))}
           </div>
@@ -129,15 +149,22 @@ const DoctorDashboard = () => {
   );
 };
 
+
+
 const DoctorCard = ({
   doctor,
   onEdit,
+  onStatusChange
 }: {
   doctor: any;
   onEdit: () =>void;
+  onStatusChange: () => void;
 }) => {
+
+ 
+
   return (
-    <div className="col-xxl-3 col-md-4 col-sm-6 user-grid-card">
+    <div className="col-xxl-2 col-md-4 col-sm-6 user-grid-card p-2">
       
       <div className="position-relative border radius-16 overflow-hidden">
           <img
@@ -147,8 +174,10 @@ const DoctorCard = ({
           style={{ height: "150px" }} 
     />
     <div className="position-absolute top-0 end-0 m-4">
-          <span className="badge bg-primary-600 text-white px-4 py-2 fs-6">
-            Block
+    <span className={`badge text-white px-4 py-4 fs-6 ${doctor.is_active == 1 ? "bg-primary-600" : "bg-danger-600"}`}>
+            <button onClick={onStatusChange}>
+              {doctor.is_active == 1 ? "Block" : "Unblock"}
+            </button>
           </span>
           </div>
         <div className="ps-16 pb-16 pe-16 text-center mt-10">

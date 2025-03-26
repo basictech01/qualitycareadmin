@@ -180,7 +180,7 @@ const DoctorAppointmentStatistics = () => {
   };
 
   // Chart options for monthly sales
-  const monthlySalesOptions = useMemo(() : ApexOptions => ({
+  const monthlySalesOptions:ApexOptions = useMemo(() => ({
     chart: {
       type: 'bar',
       stacked: false,

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { format, isAfter, isBefore, parseISO } from 'date-fns';
-import { get, post } from '@/utils/network';
+import { get, post, put } from '@/utils/network';
 
 // Define interfaces for booking types
 interface BaseBooking {
   id: string;
+  user_id: number|null;
   service_id?: number,
   doctor_id?:number
   type: string;
@@ -24,7 +25,7 @@ interface BaseBooking {
   discounted_price?: string;
   service_actual_price?: string;
   service_discounted_price?: string;
-  vat_percentage?: number;
+  vat_percentage: string;
   vat_amount?: string;
   final_total?: string;
   doctor_name_en?: string;
@@ -32,12 +33,13 @@ interface BaseBooking {
 }
 interface RescheduleState {
 
-  doctorId: string | null;
-  branchId: string | null;
-  selectedDate: string;
+  doctorId: number ;
+  branchId: number;
+  selectedDate: Date|string;
   bookingId: string | null;
-  startTime: string;
-  endTime: string;
+  userID:number|null;
+  time_slot_id:number|null;
+  time_slots:[];
 }
 
 interface DoctorBooking extends BaseBooking {
@@ -62,7 +64,6 @@ interface BookingTypeDetails {
 const BookingInvoice: React.FC = () => {
   // State variables with explicit typing
   const [doctorBookings, setDoctorBookings] = useState<DoctorBooking[]>([]);
-  const [vat, setVat] = useState<string | null>(null);
   const [serviceBookings, setServiceBookings] = useState<ServiceBooking[]>([]);
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
   const [canceledBooking, setcanceledBookings] = useState<Booking[]>([]);
@@ -75,22 +76,32 @@ const BookingInvoice: React.FC = () => {
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState<boolean>(false);
+  const [availableTimeSlots, setAvailableTimeSlot] = useState<any[]>([]);
   const [rescheduleData, setRescheduleData] = useState<RescheduleState>({
     bookingId: null,
-    startTime: '',
-    endTime: ''
+    doctorId: 0,
+    time_slots: [],
+    selectedDate: null,
+    userID:null,
+    time_slot_id:null,
+    branchId: 0,
   });
+  const [date_time, setDate_time] = useState<string>("date");
   const [isRescheduling, setIsRescheduling] = useState<boolean>(false);
   const [rescheduleError, setRescheduleError] = useState<string | null>(null);
+  const [timeSlotID, setTimeSlotID] = useState<number>(0);
+
+
 
   
   // Process bookings with VAT calculation
-  const processBookings = (bookings: DoctorBooking[] | ServiceBooking[]) => {
-    if (vat === null) return bookings;
-    
-    const vatRate = parseFloat(vat);
-    
+  const processBookingsDoctor = (bookings: DoctorBooking[] ):DoctorBooking[] => {
+   
     return bookings.map(booking => {
+      if (booking.vat_percentage === "") return booking;
+
+      const vatRate = parseFloat(booking.vat_percentage);
+ 
       const discountedPrice = parseFloat(booking.discounted_price || booking.service_discounted_price || '0');
       
       // Calculate VAT amount
@@ -101,7 +112,28 @@ const BookingInvoice: React.FC = () => {
 
       return {
         ...booking,
-        vat_percentage: vatRate,
+        vat_amount: vatAmount,
+        final_total: finalTotal
+      };
+    });
+  };
+  const processBookingsService = (bookings: ServiceBooking[]) => {
+   
+    return bookings.map(booking => {
+      if (booking.vat_percentage === "") return booking;
+
+      const vatRate = parseFloat(booking.vat_percentage);
+ 
+      const discountedPrice = parseFloat(booking.discounted_price || booking.service_discounted_price || '0');
+      
+      // Calculate VAT amount
+      const vatAmount = (discountedPrice * (vatRate / 100)).toFixed(2);
+      
+      // Calculate final total (after VAT)
+      const finalTotal = (discountedPrice * (1 + vatRate / 100)).toFixed(2);
+
+      return {
+        ...booking,
         vat_amount: vatAmount,
         final_total: finalTotal
       };
@@ -113,24 +145,17 @@ const BookingInvoice: React.FC = () => {
     try {
       setIsLoading(true);
       
-      // Fetch VAT first to ensure it's available for processing
-      const vatResponse = await get('/vat');
-      console.log(vatResponse)
-      setVat(vatResponse.vat);
-      console.log(vat)
       // Fetch doctor and service bookings
       const doctorData: DoctorBooking[] = await get('/booking/doctor/metric');
       const serviceData: ServiceBooking[] = await get('/booking/service/metric');
-      console.log(doctorData,"dd")
-      console.log(serviceData,"sd")
       // Process bookings with VAT
-      const processedDoctorData = processBookings(doctorData);
-      const processedServiceData = processBookings(serviceData);
+      const processedDoctorData = processBookingsDoctor(doctorData);
+      const processedServiceData = processBookingsService(serviceData);
 
       // Add type to bookings
-      const doctorWithType = doctorData.map(booking => ({ ...booking, type: 'doctor' }));
-      const serviceWithType = serviceData.map(booking => ({ ...booking, type: 'service' }));
-      
+      const doctorWithType = processedDoctorData.map(booking => ({ ...booking, type: 'doctor' }));
+      const serviceWithType = processedServiceData.map(booking => ({ ...booking, type: 'service' }));
+  
       // Update state
       setDoctorBookings(doctorWithType);
       setServiceBookings(serviceWithType);
@@ -154,8 +179,7 @@ const BookingInvoice: React.FC = () => {
         booking.booking_status === "CANCELED"
       );
       
-      console.log(upcoming,"upcoming")
-      console.log(canceled,"canceled")
+ 
       setcanceledBookings(canceled);
       setCompletedBookings(completed);
       setUpcomingBookings(upcoming);
@@ -171,14 +195,67 @@ const BookingInvoice: React.FC = () => {
     fetchBookings();
   }, []);
 
-  const handleOpenRescheduleModal = (bookingId: string) => {
+  interface TimeSlotParams {
+    branch_id: null | string;
+    date: string | Date;
+    doctor_id: null | string;
+  }
+   
+  const handleTimeSlotChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTimeSlotID(parseInt(event.target.value));
+  };
+
+
+const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  setRescheduleError(null)
+  const selectedDate = e.target.value; // Format: "2025-03-26"
+
+  const params = new URLSearchParams({
+    branch_id: rescheduleData.branchId || 0,
+    date: selectedDate,
+    doctor_id: rescheduleData.doctorId || 0
+  });
+
+  console.log(params , "handgel change in");
+  const fetchAvailableTimeSlot = await get(`/doctor/time-slot/available?${params.toString()}`);
+  console.log(fetchAvailableTimeSlot)
+  const availableTimeSlots1 = fetchAvailableTimeSlot.filter((timeSlot : any) => timeSlot.available === true);
+  const availableTimeSlotsCount = availableTimeSlots1.length;
+  
+  if(availableTimeSlotsCount == 0)
+  {
+    setRescheduleError("Doctor not available please change date")
+  }
+  else{
+    setAvailableTimeSlot(availableTimeSlots1)
+    // setDate_time("time")
+  }
+  console.log(availableTimeSlots , "available time slot");
+
+ console.log(rescheduleData,"done")
+
+ const res ={
+  ...rescheduleData,
+  selectedDate: selectedDate
+ }
+ setRescheduleData(res)
+}
+  
+  const handleOpenRescheduleModal = async (booking: BaseBooking) => {
+    console.log(booking,"booking")
     if (upcomingActiveTab === 'canceled') return;
-    
-    setRescheduleData({
-      bookingId,
-      startTime: '',
-      endTime: ''
-    });
+    const res: RescheduleState={
+      bookingId: booking.id,
+      time_slot_id : null,
+      doctorId: booking.doctor_id,
+      branchId: booking.branch_id,
+      selectedDate: null,
+      userID: booking.user_id,
+    }
+    console.log(res)
+    setRescheduleData(res);
+  
+   
     setRescheduleError(null);
     setShowRescheduleModal(true);
   };
@@ -189,7 +266,9 @@ const BookingInvoice: React.FC = () => {
     setRescheduleData({
       bookingId: null,
       startTime: '',
-      endTime: ''
+      endTime: '',
+      userID: null,
+      time_slot_id:null,
     });
     setRescheduleError(null);
   };
@@ -199,8 +278,8 @@ const BookingInvoice: React.FC = () => {
     if (!rescheduleData.bookingId) return;
     
     // Basic validation
-    if (!rescheduleData.startTime || !rescheduleData.endTime) {
-      setRescheduleError('Please provide both start and end times');
+    if (timeSlotID==0) {
+      setRescheduleError('Please Select a Slot');
       return;
     }
 
@@ -220,12 +299,12 @@ const BookingInvoice: React.FC = () => {
         : '/booking/service/reschedule';
       
       // Send reschedule request
-      await put(endpoint, {
+      await post(endpoint, {
         booking_id: rescheduleData.bookingId,
-        start_time: rescheduleData.startTime,
-        end_time: rescheduleData.endTime
+        time_slot_id: timeSlotID,
+        userID: rescheduleData.userID,
+        date:rescheduleData.selectedDate,
       });
-      
       // Close modal and refresh bookings
       handleCloseRescheduleModal();
       fetchBookings();
@@ -709,7 +788,7 @@ const BookingInvoice: React.FC = () => {
                           </button>
                           <button
                             disabled={upcomingActiveTab === 'canceled'}
-                            onClick={() => handleOpenRescheduleModal(booking.id)}
+                            onClick={() => handleOpenRescheduleModal(booking)}
                             style={{
                               border: 'none',
                               background: upcomingActiveTab === 'canceled' ? '#808080' : '#c70000',
@@ -854,6 +933,9 @@ const BookingInvoice: React.FC = () => {
           </div>
         )}
       </div>
+
+
+
         {/* Reschedule Booking Modal */}
   <div style={{
     position: 'fixed',
@@ -907,71 +989,39 @@ const BookingInvoice: React.FC = () => {
         </div>
       )}
       
-      <div>
-        <div style={{ marginBottom: '16px' }}>
-          <label 
-            htmlFor="start-time" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: 'bold' 
-            }}
-          >
-            Start Time
-          </label>
-          <input
-            id="start-time"
-            type="datetime-local"
-            value={rescheduleData.startTime}
-            onChange={(e) => setRescheduleData(prev => ({
-              ...prev,
-              startTime: e.target.value
-            }))}
-            style={{
-              width: '100%',
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc'
-            }}
-          />
-        </div>
-        
-        <div style={{ marginBottom: '16px' }}>
-          <label 
-            htmlFor="end-time" 
-            style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: 'bold' 
-            }}
-          >
-            End Time
-          </label>
-          <input
-            id="end-time"
-            type="datetime-local"
-            value={rescheduleData.endTime}
-            onChange={(e) => setRescheduleData(prev => ({
-              ...prev,
-              endTime: e.target.value
-            }))}
-            style={{
-              width: '100%',
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc'
-            }}
-          />
-        </div>
-      </div>
-      
+    {date_time=="date"? 
+    <div>
+  <label htmlFor="appointment-date">Select Date:</label>
+  <input
+    id="appointment-date"
+    type="date"
+    onChange={handleDateChange}
+    min={new Date().toISOString().split('T')[0]} // No past dates
+  />
+</div>:
+     <select 
+     className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+     onChange={handleTimeSlotChange}
+     defaultValue=""
+   >
+     <option value="" disabled>Select a time slot</option>
+     {availableTimeSlots.map((slot) => (
+       <option 
+         key={slot.id} 
+         value={slot.id.toString()}
+       >
+         {slot.start_time} - {slot.end_time}
+       </option>
+     ))}
+   </select>
+      }
       <div style={{
         display: 'flex',
         justifyContent: 'flex-end',
         marginTop: '24px',
         gap: '12px'
       }}>
-        <button
+         {date_time=="date"?<button
           onClick={handleCloseRescheduleModal}
           style={{
             background: '#f0f0f0',
@@ -982,8 +1032,21 @@ const BookingInvoice: React.FC = () => {
           }}
         >
           Cancel
-        </button>
+        </button>:
         <button
+        onClick={()=>{setDate_time("date")}}
+        style={{
+          background: '#f0f0f0',
+          border: 'none',
+          borderRadius: '4px',
+          padding: '8px 16px',
+          cursor: 'pointer'
+        }}
+      >
+        back
+      </button>
+        }
+        {date_time=="time"?<button
           onClick={handleRescheduleBooking}
           disabled={isRescheduling}
           style={{
@@ -997,7 +1060,21 @@ const BookingInvoice: React.FC = () => {
           }}
         >
           {isRescheduling ? 'Rescheduling...' : 'Reschedule'}
-        </button>
+        </button>:
+        <button
+       onClick={()=> {setDate_time("time")}}
+       
+       style={{
+         background: '#28a745',
+         border: 'none',
+         borderRadius: '4px',
+         padding: '8px 16px',
+         color: 'white',
+       }}
+     >
+       Set Time Slot
+     </button>
+        }
       </div>
     </div>
   </div>
