@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { format, isAfter, isBefore, parseISO } from 'date-fns';
 import { get, post, put } from '@/utils/network';
+import { Calendar, AlertCircle } from 'lucide-react';
 
 // Define interfaces for booking types
 interface BaseBooking {
@@ -149,6 +150,7 @@ const BookingInvoice: React.FC = () => {
       const doctorData: DoctorBooking[] = await get('/booking/doctor/metric');
       const serviceData: ServiceBooking[] = await get('/booking/service/metric');
       // Process bookings with VAT
+      console.log(doctorData,"doctor data")
       const processedDoctorData = processBookingsDoctor(doctorData);
       const processedServiceData = processBookingsService(serviceData);
 
@@ -317,6 +319,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       setRescheduleError((error as Error).message || 'Failed to reschedule booking');
     } finally {
       setIsRescheduling(false);
+      setDate_time("date")
     }
   };
 
@@ -963,7 +966,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         alignItems: 'center',
         marginBottom: '16px'
       }}>
-        <h3 style={{ margin: 0, fontSize: '18px' }}>Reschedule Booking</h3>
+        <h3 style={{ margin: 0, fontSize: '10px' }}>Reschedule Booking</h3>
         <button
           onClick={handleCloseRescheduleModal}
           style={{
@@ -990,30 +993,69 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       )}
       
     {date_time=="date"? 
-    <div>
+    <div className='my-3'>
   <label htmlFor="appointment-date">Select Date:</label>
   <input
     id="appointment-date"
     type="date"
     onChange={handleDateChange}
+    className="
+    w-full 
+    pl-10 
+    pr-3 
+    py-2
+    px-3
+    mx-3 
+    border 
+    border-gray-300 
+    rounded-md 
+    shadow-sm 
+    focus:outline-none 
+    focus:ring-2 
+    focus:ring-blue-500 
+    focus:border-blue-500
+  "
     min={new Date().toISOString().split('T')[0]} // No past dates
   />
 </div>:
-     <select 
-     className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-     onChange={handleTimeSlotChange}
-     defaultValue=""
-   >
-     <option value="" disabled>Select a time slot</option>
-     {availableTimeSlots.map((slot) => (
-       <option 
-         key={slot.id} 
-         value={slot.id.toString()}
-       >
-         {slot.start_time} - {slot.end_time}
-       </option>
-     ))}
-   </select>
+      <select 
+      id="time-slot-select"
+      className="
+        w-full 
+        pl-10 
+        pr-3 
+        py-2 
+        px-3
+        border 
+        rounded-md 
+        border-gray-300 
+        focus:outline-none 
+        focus:ring-2 
+        focus:ring-blue-500 
+        focus:border-transparent
+        appearance-none 
+        bg-white 
+        text-gray-900
+        shadow-sm
+      "
+      onChange={handleTimeSlotChange}
+      aria-describedby="time-slot-description"
+    >
+      <option value="" disabled>Select a time slot</option>
+      {availableTimeSlots.map((slot) => (
+        <option 
+          key={slot.id} 
+          value={slot.id.toString()}
+          disabled={!slot.available}
+          className={`
+            ${!slot.available ? 'text-gray-300 line-through' : ''}
+          `}
+        >
+          {slot.start_time} - {slot.end_time} 
+          {!slot.available && ' (Unavailable)'}
+        </option>
+      ))}
+    </select>
       }
       <div style={{
         display: 'flex',
@@ -1062,13 +1104,22 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           {isRescheduling ? 'Rescheduling...' : 'Reschedule'}
         </button>:
         <button
-       onClick={()=> {setDate_time("time")}}
-       
+       onClick={()=> {
+        if(rescheduleData.selectedDate ==null)
+        {
+          setRescheduleError("select a date")
+        }
+        else{
+          setRescheduleError(null)
+          setDate_time("time")}}
+        }
+        
        style={{
          background: '#28a745',
          border: 'none',
          borderRadius: '4px',
-         padding: '8px 16px',
+         padding: '10px 16px',
+        
          color: 'white',
        }}
      >
@@ -1083,7 +1134,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <div style={modalOverlayStyle}>
         <div style={modalContentStyle}>
           <div style={modalHeaderStyle}>
-            <h3 style={{ margin: 0, fontSize: '18px' }}>Cancel Booking</h3>
+            <h3 style={{ margin: 0, fontSize: '12px' }}>Cancel Booking</h3>
             <button
               onClick={handleCloseCancelModal}
               style={{
