@@ -3,6 +3,7 @@
 import { ERRORS } from "@/utils/errors";
 import { post } from "@/utils/network";
 import { useState } from "react";
+import { Notification } from "@/utils/types";
 
 interface NotificationFormData {
   title_ar: string | null;
@@ -12,7 +13,11 @@ interface NotificationFormData {
   scheduled_timestamp: string;
 }
 
-const AddNotificationLayer = () => {
+interface AddNotificationLayerProps {
+  onSuccess: (notification: Notification) => void;
+}
+
+const AddNotificationLayer: React.FC<AddNotificationLayerProps> = ({ onSuccess }) => {
   const [formData, setFormData] = useState<NotificationFormData>({
     title_ar: null,
     title_en: null,
@@ -39,7 +44,8 @@ const AddNotificationLayer = () => {
         throw ERRORS.NOTIFICATION_TITLE_EN_REQUIRED;
       }
       formData.scheduled_timestamp = new Date(formData.scheduled_timestamp).toISOString();
-      post("/notification", formData);
+      const data: any = post("/notification", formData);
+      onSuccess(data);
     } catch (err) {
       console.error(err);
 

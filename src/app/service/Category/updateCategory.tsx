@@ -6,9 +6,10 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface Props {
   editData: Category | null | undefined;
+  onSuccess: (category: Category) => void;
 }
 
-const UpdateCategory = ({ editData }: Props) => {
+const UpdateCategory = ({ editData, onSuccess }: Props) => {
   const [formData, setFormData] = useState<Category>({
     name_en: "",
     name_ar: "",
@@ -82,7 +83,8 @@ const UpdateCategory = ({ editData }: Props) => {
       if (Object.keys(data).length === 0) {
         throw ERRORS.NO_CHANGES
       }
-      await put(`/service/category/${editData.id}`, data);
+      const category =  await put(`/service/category/${editData.id}`, data);
+      onSuccess(category)
     } catch (error) {
       console.error("Error fetching categories:", error);
     }

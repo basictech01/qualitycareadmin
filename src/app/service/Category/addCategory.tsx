@@ -5,7 +5,11 @@ import { Category } from "@/utils/types";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 
-const AddCategory = () => {
+interface AddCategoryProps {
+  onSuccess: (category: Category) => void;
+}
+
+const AddCategory: React.FC<AddCategoryProps> = ({ onSuccess }) => {
   const [formData, setFormData] = useState<Category>({
     name_en: "",
     name_ar: "",
@@ -108,7 +112,9 @@ const AddCategory = () => {
         image_en: image_en,
         image_ar: image_ar,
       }
-      await post('/service/category', data);
+      const category = await post('/service/category', data);
+      onSuccess(category);
+
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
