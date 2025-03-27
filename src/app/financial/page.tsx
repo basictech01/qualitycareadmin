@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, isAfter, isBefore, parseISO } from 'date-fns';
 import { get, post, put } from '@/utils/network';
-import { Calendar, AlertCircle } from 'lucide-react';
 
 // Define interfaces for booking types
 interface BaseBooking {
@@ -33,7 +32,8 @@ interface BaseBooking {
   service_name_en?: string;
 }
 interface RescheduleState {
-
+  startTime?: string;
+  endTime?: string;
   doctorId: number ;
   branchId: number;
   selectedDate: Date|string;
@@ -42,6 +42,18 @@ interface RescheduleState {
   time_slot_id:number|null;
   time_slots:[];
 }
+
+const RescheduleStateInitial: RescheduleState = {
+  startTime: '',
+  endTime: '',
+  doctorId: 0,
+  branchId: 0,
+  selectedDate: Date(),
+  bookingId: null,
+  userID:null,
+  time_slot_id:null,
+  time_slots:[],
+};
 
 interface DoctorBooking extends BaseBooking {
   doctor_name_en: string;
@@ -78,15 +90,7 @@ const BookingInvoice: React.FC = () => {
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState<boolean>(false);
   const [availableTimeSlots, setAvailableTimeSlot] = useState<any[]>([]);
-  const [rescheduleData, setRescheduleData] = useState<RescheduleState>({
-    bookingId: null,
-    doctorId: 0,
-    time_slots: [],
-    selectedDate: null,
-    userID:null,
-    time_slot_id:null,
-    branchId: 0,
-  });
+  const [rescheduleData, setRescheduleData] = useState<RescheduleState>(RescheduleStateInitial);
   const [date_time, setDate_time] = useState<string>("date");
   const [isRescheduling, setIsRescheduling] = useState<boolean>(false);
   const [rescheduleError, setRescheduleError] = useState<string | null>(null);
@@ -213,10 +217,10 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const selectedDate = e.target.value; // Format: "2025-03-26"
 
   const params = new URLSearchParams({
-    branch_id: rescheduleData.branchId || 0,
-    date: selectedDate,
-    doctor_id: rescheduleData.doctorId || 0
-  });
+    branch_id: String(rescheduleData.branchId),
+    date: String(selectedDate),
+    doctor_id: String(rescheduleData.doctorId)
+});
 
   console.log(params , "handgel change in");
   const fetchAvailableTimeSlot = await get(`/doctor/time-slot/available?${params.toString()}`);
@@ -249,9 +253,10 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const res: RescheduleState={
       bookingId: booking.id,
       time_slot_id : null,
-      doctorId: booking.doctor_id,
+      doctorId: booking.doctor_id ?? 0,
       branchId: booking.branch_id,
-      selectedDate: null,
+      selectedDate: new Date(),
+      time_slots:[],
       userID: booking.user_id,
     }
     console.log(res)
@@ -265,13 +270,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   // Function to handle closing the reschedule modal
   const handleCloseRescheduleModal = () => {
     setShowRescheduleModal(false);
-    setRescheduleData({
-      bookingId: null,
-      startTime: '',
-      endTime: '',
-      userID: null,
-      time_slot_id:null,
-    });
+    setRescheduleData(RescheduleStateInitial);
     setRescheduleError(null);
   };
 
@@ -456,7 +455,6 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         formatDate(booking.booking_date),
         details.actual_price,
         details.discount_amount,
-        vat || 0,
         booking.vat_amount || "0.00",
         booking.final_total || "0.00"
       ];

@@ -4,7 +4,7 @@ import { get } from "@/utils/network";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import AddNotificationLayer from "./add/page";
+import AddNotificationLayer from "./component/addNotiofication";
 import { Notification } from "@/utils/types";
 
 
