@@ -4,7 +4,12 @@
 import React from 'react';
 import { DoctorStats } from '@/utils/types';
 import { DoctorPerformanceTableProps } from '@/utils/types';
-
+const getConversionRate = (totalAppointments: number, completedAppointments: number): string => {
+  if (totalAppointments > 0) {
+    return `${Math.round((completedAppointments / totalAppointments) * 100)}%`;
+  }
+  return "0%";
+};
 
 const DoctorPerformanceTable: React.FC<DoctorPerformanceTableProps> = ({ doctorStats }) => {
   return (
@@ -41,11 +46,7 @@ const DoctorPerformanceTable: React.FC<DoctorPerformanceTableProps> = ({ doctorS
                 <td>{doctor.completedAppointments}</td>
                 <td>{doctor.canceledAppointments}</td>
                 <td>${doctor.totalIncome.toLocaleString()}</td>
-                <td>
-                  {doctor.totalAppointments > 0 
-                    ? `${Math.round((doctor.completedAppointments / doctor.totalAppointments) * 100)}%`
-                    : '0%'}
-                </td>
+                <td>{getConversionRate(doctor.totalAppointments, doctor.completedAppointments)}</td>
               </tr>
             ))
           ) : (

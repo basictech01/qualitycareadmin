@@ -1,7 +1,7 @@
 
 "use client";
 import React from "react";
-import { TabNavigationProps } from "@/utils/types";
+import {AppointmentType, TabNavigationProps } from "@/utils/types";
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab }) => {
   return (
@@ -17,7 +17,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab }
           fontSize: "13px",
           marginRight: "8px",
         }}
-        onClick={() => setActiveTab("doctor")}
+        onClick={() => setActiveTab(AppointmentType.DOCTOR)}
       >
         Doctor Appointment History
       </button>
@@ -31,7 +31,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab }
           cursor: "pointer",
           fontSize: "13px",
         }}
-        onClick={() => setActiveTab("service")}
+        onClick={() => setActiveTab(AppointmentType.SERVICE)}
       >
         Service Appointment History
       </button>
