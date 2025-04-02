@@ -1,10 +1,11 @@
 
 "use client";
 import React from "react";
-import { AppointmentDetailsRowProps } from "@/utils/types";
+import { AppointmentType,AppointmentDetailsRowProps } from "@/utils/types";
 import TabNavigation from "./TabNavigation";
 import DoctorAppointmentsTable from "./DoctorAppointmentsTable";
 import ServiceAppointmentsTable from "./ServiceAppointmentsTable";
+import App from "next/app";
 
 const AppointmentDetailsRow: React.FC<AppointmentDetailsRowProps> = ({
   user,
@@ -23,10 +24,10 @@ const AppointmentDetailsRow: React.FC<AppointmentDetailsRowProps> = ({
             <div className="text-center py-3">Loading appointment data...</div>
           ) : (
             <>
-              {activeTab === "doctor" && (
+              {activeTab === AppointmentType.DOCTOR && (
                 <DoctorAppointmentsTable appointments={doctorAppointments} />
               )}
-              {activeTab === "service" && (
+              {activeTab === AppointmentType.SERVICE && (
                 <ServiceAppointmentsTable appointments={serviceAppointments} />
               )}
             </>

@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { get } from "@/utils/network";
-import { User, DoctorAppointment, ServiceAppointment } from "@/utils/types";
+import { AppointmentType , User, DoctorAppointment, ServiceAppointment } from "@/utils/types";
 import CustomerRow from "./components/CustomerRow";
 import AppointmentDetailsRow from "./components/AppointmentDetailsRow";
 
@@ -11,7 +11,7 @@ const CustomerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedUser, setExpandedUser] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"doctor" | "service">("doctor");
+  const [activeTab, setActiveTab] = useState<AppointmentType>(AppointmentType.DOCTOR);
   const [doctorAppointments, setDoctorAppointments] = useState<Record<number, DoctorAppointment[]>>({});
   const [serviceAppointments, setServiceAppointments] = useState<Record<number, ServiceAppointment[]>>({});
   const [appointmentLoading, setAppointmentLoading] = useState<boolean>(false);

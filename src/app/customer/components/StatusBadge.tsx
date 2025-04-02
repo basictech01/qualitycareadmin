@@ -1,25 +1,25 @@
 
 "use client";
 import React from "react";
-import { StatusBadgeProps } from "@/utils/types";
+import {Status, StatusBadgeProps } from "@/utils/types";
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const getBadgeStyles = (status: string) => {
+  const getBadgeStyles = (status: Status) => {
     const styles = {
       backgroundColor: "#ffeeba",
       color: "#856404",
     };
 
     switch (status) {
-      case "COMPLETED":
+      case Status.Completed:
         styles.backgroundColor = "#d4edda";
         styles.color = "#155724";
         break;
-      case "CANCELLED":
+      case Status.Cancelled:
         styles.backgroundColor = "#f8d7da";
         styles.color = "#721c24";
         break;
-      case "SCHEDULED":
+      case Status.Scheduled:
         styles.backgroundColor = "#cce5ff";
         styles.color = "#004085";
         break;

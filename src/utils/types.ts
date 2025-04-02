@@ -63,6 +63,11 @@ export interface FormFieldProps {
 
 
 //Customer page
+export enum AppointmentType {
+  DOCTOR = "doctor",
+  SERVICE = "service",
+}
+
 export interface User {
   id: number;
   full_name: string;
@@ -113,24 +118,31 @@ export interface CustomerRowProps {
 
 export interface AppointmentDetailsRowProps {
   user: any;
-  activeTab: 'doctor' | 'service';
-  setActiveTab: (tab: 'doctor' | 'service') => void;
+  activeTab: AppointmentType;
+  setActiveTab: (tab: AppointmentType) => void;
   doctorAppointments: any[];
   serviceAppointments: any[];
   appointmentLoading: boolean;
 }
 
 export interface TabNavigationProps {
-  activeTab: 'doctor' | 'service';
-  setActiveTab: (tab: 'doctor' | 'service') => void;
+  activeTab: AppointmentType;
+  setActiveTab: (tab: AppointmentType) => void;
 }
 
 export interface AppointmentsTableProps {
   appointments: any[];
 }
 
+export enum Status {
+  Completed = 'COMPLETED',
+  Cancelled = 'CANCELLED',
+  Scheduled = 'SCHEDULED',
+  // Add other statuses as needed
+}
+
 export interface StatusBadgeProps {
-  status: string;
+  status: Status;
 }
 
 
@@ -162,7 +174,7 @@ export interface DoctorBookingData {
   user_id: number;
   user_full_name: string;
   user_email: string;
-  booking_status: 'COMPLETED' | 'CANCELED' | 'SCHEDULED';
+  booking_status: Status;
   doctor_id: number;
   doctor_name_en: string;
   doctor_name_ar: string;
@@ -236,7 +248,7 @@ export interface SalesData {
 export interface SalesBookingData {
   service_discounted_price: string;
   service_actual_price: string;
-  booking_status:'COMPLETED' | 'CANCELED' | 'SCHEDULED';
+  booking_status:Status;
   service_category_type: string;
   service_name_en: string;
   booking_date: string;
