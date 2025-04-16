@@ -142,7 +142,7 @@ const Review: React.FC<ReviewProps> = ({ review }) => {
               </div>
               <div className='d-flex flex-column flex-grow-1'>
                 <h6 className='text-xl mb-0'>{review.user_name}</h6>
-                <span className='text-neutral-500'>{review.booking_type}</span>
+                <span className='text-neutral-500'>{review.name_en} ({review.booking_type})</span>
               </div>
             </div>
             <RenderStarRating rating={review.rating} />

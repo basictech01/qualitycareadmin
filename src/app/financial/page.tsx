@@ -12,6 +12,7 @@ interface BaseBooking {
   doctor_id?:number
   type: string;
   user_full_name: string;
+  user_phone_number: string;
   user_email: string;
   branch_id: number;
   branch_name_en: string;
@@ -434,6 +435,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       'Customer Name',
       'Customer Email',
       'Booking Type',
+      'Branch Name',
       'Service/Doctor Name',
       'Date',
       'Total Amount',
@@ -444,6 +446,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     ];
     
     // Map bookings to CSV rows
+    console.log(bookings)
     const rows = bookings.map(booking => {
       const details = getBookingTypeDetails(booking);
       return [
@@ -451,6 +454,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         booking.user_full_name,
         booking.user_email,
         details.type,
+        booking.branch_name_en,
         details.name,
         formatDate(booking.booking_date),
         details.actual_price,
@@ -729,6 +733,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     <th scope="col">Customer Name</th>
                     <th scope="col">Booking Type</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Branch Name</th>
                     <th scope="col" className="text-right">Total Amount</th>
                     <th scope="col" className="text-right">Discount Amount</th>
                     <th scope="col" className="text-right">VAT (%) & Amount</th>
@@ -748,6 +753,9 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                             <div>
                               <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
                             </div>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_phone_number}</span>
+                            </div>
                           </div>
                         </td>
                         <td>
@@ -759,6 +767,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                           </div>
                         </td>
                         <td>{formatDate(booking.booking_date)}</td>
+                        <td>{booking.branch_name_en}</td>
                         <td className="text-right">﷼{details.actual_price}</td>
                         <td className="text-right">﷼{details.discount_amount}</td>
                         <td className="text-right">
@@ -889,6 +898,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     <th scope="col">Customer Name</th>
                     <th scope="col">Booking Type</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Branch Name</th>
                     <th scope="col" className="text-right">Total Amount</th>
                     <th scope="col" className="text-right">Discount Amount</th>
                     <th scope="col" className="text-right">VAT (%) & Amount</th>
@@ -907,6 +917,9 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                             <div>
                               <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_email}</span>
                             </div>
+                            <div>
+                              <span style={{ fontSize: '12px', color: '#666' }}>{booking.user_phone_number}</span>
+                            </div>
                           </div>
                         </td>
                         <td>
@@ -918,6 +931,7 @@ const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                           </div>
                         </td>
                         <td>{formatDate(booking.booking_date)}</td>
+                        <td>{booking.branch_name_en}</td>
                         <td className="text-right">﷼{details.actual_price}</td>
                         <td className="text-right">﷼{details.discount_amount}</td>
                         <td className="text-right">

@@ -486,7 +486,7 @@ export default function MarketingPage() {
         <div className='row gy-4'>
         {banners.map((banner) => {
           return (
-            <BannerCard key={banner.id} id={banner.id} image_ar={banner.image_ar} image_en={banner.image_en} link={banner.link} start_timestamp={banner.start_timestamp} end_timestamp={banner.start_timestamp}  deleteBanner={handleDeleteBanner}/>
+            <BannerCard key={banner.id} id={banner.id} image_ar={banner.image_ar} image_en={banner.image_en} link={banner.link} start_timestamp={banner.start_timestamp} end_timestamp={banner.end_timestamp}  deleteBanner={handleDeleteBanner}/>
           )
         })}
         </div>

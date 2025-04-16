@@ -59,6 +59,12 @@ const userSlice = createSlice({
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const user = JSON.parse(storedUser);
+        if (isTokenExpired(user.access_token)) {
+          state.status = 'LOGGED_OUT';
+          localStorage.removeItem('user');
+          localStorage.removeItem('x-access-token');
+          return;
+        }
         state.status = 'LOGGED_IN';
         state.full_name = user.full_name;
         state.email_address = user.email_address;
@@ -76,6 +82,11 @@ const userSlice = createSlice({
     }
   },
 });
+
+function isTokenExpired(token: string) {
+  const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+  return (Math.floor((new Date()).getTime() / 1000)) >= expiry;
+}
 
 export const { login, logout, checkAuthenticated, setLoading } = userSlice.actions;
 export default userSlice.reducer;

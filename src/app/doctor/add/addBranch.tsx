@@ -105,11 +105,12 @@ const BranchSelection: React.FC<{
                   <Col md={5}>
                     <FloatingLabel controlId={`branch-${index}`} label="Branch">
                       <Form.Select
+                        onClick={(e) => console.log(branch)}
                         value={branch.id}
                         onChange={(e) => handleBranchChange(index, e.target.value)}
                         className={!branch.id ? "border-danger" : ""}
                       >
-                        <option value="">Select Branch</option>
+                        <option key={0} value={0}>Select Branch</option>
                         {branches.map((b) => (
                           <option key={b.id} value={b.id}>
                             {b.name_en}

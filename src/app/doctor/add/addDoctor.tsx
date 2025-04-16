@@ -81,7 +81,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
       const selected_branches = branches.map((branch: any): SelectedBranch => {
         const availableDays = constructAvailableDays(branch.day_map);
         return {
-          id: branch.id,
+          id: branch.branch_id,
           name_en: branch.name_en,
           availableDays: availableDays,
         }

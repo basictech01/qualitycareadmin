@@ -9,7 +9,7 @@ export interface Review {
     user_name: string;
     user_photo_url: string;
     booking_type: string;
-    name: string;
+    name_en: string;
     review: string;
     created_timestamp: Date;
     rating: number;

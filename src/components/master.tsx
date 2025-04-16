@@ -5,9 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { usePathname } from "next/navigation";
 import ThemeToggleButton from "./themetoggle";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { logout } from "@/app/login/store";
 
 const MasterLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
+    const dispatch = useDispatch();
     const [sidebarActive, seSidebarActive] = useState(false);
     const [mobileMenu, setMobileMenu] = useState(false);
     const location = usePathname(); // Hook to get the current route
@@ -94,6 +97,10 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
     const mobileMenuControl = () => {
         setMobileMenu(!mobileMenu);
     };
+
+    const onLogoutClick = () => {
+        dispatch(logout());
+    }
 
     return (
         <section className={mobileMenu ? "overlay active" : "overlay "}>
@@ -349,84 +356,35 @@ const MasterLayout = ({ children }: { children: React.ReactNode }) => {
                         <div className='col-auto'>
                             <div className='d-flex flex-wrap align-items-center gap-3'>
                                 {/* ThemeToggleButton */}
+                                <div className='dropdown'>
+                                    <button
+                                        className='d-flex justify-content-center align-items-center rounded-circle'
+                                        type='button'
+                                        title="Add Admin Account"
+                                    >
+                                        <Link
+                                            href='/admin'
+                                        >
+                                        <Icon
+                                            icon='fluent:bot-add-16-regular'
+                                            className='icon text-2xl non-active'
+                                        />
+                                         </Link>
+                                    </button>
+                                </div>
                                 <ThemeToggleButton />
                                 <div className='dropdown'>
                                     <button
                                         className='d-flex justify-content-center align-items-center rounded-circle'
                                         type='button'
-                                        data-bs-toggle='dropdown'
+                                        onClick={onLogoutClick}
+                                        title="Logout"
                                     >
-                                        <img
-                                            src='/assets/images/user.png'
-                                            alt='image_user'
-                                            className='w-40-px h-40-px object-fit-cover rounded-circle'
+                                        <Icon
+                                            icon='iconoir:system-shut'
+                                            className='icon text-2xl non-active'
                                         />
                                     </button>
-                                    <div className='dropdown-menu to-top dropdown-menu-sm'>
-                                        <div className='py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2'>
-                                            <div>
-                                                <h6 className='text-lg text-primary-light fw-semibold mb-2'>
-                                                    Shaidul Islam
-                                                </h6>
-                                                <span className='text-secondary-light fw-medium text-sm'>
-                                                    Admin
-                                                </span>
-                                            </div>
-                                            <button type='button' className='hover-text-danger'>
-                                                <Icon
-                                                    icon='radix-icons:cross-1'
-                                                    className='icon text-xl'
-                                                />
-                                            </button>
-                                        </div>
-                                        <ul className='to-top-list'>
-                                            <li>
-                                                <Link
-                                                    className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                                    href='/view-profile'
-                                                >
-                                                    <Icon
-                                                        icon='solar:user-linear'
-                                                        className='icon text-xl'
-                                                    />{" "}
-                                                    My Profile
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                                    href='/email'
-                                                >
-                                                    <Icon
-                                                        icon='tabler:message-check'
-                                                        className='icon text-xl'
-                                                    />{" "}
-                                                    Inbox
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                                    href='/company'
-                                                >
-                                                    <Icon
-                                                        icon='icon-park-outline:setting-two'
-                                                        className='icon text-xl'
-                                                    />
-                                                    Setting
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                                                    href='#'
-                                                >
-                                                    <Icon icon='lucide:power' className='icon text-xl' />{" "}
-                                                    Log Out
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </div>
                                 </div>
                                 {/* Profile dropdown end */}
                             </div>
