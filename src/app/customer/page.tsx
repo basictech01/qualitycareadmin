@@ -360,7 +360,7 @@ const DoctorAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointment
                 <td>{appointment.name_en}</td>
                 <td>{appointment.branch_name_en}</td>
                 <td>
-                  <StatusBadge status={appointment.status} />
+                  <StatusBadge date={appointment.date} start_time={appointment.start_time} end_time={appointment.end_time} status={appointment.status} />
                 </td>
               </tr>
             ))
@@ -402,7 +402,7 @@ const ServiceAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
                 <td>{appointment.name_en}</td>
                 <td>{appointment.branch_name_en}</td>
                 <td>
-                  <StatusBadge status={appointment.status} />
+                  <StatusBadge status={appointment.status} date={appointment.date} start_time={appointment.start_time} end_time={appointment.end_time} />
                 </td>
               </tr>
             ))
@@ -421,10 +421,13 @@ const ServiceAppointmentsTable: React.FC<AppointmentsTableProps> = ({ appointmen
 
 interface StatusBadgeProps {
   status: string;
+  date: string;
+  start_time: string;
+  end_time: string;
 }
 
 // Reusable Status Badge Component
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status, date, start_time, end_time }) => {
   const getBadgeStyles = (status: string) => {
     const styles = {
       backgroundColor: '#ffeeba',
@@ -444,12 +447,20 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
         styles.backgroundColor = '#cce5ff';
         styles.color = '#004085';
         break;
+      case 'NO-SHOW':
+        styles.backgroundColor = '#FFD041';
+        styles.color = '#D35400';
+        break;
       default:
         break;
     }
     
     return styles;
   };
+
+  if (Date.now() > new Date(date).getTime() && status === 'SCHEDULED') {
+    status = 'NO-SHOW';
+  }
   
   const styles = {
     padding: '2px 6px',

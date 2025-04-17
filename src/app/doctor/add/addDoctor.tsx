@@ -286,8 +286,10 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
       </div>
 
       {/* Form */}
+      
       <div>
-        <div className="mb-20">
+      <div className="row">
+        <div className="col mb-20">
           <label htmlFor="name_en" className="form-label fw-semibold text-primary-light text-sm mb-8">
             Full Name (English)
           </label>
@@ -301,7 +303,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
           />
         </div>
 
-        <div className="mb-20">
+        <div className="col mb-20">
           <label htmlFor="name_ar" className="form-label fw-semibold text-primary-light text-sm mb-8">
             Full Name (Arabic)
           </label>
@@ -314,61 +316,65 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
             onChange={handleChange}
           />
         </div>
+      </div>
 
-        <div className="mb-20">
-          <label htmlFor="attended_patient" className="form-label fw-semibold text-primary-light text-sm mb-8">
-            Attended Patients <span className="text-danger-600">*</span>
-          </label>
-          <input
-            type="number"
-            className="form-control radius-8"
-            id="attended_patient"
-            placeholder="Enter number of attended patients"
-            value={formData.attended_patient}
-            onChange={handleChange}
-          />
+        <div className="row">
+          <div className="col mb-20">
+            <label htmlFor="attended_patient" className="form-label fw-semibold text-primary-light text-sm mb-8">
+              Attended Patients <span className="text-danger-600">*</span>
+            </label>
+            <input
+              type="number"
+              className="form-control radius-8"
+              id="attended_patient"
+              placeholder="Enter number of attended patients"
+              value={formData.attended_patient}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="col mb-20">
+            <label htmlFor="session_fees" className="form-label fw-semibold text-primary-light text-sm mb-8">
+              Session Fees <span className="text-danger-600">*</span>
+            </label>
+            <input
+              type="number"
+              className="form-control radius-8"
+              id="session_fees"
+              placeholder="Enter session fees"
+              value={formData.session_fees}
+              onChange={handleChange}
+            />
+          </div>
         </div>
+        <div className="row">
+          <div className="col mb-20">
+            <label htmlFor="total_experience" className="form-label fw-semibold text-primary-light text-sm mb-8">
+              Total Experience <span className="text-danger-600">*</span>
+            </label>
+            <input
+              type="number"
+              className="form-control radius-8"
+              id="total_experience"
+              placeholder="Enter years of experience"
+              value={formData.total_experience}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div className="mb-20">
-          <label htmlFor="session_fees" className="form-label fw-semibold text-primary-light text-sm mb-8">
-            Session Fees <span className="text-danger-600">*</span>
-          </label>
-          <input
-            type="number"
-            className="form-control radius-8"
-            id="session_fees"
-            placeholder="Enter session fees"
-            value={formData.session_fees}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-20">
-          <label htmlFor="total_experience" className="form-label fw-semibold text-primary-light text-sm mb-8">
-            Total Experience <span className="text-danger-600">*</span>
-          </label>
-          <input
-            type="number"
-            className="form-control radius-8"
-            id="total_experience"
-            placeholder="Enter years of experience"
-            value={formData.total_experience}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-20">
-          <label htmlFor="qualification" className="form-label fw-semibold text-primary-light text-sm mb-8">
-          qualification
-          </label>
-          <input
-            type="text"
-            className="form-control radius-8"
-            id="qualification"
-            placeholder="Enter qualification"
-            value={formData.qualification}
-            onChange={handleChange}
-          />
+          <div className="col mb-20">
+            <label htmlFor="qualification" className="form-label fw-semibold text-primary-light text-sm mb-8">
+            qualification
+            </label>
+            <input
+              type="text"
+              className="form-control radius-8"
+              id="qualification"
+              placeholder="Enter qualification"
+              value={formData.qualification}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="mb-20">
           <label htmlFor="languages" className="form-label fw-semibold text-primary-light text-sm mb-8">
@@ -416,7 +422,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
         <TimeSlotCreator title="Time Slot" selectedTimeSlots={selectedTimeSlots} setSelectedTimeSlots={setSelectedTimeSlots} />
         <div className="col-12">
           <button onClick={handleSubmit} className="btn btn-primary">
-            {doctor ? "Update Service" : "Add Service"}
+            {doctor ? "Update Doctor" : "Add Doctor"}
           </button>
         </div>
       </div>

@@ -387,14 +387,16 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots, onSuccess }: 
                 </select>
               )}
             </div>
-              <div className="col-12">
-                <label className="form-label">Service Name (English)</label>
-                <input type="text" name="name_en" className="form-control" value={formData.name_en} onChange={handleChange} required />
-              </div>
+              <div className="row mt-4">
+                <div className="col">
+                  <label className="form-label">Service Name (English)</label>
+                  <input type="text" name="name_en" className="form-control" value={formData.name_en} onChange={handleChange} required />
+                </div>
 
-              <div className="col-12">
-                <label className="form-label">Service Name (Arabic)</label>
-                <input type="text" name="name_ar" className="form-control" value={formData.name_ar} onChange={handleChange} required />
+                <div className="col">
+                  <label className="form-label">Service Name (Arabic)</label>
+                  <input type="text" name="name_ar" className="form-control" value={formData.name_ar} onChange={handleChange} required />
+                </div>
               </div>
               <div className="col-12">
                 <label className="form-label">About (English)</label>
@@ -405,15 +407,16 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots, onSuccess }: 
                 <label className="form-label">About (Arabic)</label>
                 <input type="text" name="about_ar" step="0.01" className="form-control" value={formData.about_ar} onChange={handleChange} required />
               </div>
+              <div className="row mt-4">
+                <div className="col">
+                  <label className="form-label">Actual Price</label>
+                  <input type="number" name="actual_price" step="0.01" className="form-control" value={formData.actual_price} onChange={handleChange} required />
+                </div>
 
-              <div className="col-12">
-                <label className="form-label">Actual Price</label>
-                <input type="number" name="actual_price" step="0.01" className="form-control" value={formData.actual_price} onChange={handleChange} required />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label">Discounted Price</label>
-                <input type="number" name="discounted_price" step="0.01" className="form-control" value={formData.discounted_price} onChange={handleChange} />
+                <div className="col">
+                  <label className="form-label">Discounted Price</label>
+                  <input type="number" name="discounted_price" step="0.01" className="form-control" value={formData.discounted_price} onChange={handleChange} />
+                </div>
               </div>
               <div className="col-12">
               <div className="form-check d-flex align-items-center" style={{ minHeight: '30px' }}>

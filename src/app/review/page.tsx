@@ -111,7 +111,7 @@ const Review: React.FC<ReviewProps> = ({ review }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Modal heading
+          Comment Review
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -128,7 +128,7 @@ const Review: React.FC<ReviewProps> = ({ review }) => {
         createComment={() => createComment()}  />
       </Modal.Footer>
     </Modal>
-    <div className='col-xxl-4 col-md-6' onClick={openModel}>
+    <div className='col-xxl-4 col-md-6 mt-16' onClick={openModel}>
       <div className='card rounded-3 overflow-hidden h-100'>
         <div className='card-body p-24'>
           <div className='d-flex align-items-start justify-content-between gap-2'>
@@ -198,7 +198,7 @@ const Comment: React.FC<CommentProps> = ({ state, comment, setComment, createCom
     )
   }
   return (
-    <p>{comment}</p>
+    <p>Admin Comment: <b>{comment}</b></p>
   )
 }
 

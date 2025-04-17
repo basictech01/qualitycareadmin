@@ -127,7 +127,7 @@ const DoctorDashboard = () => {
               icon="ic:baseline-plus"
               className="icon text-xl line-height-1"
             />
-            Add New User
+            Add New Doctor
           </button>
         </div>
         <div className="card-body p-24">
