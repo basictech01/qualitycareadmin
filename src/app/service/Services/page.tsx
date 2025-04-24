@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Modal from 'react-bootstrap/Modal';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import AddService from './addService';
-import { get } from '@/utils/network';
+import { del, get } from '@/utils/network';
 import CategoryPage from '../Category/page';
 
 const ServicePage = () => {
@@ -57,6 +57,15 @@ const ServicePage = () => {
     setShowEditServiceModel(false);
   }
 
+  const handleServiceDelete = async (serviceId: number) => {
+    try {
+      await del(`/service/${serviceId}`); // Replace with your actual API endpoint
+      setService((state) => state.filter((service) => service.id !== serviceId));
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
+  }
+
   return (
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
@@ -103,7 +112,7 @@ const ServicePage = () => {
           <p className="text-center text-muted">No services found.</p>
         ) : (
           services.map((service: any) => (
-            <Service key={service.id} service={service} onEdit={() => handleEditService(service.id)} />
+            <Service key={service.id} service={service} onEdit={() => handleEditService(service.id)} onDelete={() => handleServiceDelete(service.id)} />
           ))
         )}
       </div>
@@ -112,7 +121,7 @@ const ServicePage = () => {
 };
 
 // Service Card Component
-const Service = ({ service, onEdit }: { service: any; onEdit: () => void }) => {
+const Service = ({ service, onEdit, onDelete }: { service: any; onEdit: () => void, onDelete: () => void }) => {
   return (
     <div className="col-xxl-3 col-lg-3 col-md-4 col-sm-6">
     <div   className=" card h-100 shadow-sm radius-12 overflow-hidden transition-all hover:shadow-md">
@@ -180,17 +189,25 @@ const Service = ({ service, onEdit }: { service: any; onEdit: () => void }) => {
         </span>
           </div>
           </div>
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onEdit();
-            }}
-            className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-8 text-sm btn-sm px-5 py-5 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-95"
-          >
-            Edit Profile
-          </Link>
-       
+          <div className='d-flex gap-2'>
+            <button
+              onClick={(e) => {
+                onDelete();
+              }}
+              className="w-50 bg-danger-50 text-danger-600 bg-hover-primary-600 hover-text-white p-8 text-sm btn-sm px-5 py-5 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-95"
+            >
+              Delete Profile
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onEdit();
+              }}
+              className="w-50 bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-8 text-sm btn-sm px-5 py-5 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-95"
+            >
+              Edit Profile
+            </button>
+          </div>
       </div>
     </div>
   </div>

@@ -437,7 +437,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots, onSuccess }: 
               {/* Image Upload */}
                 <div className="col-md-6">
                               <label className="form-label fw-bold text-neutral-900">
-                                          English Thumbnail
+                                          English Thumbnail (Max Size 2Mb)
                                         </label>
                                         <div className="upload-image-wrapper">
                                           {formData.service_image_en_url ? (
@@ -486,7 +486,7 @@ const AddService = ({ editData, serviceBranches, serviceTimeSlots, onSuccess }: 
             
                         <div className="col-md-6">
                         <label className="form-label fw-bold text-neutral-900">
-                            Arabic Thumbnail
+                            Arabic Thumbnail (Max Size 2Mb)
                           </label>
                           <div className="upload-image-wrapper">
                             {formData.service_image_ar_url ? (

@@ -173,7 +173,7 @@ const AddNewBanner: React.FC<AddNewBannerProps> = ({ onSuccess }) => {
           <div className="row">
             <div className="col-6">
               <label className="form-label fw-bold text-neutral-900">
-                English Thumbnail
+                English Thumbnail (Max Size 2Mb)
               </label>
               <div className="upload-image-wrapper">
                 {enImagePreview ? (
@@ -221,7 +221,7 @@ const AddNewBanner: React.FC<AddNewBannerProps> = ({ onSuccess }) => {
             </div>
             <div className="col-6">
               <label className="form-label fw-bold text-neutral-900">
-                Arabic Thumbnail
+                Arabic Thumbnail (Max Size 2Mb)
               </label>
               <div className="upload-image-wrapper">
                 {arImagePreview ? (

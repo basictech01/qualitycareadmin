@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Modal from "react-bootstrap/Modal";
 import AddUserLayer from "./add/addDoctor";
-import { get, put } from "@/utils/network";
+import { del, get, put } from "@/utils/network";
 import { Doctor } from "@/utils/types";
 
 const DoctorDashboard = () => {
@@ -41,6 +41,15 @@ const DoctorDashboard = () => {
 
     setSelectedDoctor(doctorToEdit);
     setShowEditUserModel(true);
+  };
+
+  const handDeleteDoctor = async (doctorId: Doctor) => {
+    try {
+      await del(`/doctor/${doctorId}`);
+      setDoctors((state) => state.filter((doctor) => doctor.id !== doctorId));
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   useEffect(() => {
@@ -139,6 +148,7 @@ const DoctorDashboard = () => {
                 key={doctor.id}
                 doctor={doctor}
                 onEdit={() => handleEditDoctor(doctor.id)}
+                onDelete={() => handDeleteDoctor(doctor.id)}
                 onStatusChange={()=>changeActiveStatus(doctor)}
               />
             ))}
@@ -154,15 +164,17 @@ const DoctorDashboard = () => {
 const DoctorCard = ({
   doctor,
   onEdit,
+  onDelete,
   onStatusChange
 }: {
   doctor: any;
   onEdit: () =>void;
+  onDelete: () => void;
   onStatusChange: () => void;
 }) => {
 
  
-
+  console.log(doctor)
   return (
     <div className="col-xxl-2 col-md-4 col-sm-6 user-grid-card p-2">
       
@@ -187,7 +199,7 @@ const DoctorCard = ({
           <div className="center-border position-relative bg-danger-gradient-light radius-8 p-12 d-flex align-items-center gap-4">
             <div className="text-center w-50">
               <h6 className="text-md mb-0">
-                {doctor.about_en || "Department"}
+                {doctor.languages || "Department"}
               </h6>
              
             </div>
@@ -203,6 +215,12 @@ const DoctorCard = ({
             className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
           >
             Edit Profile
+          </div>
+          <div
+            onClick={onDelete}
+            className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
+          >
+            Delete Profile
           </div>
         </div>
       </div>

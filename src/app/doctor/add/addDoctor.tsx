@@ -254,7 +254,7 @@ const AddUserLayer: React.FC<AddUserLayerProps> = ({ doctor, onSuccess }) => {
 
   return (
     <div>
-      <h6 className="text-md text-primary-light mb-16">Profile Image</h6>
+      <h6 className="text-md text-primary-light mb-16">Profile Image (Max Size 2Mb)</h6>
 
       {/* Upload Image */}
       <div className="mb-24 mt-16">
