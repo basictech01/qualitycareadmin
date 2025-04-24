@@ -214,13 +214,13 @@ const DoctorCard = ({
             onClick={onEdit}
             className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
           >
-            Edit Profile
+            Edit Doctor
           </div>
           <div
             onClick={onDelete}
-            className="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
+            className="bg-danger-50 text-danger-600 bg-hover-danger-600 hover-text-white p-10 text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center justify-content-center mt-16 fw-medium gap-2 w-100"
           >
-            Delete Profile
+            Delete Doctor
           </div>
         </div>
       </div>
